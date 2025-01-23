@@ -8,21 +8,20 @@
 #ifndef HitRec_h
 #define HitRec_h
 
-#include <stdlib.h>
-#include <stdbool.h>
 #include "Vector3.h"
+#include <stdbool.h>
+#include <stdlib.h>
 
 struct material_t;
 
 typedef struct
 {
-	double				t;			// Time of hit.
-	Point3				hitPt;		// Location of hit.
-	Vector3				normal;
-	struct material_t	*material;
-	bool 				frontFace;
-	double 				u, v;		// Texture coordinates [0, 1].
-}
-HitRec;
+    double t;     // Time of hit.
+    Point3 hitPt; // Location of hit.
+    Vector3 normal;
+    struct material_t *material;
+    bool frontFace;
+    double u, v; // Texture coordinates [0, 1].
+} HitRec;
 
 #endif /* HitRec_h */

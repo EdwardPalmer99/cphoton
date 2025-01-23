@@ -8,15 +8,15 @@
 #ifndef RayTracer_h
 #define RayTracer_h
 
-#include <stdlib.h>
-#include "Ray.h"
 #include "Camera.h"
-#include "Vector3.h"
-#include "Utility.h"
-#include "Primitive.h"
 #include "HitRec.h"
 #include "PPMWriter.h"
+#include "Primitive.h"
+#include "Ray.h"
 #include "Scene.h"
+#include "Utility.h"
+#include "Vector3.h"
+#include <stdlib.h>
 
 #include <Cocoa/Cocoa.h>
 

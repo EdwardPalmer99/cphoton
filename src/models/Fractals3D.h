@@ -8,14 +8,13 @@
 #ifndef Fractals3D_h
 #define Fractals3D_h
 
-#include <stdlib.h>
-#include "Primitive.h"
-#include "Material.h"
-#include "HitRec.h"
 #include "Camera.h"
+#include "HitRec.h"
+#include "Material.h"
 #include "PPMWriter.h"
-#include "Ray.h"
 #include "Primitive.h"
+#include "Ray.h"
+#include <stdlib.h>
 
 struct fractal_t;
 

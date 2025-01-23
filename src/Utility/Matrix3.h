@@ -8,11 +8,11 @@
 #ifndef Matrix3_h
 #define Matrix3_h
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include "Vector3.h"
 #include "Utility.h"
+#include "Vector3.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 struct rotate3_t;
 

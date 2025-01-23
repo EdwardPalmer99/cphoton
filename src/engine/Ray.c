@@ -10,13 +10,13 @@
 
 Ray makeRay(Point3 origin, Vector3 direction)
 {
-	Ray ray = { .origin = origin, .direction = direction };
-	
-	return ray;
+    Ray ray = {.origin = origin, .direction = direction};
+
+    return ray;
 }
 
 
 Point3 pointAtTime(Ray *ray, double t)
 {
-	return addVectors(ray->origin, scaleVector(ray->direction, t));
+    return addVectors(ray->origin, scaleVector(ray->direction, t));
 }

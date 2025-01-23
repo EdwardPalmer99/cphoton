@@ -8,23 +8,22 @@
 #ifndef PPMWriter_h
 #define PPMWriter_h
 
+#include "Vector3.h"
+#include <math.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
-#include <math.h>
-#include "Vector3.h"
 
-#define NUM_PIXELS(image)	(image)->width * (image)->height
+#define NUM_PIXELS(image) (image)->width *(image)->height
 
 typedef struct
 {
-	int		width;
-	int 	height;
-	Color3 	*pixels;
-	Color3 	**pixelValue;
-}
-PPMImage;
+    int width;
+    int height;
+    Color3 *pixels;
+    Color3 **pixelValue;
+} PPMImage;
 
 PPMImage *makePPMImage(int width, int height);
 void freePPMImage(PPMImage *image);

@@ -12,13 +12,12 @@
 
 typedef struct
 {
-	Point3	origin;
-	Vector3	direction;
-}
-Ray;
+    Point3 origin;
+    Vector3 direction;
+} Ray;
 
 
-Ray 	makeRay(Point3 origin, Vector3 direction);
-Point3	pointAtTime(Ray *ray, double t);
+Ray makeRay(Point3 origin, Vector3 direction);
+Point3 pointAtTime(Ray *ray, double t);
 
 #endif /* Ray_h */

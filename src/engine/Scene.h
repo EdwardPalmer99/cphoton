@@ -17,15 +17,15 @@ Primitive *makeDarkKnightRoom(double length, double width, double height);
 
 struct scene_t
 {
-	int numObjects, objectCapacity;
-	
-	Primitive **objects;
-	Primitive *sceneNode;
+    int numObjects, objectCapacity;
 
-	// "Methods".
-	bool (*addObject)(Scene *scene, Primitive *object);
-	void (*destructor)(Scene *scene);
-	void (*markAsFinished)(Scene *scene);
+    Primitive **objects;
+    Primitive *sceneNode;
+
+    // "Methods".
+    bool (*addObject)(Scene *scene, Primitive *object);
+    void (*destructor)(Scene *scene);
+    void (*markAsFinished)(Scene *scene);
 };
 
 #endif /* Scene_h */

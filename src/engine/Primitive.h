@@ -8,15 +8,15 @@
 #ifndef Primitive_h
 #define Primitive_h
 
-#include "Vector3.h"
-#include "Ray.h"
+#include "Fractals3D.h"
 #include "HitRec.h"
 #include "Material.h"
 #include "Matrix3.h"
+#include "Ray.h"
+#include "Vector3.h"
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include "Fractals3D.h"
 
 typedef struct bvhNode_t BVHNode;
 typedef struct cube_t Cube;
@@ -32,31 +32,30 @@ typedef struct fractal_t Fractal;
 
 struct primitive_t
 {
-	union
-	{
-		BVHNode		*node;
-		Triangle	*triangle;
-		Cube 		*cube;
-		Sphere		*sphere;
-		Cylinder	*cylinder;
-		Disc		*disc;
-		Plane		*plane;
-		Cone 		*cone;
-		Fractal		*fractal;
-	};
-	
-	Material *material;
-	
-	bool (*hit)(Primitive *, Ray *, double, double, HitRec *);
-	bool (*boundingBox)(Primitive *, AABB *);
-	void (*destructor)(Primitive *);
+    union
+    {
+        BVHNode *node;
+        Triangle *triangle;
+        Cube *cube;
+        Sphere *sphere;
+        Cylinder *cylinder;
+        Disc *disc;
+        Plane *plane;
+        Cone *cone;
+        Fractal *fractal;
+    };
+
+    Material *material;
+
+    bool (*hit)(Primitive *, Ray *, double, double, HitRec *);
+    bool (*boundingBox)(Primitive *, AABB *);
+    void (*destructor)(Primitive *);
 };
 
 
-
-struct aabb_t	// Axis-aligned Bounding box.
+struct aabb_t // Axis-aligned Bounding box.
 {
-	Point3 min, max;
+    Point3 min, max;
 };
 
 
