@@ -3,7 +3,6 @@ CFLAGS	:= -std=c11 -g -Wall -O2
 CC		:= gcc
 
 TARGET_EXEC 	:= cphoton
-
 INSTALL_DIR		:= install
 BUILD_DIR		:= build
 SRC_DIR 		:= src
@@ -24,21 +23,25 @@ INC_FLAGS := $(addprefix -I, $(INC_DIRS))
 # Linker flags:
 LDFLAGS := $(INC_FLAGS)
 
+define do_compile
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@ $(LDFLAGS)
+endef
+
+# Build step for c source files:
+$(BUILD_DIR)/%.o: %.c
+	$(call do_compile)
+
+# Build step for obj-c source files:
+$(BUILD_DIR)/%.o: %.m
+	$(call do_compile)
+
 # Final build step:
 $(INSTALL_DIR)/$(TARGET_EXEC): $(OBJS)
 	mkdir -p $(INSTALL_DIR)
 	$(CC) $(OBJS) -o $@
-
-# Build step for c source files:
-$(BUILD_DIR)/%.o: %.c
-	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@ $(LDFLAGS)
-
-# Build step for obj-c source files:
-$(BUILD_DIR)/%.o: %.m
-	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@ $(LDFLAGS)
-
+	
+.PHONY: debug
 debug:
 	@echo "srcs: $(SRCS)"
 	@echo "objs: $(OBJS)"
