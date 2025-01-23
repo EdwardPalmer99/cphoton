@@ -1,5 +1,5 @@
 //
-//  RayTracer.c
+//  RayTracer.m
 //  CPhoton
 //
 //  Created by Edward on 19/01/2023.
