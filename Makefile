@@ -35,7 +35,7 @@ $(BUILD_DIR)/%.o: %.c
 # Final build step:
 $(INSTALL_DIR)/$(TARGET_EXEC): $(OBJS)
 	mkdir -p $(INSTALL_DIR)
-	$(CC) $(OBJS) -o $@
+	$(CC) $(OBJS) -lm -o $@
 	
 .PHONY: debug
 debug:
