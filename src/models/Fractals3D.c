@@ -32,7 +32,7 @@ struct fractal_t
 };
 
 
-#pragma mark - *** Quaternion Operations ***
+// *** Quaternion Operations ***
 
 struct quaternion_t
 {
@@ -84,8 +84,6 @@ static inline Quaternion qCube(Quaternion q1)
     return qMultiply(q1, qSquare(q1));
 }
 
-
-#pragma mark -
 
 static inline bool fractalBoundingBox(Primitive *primitive, AABB *outputBox)
 {
@@ -170,7 +168,7 @@ static void destructFractal(Primitive *primitive)
 }
 
 
-#pragma mark - *** Distance Estimators ***
+// *** Distance Estimators ***
 
 /// Returns the closest point to a point in the Mandelbrot set.
 static inline double mandelbulb8DistanceEstimator(Point3 c)

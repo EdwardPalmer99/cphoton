@@ -11,7 +11,7 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-#pragma mark - Function Prototypes:
+// Function Prototypes:
 
 #define swap(val1, val2) ({ double temp = (val1); (val1) = (val2); (val2) = temp; })
 
@@ -57,7 +57,7 @@ static void destructTriangle(Primitive *primitive);
 static inline void setSphereUV(Vector3 *outwardNormal, double *u, double *v);
 
 
-#pragma mark - *** Primitives ***
+// *** Primitives ***
 
 struct cone_t
 {
@@ -124,7 +124,7 @@ struct triangle_t
 };
 
 
-#pragma mark - *** Axis-Aligned Bounded Boxes ***
+// *** Axis-Aligned Bounded Boxes ***
 
 static inline void resetBoundingBox(AABB *outputBox)
 {
@@ -378,7 +378,7 @@ static inline bool triangleBoundingBox(Primitive *primitive, AABB *outputBox)
 }
 
 
-#pragma mark - *** AABB Functions ***
+// *** AABB Functions ***
 
 static inline AABB addBoundingBoxes(AABB box0, AABB box1)
 {
@@ -468,7 +468,7 @@ int boxComparatorZ(const void *ptr1, const void *ptr2)
 }
 
 
-#pragma mark - *** Destructors ***
+// *** Destructors ***
 
 static void destructTriangle(Primitive *primitive)
 {
@@ -609,7 +609,7 @@ static void destructBVHNode(Primitive *primitive)
 }
 
 
-#pragma mark - *** Make Primitives ***
+// *** Make Primitives ***
 
 Primitive *makeCube(Point3 center, Vector3 rotAngles, double length, Material *material)
 {
@@ -927,7 +927,7 @@ Primitive *makeBVHNode(Primitive **objects, int start, int end)
 }
 
 
-#pragma mark - *** isHit Functions ***
+// *** isHit Functions ***
 
 static inline bool isTriangleHit(Primitive *primitive, Ray *ray, double tmin, double tmax, HitRec *hit)
 {
@@ -1479,7 +1479,7 @@ static inline bool isConeHit(Primitive *primitive, Ray *ray, double tmin, double
 }
 
 
-#pragma mark - *** Texturing ***
+// *** Texturing ***
 
 /// Calculate the texture coordinates which are in range [0, 1] using the outward
 /// normal calculated from the hit. We are using spherical polar coordinates with
@@ -1495,7 +1495,7 @@ static inline void setSphereUV(Vector3 *outwardNormal, double *u, double *v)
 }
 
 
-#pragma mark - *** Utility ***
+// *** Utility ***
 
 static inline bool isValidIntersectionTime(double hitTime, double tmin, double tmax)
 {

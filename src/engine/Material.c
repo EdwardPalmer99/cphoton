@@ -23,7 +23,7 @@ static inline Vector3 reflect(Vector3 v, Vector3 n);
 static inline Vector3 refract(Vector3 vin, Vector3 n, double refractionRatio);
 
 
-#pragma mark - *** Make Materials ***
+// *** Make Materials ***
 
 static inline Material *makeEmptyMaterial(void)
 {
@@ -114,7 +114,7 @@ Material *makeDielectric(double indexOfRefraction)
 }
 
 
-#pragma mark - *** Destructors ***
+// *** Destructors ***
 
 static inline void destructMaterial(Material *material)
 {
@@ -130,7 +130,7 @@ static inline void destructMaterial(Material *material)
 }
 
 
-#pragma mark - *** Reference Counting ***
+// *** Reference Counting ***
 
 static inline void incrementRefCounter(Material *material)
 {
@@ -148,8 +148,6 @@ static inline void decrementRefCounter(Material *material)
         material->destructor(material);
 }
 
-
-#pragma mark -
 
 static inline bool absorbRay(Ray *incidentRay, HitRec *hit, Ray *scatteredRay, Color3 *attenuation)
 {

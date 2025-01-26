@@ -22,7 +22,7 @@ static inline void rotationMatrix(Matrix3 matRot, double alpha, double beta, dou
 static inline void transposeMatrix(Matrix3 matT, Matrix3 mat);
 
 
-#pragma mark - *** User Accessible ***
+// *** User Accessible ***
 
 Rotate3 *makeRotate3(Vector3 rotationAngles)
 {
@@ -56,7 +56,7 @@ Vector3 inverseRotation(Vector3 v, Rotate3 *rotation)
 }
 
 
-#pragma mark - *** Private Functions ***
+// *** Private Functions ***
 
 static inline void transposeMatrix(Matrix3 matT, Matrix3 mat)
 {

@@ -21,8 +21,6 @@ static inline void writeBinaryPixelToFile(FILE *fp, Color3 *pixel);
 static inline void writeBinary16BitPixelToFile(FILE *fp, Color3 *pixel);
 
 
-#pragma mark -
-
 static bool isValidPPMImage(PPMImage *image)
 {
     if (!image || !image->pixels || image->width < 1 || image->height < 1)
@@ -123,8 +121,6 @@ void copyImage(PPMImage *imageDst, PPMImage *imageSrc)
 }
 
 
-#pragma mark -
-
 bool writePPMImage(PPMImage *image, const char *fpath)
 {
     // 1. Check image structure and fpath.
@@ -223,8 +219,6 @@ bool writeBinary16BitPPMImage(PPMImage *image, const char *fpath)
     return true;
 }
 
-
-#pragma mark -
 
 static inline void writePixelToFile(FILE *fp, Color3 *pixel)
 {
