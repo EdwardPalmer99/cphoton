@@ -22,11 +22,11 @@ void execute(void *args)
     while (true)
     {
         pthread_mutex_lock(mutex);
-        fprintf(stdout, "thread %d: executing task\n", threadInfo->threadID);
+        // fprintf(stdout, "thread %d: executing task\n", threadInfo->threadID);
 
         if (!threadPool->task)
         {
-            fprintf(stdout, "thread %d: no tasks remaining. Exiting!\n", threadInfo->threadID);
+            // fprintf(stdout, "thread %d: no tasks remaining. Exiting!\n", threadInfo->threadID);
             pthread_mutex_unlock(mutex);
             return;
         }
@@ -60,7 +60,7 @@ void deallocThreadPool(ThreadPool *threadPool)
 {
     if (!threadPool) return;
 
-    if (threadPool->base)   // Tasks not run!
+    if (threadPool->base) // Tasks were not executed. Cleanup.
     {
         Task *ptr = threadPool->base;
         while (ptr)
@@ -70,8 +70,6 @@ void deallocThreadPool(ThreadPool *threadPool)
             ptr = next;
         }
     }
-
-    // Assume tasks run so already destroyed.
 
     free(threadPool->threads);
     free(threadPool);
@@ -84,7 +82,7 @@ void addTask(ThreadPool *threadPool, TaskFunc func, TaskArgs args, size_t argsSi
         threadPool->base = allocTask(func, args, argsSize);
         threadPool->task = threadPool->base;
     }
-    else 
+    else
     {
         threadPool->task->next = allocTask(func, args, argsSize);
         threadPool->task = threadPool->task->next;

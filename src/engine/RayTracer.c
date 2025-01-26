@@ -16,6 +16,7 @@ typedef struct
 {
     PPMImage *image;
     size_t iRow;
+    size_t iCol;
     size_t samplesPerPixel;
     int maxDepth;
     Camera *camera;
@@ -28,29 +29,28 @@ void renderRow(void *args)
     ImageInfo *info = (ImageInfo *)args;
 
     size_t iRow = info->iRow;
-    fprintf(stdout, "rendering row %zu\n", iRow);
+    size_t iCol = info->iCol;
+
+    // fprintf(stdout, "rendering row %zu\n", iRow);
 
     const double invSamplesPerPivel = 1.0 / (double)info->samplesPerPixel;
 
-    for (int iCol = 0; iCol < info->image->width; iCol++)
+    Color3 pixelColor = color3(0, 0, 0);
+
+    // Sampling:
+    for (int iSample = 0; iSample < info->samplesPerPixel; iSample++)
     {
-        Color3 pixelColor = color3(0, 0, 0);
+        const double u = (iCol + randomDouble()) / (double)(info->image->width - 1);
+        const double v = (iRow + randomDouble()) / (double)(info->image->height - 1);
 
-        // Sampling:
-        for (int iSample = 0; iSample < info->samplesPerPixel; iSample++)
-        {
-            const double u = (iCol + randomDouble()) / (double)(info->image->width - 1);
-            const double v = (iRow + randomDouble()) / (double)(info->image->height - 1);
+        // Generate a new camera ray:
+        Ray ray = getRay(info->camera, u, v);
 
-            // Generate a new camera ray:
-            Ray ray = getRay(info->camera, u, v);
-
-            pixelColor = addVectors(pixelColor, rayColor(&ray, info->sceneNode, info->maxDepth));
-        }
-
-        // Set the image's pixel to the average value:
-        info->image->pixelValue[iRow][iCol] = scaleVector(pixelColor, invSamplesPerPivel);
+        pixelColor = addVectors(pixelColor, rayColor(&ray, info->sceneNode, info->maxDepth));
     }
+
+    // Set the image's pixel to the average value:
+    info->image->pixelValue[iRow][iCol] = scaleVector(pixelColor, invSamplesPerPivel);
 }
 
 PPMImage *renderScene(Scene *scene, Camera *camera, int imageWidth, int imageHeight,
@@ -66,10 +66,17 @@ PPMImage *renderScene(Scene *scene, Camera *camera, int imageWidth, int imageHei
 
     ThreadPool *threadPool = allocThreadPool(8);
 
+    ImageInfo args = {.image = image, .iRow = 0, .iCol = 0, .samplesPerPixel = samplesPerPixel, .maxDepth = maxDepth, .camera = camera, .sceneNode = sceneNode};
+
     for (int iRow = 0; iRow < image->height; ++iRow)
     {
-        ImageInfo args = {.image = image, .iRow = iRow, .samplesPerPixel = samplesPerPixel, .maxDepth = maxDepth, .camera = camera, .sceneNode = sceneNode};
-        addTask(threadPool, renderRow, &args, sizeof(ImageInfo));
+        args.iRow = iRow;
+
+        for (int iCol = 0; iCol < image->width; ++iCol)
+        {
+            args.iCol = iCol;
+            addTask(threadPool, renderRow, &args, sizeof(ImageInfo));
+        }
     }
 
     executeTasks(threadPool);
