@@ -10,6 +10,6 @@
 
 int main(int argc, const char *argv[])
 {
-    renderBatCave("/Users/edward/Desktop/BatCave.ppm");
+    renderBatCave("/home/ubuntu/generated/batcave.ppm");
     return 0;
 }
