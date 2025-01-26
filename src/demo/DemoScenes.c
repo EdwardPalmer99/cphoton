@@ -51,7 +51,7 @@ void renderBatCave(const char *path)
     freePPMImage(outputImage);
 }
 
-void renderMengerCubeScene(const char *path)
+void renderMengerCubes(const char *path)
 {
     // Create the camera:
     const double aspectRatio = 4.0 / 3.0;
