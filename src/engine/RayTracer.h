@@ -18,6 +18,6 @@
 #include "Vector3.h"
 #include <stdlib.h>
 
-PPMImage *renderScene(Scene *scene, Camera *camera, int imageWidth, int imageHeight, int samplesPerPixel, int maxDepth);
+PPMImage *renderScene(Scene *scene, Camera *camera);
 
 #endif /* RayTracer_h */
