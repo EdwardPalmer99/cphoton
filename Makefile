@@ -1,5 +1,5 @@
 # Reference: https://makefiletutorial.com/#the-all-target
-CFLAGS	:= -std=c11 -g -Wall -Wno-missing-braces -O2
+CFLAGS	:= -std=gnu11 -g -Wall -Wno-missing-braces -O2
 CC		:= gcc
 
 TARGET_EXEC 	:= cphoton

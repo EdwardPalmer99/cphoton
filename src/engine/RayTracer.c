@@ -6,51 +6,42 @@
 //
 
 #include "RayTracer.h"
-#include "PixelLocation.h"
+#include "RenderSettings.h"
 #include "ThreadPool.h"
 #include <stdint.h>
 
 #define kMinHitTime 0.001 // Positive tmin fixes shadow acne.
 
-typedef struct globalRenderSettings_t
+typedef struct renderPixelArgs_t
 {
+    uint16_t row;
+    uint16_t col;
     Camera *camera;
-    Primitive *sceneNode;
+    Primitive *objects;
     PPMImage *image;
-    size_t samplesPerPixel;
-    size_t maxDepth;
-} GlobalRenderSettings;
-
-static GlobalRenderSettings global;
+} RenderPixelArgs;
 
 
 static inline Color3 rayColor(Ray *ray, Primitive *objectsBVH, int depth);
 static void renderPixel(void *args);
 
 
-PPMImage *renderScene(Scene *scene, Camera *camera, int imageWidth, int imageHeight,
-                      int samplesPerPixel, int maxDepth)
+PPMImage *renderScene(Scene *scene, Camera *camera)
 {
     if (!scene || !scene->sceneNode || !camera)
         return NULL;
 
-    Primitive *sceneNode = scene->sceneNode; // Contains all objects.
-
-    PPMImage *image = makePPMImage(imageWidth, imageHeight);
+    PPMImage *image = makePPMImage(gRenderSettings.pixelsWide, gRenderSettings.pixelsHigh);
     if (!image) return NULL;
 
-    // Setup global variable:
-    {
-        global.camera = camera;
-        global.sceneNode = sceneNode;
-        global.image = image;
-        global.samplesPerPixel = samplesPerPixel;
-        global.maxDepth = maxDepth;
-    }
+    ThreadPool *threadPool = allocThreadPool(gRenderSettings.nthreads);
 
-    ThreadPool *threadPool = allocThreadPool(8);
-
-    PixelLocation args = {.row = 0, .col = 0};
+    RenderPixelArgs args = {
+        .row = 0,
+        .col = 0,
+        .camera = camera,
+        .objects = scene->sceneNode,
+        .image = image};
 
     for (int iRow = 0; iRow < image->height; ++iRow)
     {
@@ -59,7 +50,7 @@ PPMImage *renderScene(Scene *scene, Camera *camera, int imageWidth, int imageHei
         for (int iCol = 0; iCol < image->width; ++iCol)
         {
             args.col = iCol;
-            addTask(threadPool, renderPixel, &args, sizeof(PixelLocation));
+            addTask(threadPool, renderPixel, &args, sizeof(RenderPixelArgs));
         }
     }
 
@@ -109,24 +100,24 @@ static inline Color3 rayColor(Ray *ray, Primitive *objectsBVH, int depth)
 
 static void renderPixel(void *args)
 {
-    PixelLocation *loc = (PixelLocation *)args;
+    RenderPixelArgs *pArgs = (RenderPixelArgs *)args;
 
-    const double invSamplesPerPivel = 1.0 / (double)global.samplesPerPixel;
+    const double invSamplesPerPivel = 1.0 / (double)gRenderSettings.samplesPerPixel;
 
     Color3 pixelColor = color3(0, 0, 0);
 
     // Sampling:
-    for (int iSample = 0; iSample < global.samplesPerPixel; iSample++)
+    for (int iSample = 0; iSample < gRenderSettings.samplesPerPixel; iSample++)
     {
-        const double u = (loc->col + randomDouble()) / (double)(global.image->width - 1);
-        const double v = (loc->row + randomDouble()) / (double)(global.image->height - 1);
+        const double u = (pArgs->col + randomDouble()) / (double)(gRenderSettings.pixelsWide - 1);
+        const double v = (pArgs->row + randomDouble()) / (double)(gRenderSettings.pixelsHigh - 1);
 
         // Generate a new camera ray:
-        Ray ray = getRay(global.camera, u, v);
+        Ray ray = getRay(pArgs->camera, u, v);
 
-        pixelColor = addVectors(pixelColor, rayColor(&ray, global.sceneNode, global.maxDepth));
+        pixelColor = addVectors(pixelColor, rayColor(&ray, pArgs->objects, gRenderSettings.maxDepth));
     }
 
     // Set the image's pixel to the average value:
-    global.image->pixelValue[loc->row][loc->col] = scaleVector(pixelColor, invSamplesPerPivel);
+    pArgs->image->pixelValue[pArgs->row][pArgs->col] = scaleVector(pixelColor, invSamplesPerPivel);
 }

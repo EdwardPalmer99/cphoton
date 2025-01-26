@@ -9,5 +9,5 @@
 
 #pragma once
 
-void renderBatCave(const char *path);
-void renderMengerCubes(const char *path);
+void renderBatCave(void);
+void renderMengerCubes(void);
