@@ -13,15 +13,13 @@
 #include "MengerCube.h"
 #include "Primitive.h"
 #include "RayTracer.h"
+#include "RenderSettings.h"
 #include "Scene.h"
 
-void renderBatCave(const char *path)
+void renderBatCave(void)
 {
     // Create the camera:
-    const double aspectRatio = 1.6;
-    const int imageWidth = 256; // 2560;
-    const int imageHeight = (int)(imageWidth / aspectRatio);
-
+    const double aspectRatio = ((double)gRenderSettings.pixelsWide / (double)gRenderSettings.pixelsHigh);
     Camera camera = makeCamera(45.0, aspectRatio, 1, 0, point3(-2.5, 2, 10), point3(0, 2, 0));
 
     Primitive *room = makeDarkKnightRoom(20, 16.0, 5);
@@ -43,20 +41,19 @@ void renderBatCave(const char *path)
 
     scene->markAsFinished(scene);
 
-    PPMImage *outputImage = renderScene(scene, &camera, imageWidth, imageHeight, 500, 50);
+    PPMImage *outputImage = renderScene(scene, &camera);
 
-    writeBinary16BitPPMImage(outputImage, path);
+    writeBinary16BitPPMImage(outputImage, gRenderSettings.outputPath);
 
     scene->destructor(scene);
     freePPMImage(outputImage);
 }
 
-void renderMengerCubes(const char *path)
+void renderMengerCubes(void)
 {
     // Create the camera:
-    const double aspectRatio = 4.0 / 3.0;
-    const int imageWidth = 800;
-    const int imageHeight = (int)(imageWidth / aspectRatio);
+    // Works well with 4/3 aspect ratio, width=800.
+    const double aspectRatio = ((double)gRenderSettings.pixelsWide / (double)gRenderSettings.pixelsHigh);
 
     Camera camera = makeCamera(45.0, aspectRatio, 4, 0.0, point3(2, 5, 5), point3(0.2, 0.6, 1.0));
 
@@ -87,8 +84,8 @@ void renderMengerCubes(const char *path)
     scene->markAsFinished(scene);
 
     // Render:
-    PPMImage *outputImage = renderScene(scene, &camera, imageWidth, imageHeight, 100, 50);
-    writeBinary16BitPPMImage(outputImage, path);
+    PPMImage *outputImage = renderScene(scene, &camera);
+    writeBinary16BitPPMImage(outputImage, gRenderSettings.outputPath);
 
     // Cleanup:
     freePPMImage(outputImage);
