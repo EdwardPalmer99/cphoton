@@ -21,7 +21,7 @@ static inline void incrementRefCounter(Texture *texture);
 static inline void decrementRefCounter(Texture *texture);
 
 
-#pragma mark - *** Textures ***
+// *** Textures ***
 
 struct solidColor_t
 {
@@ -45,8 +45,6 @@ struct imageTexture_t
     size_t bytesPerPixel;
 };
 
-
-#pragma mark -
 
 /// Returns a partially initialized texture.
 static inline Texture *makeEmptyTexture(void)
@@ -152,7 +150,7 @@ Texture *makeImageTexture(uint8_t *bytes, size_t pixelsWide, size_t pixelsHigh, 
 }
 
 
-#pragma mark - *** Reference Counting ***
+// *** Reference Counting ***
 
 static inline void incrementRefCounter(Texture *texture)
 {
@@ -171,7 +169,7 @@ static inline void decrementRefCounter(Texture *texture)
 }
 
 
-#pragma mark - *** Destructors ***
+// *** Destructors ***
 
 static inline void destructSolidColor(Texture *texture)
 {
@@ -221,7 +219,7 @@ static inline void destructImageTexture(Texture *texture)
 }
 
 
-#pragma mark - *** Texture Functions ***
+// *** Texture Functions ***
 
 static inline Color3 solidColorValue(Texture *texture, double u, double v, Point3 *hitPt)
 {

@@ -19,7 +19,7 @@ void renderBatCave(const char *path)
 {
     // Create the camera:
     const double aspectRatio = 1.6;
-    const int imageWidth = 2560;
+    const int imageWidth = 256; // 2560;
     const int imageHeight = (int)(imageWidth / aspectRatio);
 
     Camera camera = makeCamera(45.0, aspectRatio, 1, 0, point3(-2.5, 2, 10), point3(0, 2, 0));
@@ -51,7 +51,7 @@ void renderBatCave(const char *path)
     freePPMImage(outputImage);
 }
 
-void renderMengerCubeScene(const char *path)
+void renderMengerCubes(const char *path)
 {
     // Create the camera:
     const double aspectRatio = 4.0 / 3.0;

@@ -1,5 +1,5 @@
 # Reference: https://makefiletutorial.com/#the-all-target
-CFLAGS	:= -std=c11 -g -Wall -O2
+CFLAGS	:= -std=c11 -g -Wall -Wno-missing-braces -O2
 CC		:= gcc
 
 TARGET_EXEC 	:= cphoton
@@ -8,7 +8,7 @@ BUILD_DIR		:= build
 SRC_DIR 		:= src
 
 # Find all source files:
-SRCS	:= $(shell find $(SRC_DIR) -name '*.c' -o -name '*.m')
+SRCS	:= $(shell find $(SRC_DIR) -name '*.c')
 
 # Find all object files:
 _OBJS	:= $(patsubst %.m, %.o, $(patsubst %.c, %.o, $(SRCS)))
@@ -32,14 +32,10 @@ endef
 $(BUILD_DIR)/%.o: %.c
 	$(call do_compile)
 
-# Build step for obj-c source files:
-$(BUILD_DIR)/%.o: %.m
-	$(call do_compile)
-
 # Final build step:
 $(INSTALL_DIR)/$(TARGET_EXEC): $(OBJS)
 	mkdir -p $(INSTALL_DIR)
-	$(CC) $(OBJS) -o $@
+	$(CC) $(OBJS) -lm -o $@
 	
 .PHONY: debug
 debug:

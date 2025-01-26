@@ -18,8 +18,6 @@
 #include "Vector3.h"
 #include <stdlib.h>
 
-#include <Cocoa/Cocoa.h>
-
 PPMImage *renderScene(Scene *scene, Camera *camera, int imageWidth, int imageHeight, int samplesPerPixel, int maxDepth);
 
 #endif /* RayTracer_h */
