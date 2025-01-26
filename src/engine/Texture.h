@@ -12,6 +12,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 typedef struct texture_t Texture;
 typedef struct solidColor_t SolidColor;

@@ -6,6 +6,7 @@
 //
 
 #include "PPMWriter.h"
+#include <stdint.h>
 // #include <Cocoa/Cocoa.h>
 
 #define MAX_BYTE 255

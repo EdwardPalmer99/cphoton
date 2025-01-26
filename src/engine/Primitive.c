@@ -7,6 +7,10 @@
 
 #include "Primitive.h"
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 #pragma mark - Function Prototypes:
 
 #define swap(val1, val2) ({ double temp = (val1); (val1) = (val2); (val2) = temp; })

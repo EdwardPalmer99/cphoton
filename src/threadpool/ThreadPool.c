@@ -7,7 +7,7 @@
  *
  */
 
-#include "threadpool.h"
+#include "ThreadPool.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
