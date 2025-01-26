@@ -31,7 +31,7 @@ void freePPMImage(PPMImage *image);
 bool writePPMImage(PPMImage *image, const char *fpath);
 bool writeBinaryPPMImage(PPMImage *image, const char *fpath);
 bool writeBinary16BitPPMImage(PPMImage *image, const char *fpath);
-bool writeTo32BitARGBBuffer(PPMImage *image, void *basePtr, size_t bytesPerRow);
+// bool writeTo32BitARGBBuffer(PPMImage *image, void *basePtr, size_t bytesPerRow);
 
 void clearImage(PPMImage *image);
 void fadeImage(PPMImage *image, double fadeFactor);

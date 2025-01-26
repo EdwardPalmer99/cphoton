@@ -6,11 +6,52 @@
 //
 
 #include "RayTracer.h"
+#include "ThreadPool.h"
 
 #define kMinHitTime 0.001 // Positive tmin fixes shadow acne.
 
 static inline Color3 rayColor(Ray *ray, Primitive *objectsBVH, int depth);
 
+typedef struct
+{
+    PPMImage *image;
+    size_t iRow;
+    size_t samplesPerPixel;
+    int maxDepth;
+    Camera *camera;
+    Primitive *sceneNode;
+} ImageInfo;
+
+
+void renderRow(void *args)
+{
+    ImageInfo *info = (ImageInfo *)args;
+
+    size_t iRow = info->iRow;
+    fprintf(stdout, "rendering row %zu\n", iRow);
+
+    const double invSamplesPerPivel = 1.0 / (double)info->samplesPerPixel;
+
+    for (int iCol = 0; iCol < info->image->width; iCol++)
+    {
+        Color3 pixelColor = color3(0, 0, 0);
+
+        // Sampling:
+        for (int iSample = 0; iSample < info->samplesPerPixel; iSample++)
+        {
+            const double u = (iCol + randomDouble()) / (double)(info->image->width - 1);
+            const double v = (iRow + randomDouble()) / (double)(info->image->height - 1);
+
+            // Generate a new camera ray:
+            Ray ray = getRay(info->camera, u, v);
+
+            pixelColor = addVectors(pixelColor, rayColor(&ray, info->sceneNode, info->maxDepth));
+        }
+
+        // Set the image's pixel to the average value:
+        info->image->pixelValue[iRow][iCol] = scaleVector(pixelColor, invSamplesPerPivel);
+    }
+}
 
 PPMImage *renderScene(Scene *scene, Camera *camera, int imageWidth, int imageHeight,
                       int samplesPerPixel, int maxDepth)
@@ -21,37 +62,18 @@ PPMImage *renderScene(Scene *scene, Camera *camera, int imageWidth, int imageHei
     Primitive *sceneNode = scene->sceneNode; // Contains all objects.
 
     PPMImage *image = makePPMImage(imageWidth, imageHeight);
-    if (!image)
-        return NULL;
+    if (!image) return NULL;
 
-    const double invSamplesPerPivel = 1.0 / (double)samplesPerPixel;
+    ThreadPool *threadPool = allocThreadPool(8);
 
-    __block int numRowsRendered = 0;
+    for (int iRow = 0; iRow < image->height; ++iRow)
+    {
+        ImageInfo args = {.image = image, .iRow = iRow, .samplesPerPixel = samplesPerPixel, .maxDepth = maxDepth, .camera = camera, .sceneNode = sceneNode};
+        addTask(threadPool, renderRow, &args, sizeof(ImageInfo));
+    }
 
-    dispatch_apply(imageHeight, DISPATCH_APPLY_AUTO, ^(size_t iRow) {
-        for (int iCol = 0; iCol < imageWidth; iCol++)
-        {
-            Color3 pixelColor = color3(0, 0, 0);
-
-            // Sampling:
-            for (int iSample = 0; iSample < samplesPerPixel; iSample++)
-            {
-                const double u = (iCol + randomDouble()) / (double)(imageWidth - 1);
-                const double v = (iRow + randomDouble()) / (double)(imageHeight - 1);
-
-                // Generate a new camera ray:
-                Ray ray = getRay(camera, u, v);
-
-                pixelColor = addVectors(pixelColor, rayColor(&ray, sceneNode, maxDepth));
-            }
-
-            // Set the image's pixel to the average value:
-            image->pixelValue[iRow][iCol] = scaleVector(pixelColor, invSamplesPerPivel);
-        }
-
-        numRowsRendered++;
-        printf("Progress: %3.2lf %%\n", (100.0 * numRowsRendered) / (double)imageHeight);
-    });
+    executeTasks(threadPool);
+    deallocThreadPool(threadPool);
 
     return image;
 }

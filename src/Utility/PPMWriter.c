@@ -6,7 +6,7 @@
 //
 
 #include "PPMWriter.h"
-#include <Cocoa/Cocoa.h>
+// #include <Cocoa/Cocoa.h>
 
 #define MAX_BYTE 255
 #define MAX_2BYTES 65535
@@ -218,42 +218,6 @@ bool writeBinary16BitPPMImage(PPMImage *image, const char *fpath)
 
     // 5. Close the file.
     fclose(fp);
-
-    return true;
-}
-
-
-bool writeTo32BitARGBBuffer(PPMImage *image, void *basePtr, size_t bytesPerRow)
-{
-    if (!image || !basePtr)
-        return false;
-
-    const int nbytesPerPixel = 4;
-    const double invGamma = (1.0 / 2.2);
-
-    dispatch_apply(image->height, DISPATCH_APPLY_AUTO, ^(size_t i) {
-        // Note: we've flipped this since our image has row 0 at the bottom.
-        uint8_t *pixel = basePtr + (image->height - 1 - i) * bytesPerRow;
-
-        for (int j = 0; j < image->width; j++)
-        {
-            pixel[0] = 255; // Alpha
-
-            // Gamma correct. The pixel input values should be in the range [0, 1].
-            Color3 color = image->pixelValue[i][j];
-
-            double r = pow(color.r, invGamma);
-            double g = pow(color.g, invGamma);
-            double b = pow(color.b, invGamma);
-
-            // Write translated [0, 255] value for each color component.
-            pixel[1] = (int)(256 * clamp(r, 0.0, 0.999));
-            pixel[2] = (int)(256 * clamp(g, 0.0, 0.999));
-            pixel[3] = (int)(256 * clamp(b, 0.0, 0.999));
-
-            pixel += nbytesPerPixel;
-        }
-    });
 
     return true;
 }
