@@ -16,11 +16,9 @@ typedef struct threadPool_t
 {
     unsigned int nthreads;
     pthread_t *threads;
-
-    unsigned int ntasks;
-    unsigned int itask;
-    unsigned int capacity;
-    Task **tasks;
+    
+    Task *base;
+    Task *task;
 } ThreadPool;
 
 typedef struct threadInfo_t

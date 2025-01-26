@@ -12,8 +12,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void deallocThreadTasks(ThreadPool *threadPool);
-
 
 void execute(void *args)
 {
@@ -26,18 +24,22 @@ void execute(void *args)
         pthread_mutex_lock(mutex);
         fprintf(stdout, "thread %d: executing task\n", threadInfo->threadID);
 
-        if (threadPool->itask >= threadPool->ntasks)
+        if (!threadPool->task)
         {
             fprintf(stdout, "thread %d: no tasks remaining. Exiting!\n", threadInfo->threadID);
             pthread_mutex_unlock(mutex);
             return;
         }
 
-        Task *task = threadPool->tasks[threadPool->itask++];
+        Task *task = threadPool->task;
+        threadPool->task = threadPool->task->next;
 
         pthread_mutex_unlock(mutex);
 
         task->func(task->args); // Execute function.
+
+        // Task completed. Dealloc memory.
+        deallocTask(task);
     }
 }
 
@@ -47,37 +49,29 @@ ThreadPool *allocThreadPool(unsigned int nthreads)
 
     threadPool->nthreads = nthreads;
     threadPool->threads = malloc(sizeof(pthread_t *) * nthreads);
-
-    threadPool->ntasks = 0;
-    threadPool->capacity = 0;
-    threadPool->itask = 0;
-    threadPool->tasks = NULL;
+    threadPool->base = NULL;
+    threadPool->task = NULL;
 
     return threadPool;
 }
 
-void deallocThreadTasks(ThreadPool *threadPool)
-{
-    if (!threadPool || !threadPool->tasks) return;
-
-    for (int itask = 0; itask < threadPool->capacity; ++itask)
-    {
-        deallocTask(threadPool->tasks[itask]);
-    }
-
-    free(threadPool->tasks);
-
-    threadPool->ntasks = 0;
-    threadPool->itask = 0;
-    threadPool->capacity = 0;
-    threadPool->tasks = NULL;
-}
 
 void deallocThreadPool(ThreadPool *threadPool)
 {
     if (!threadPool) return;
 
-    deallocThreadTasks(threadPool);
+    if (threadPool->base)   // Tasks not run!
+    {
+        Task *ptr = threadPool->base;
+        while (ptr)
+        {
+            Task *next = ptr->next;
+            deallocTask(ptr);
+            ptr = next;
+        }
+    }
+
+    // Assume tasks run so already destroyed.
 
     free(threadPool->threads);
     free(threadPool);
@@ -85,41 +79,27 @@ void deallocThreadPool(ThreadPool *threadPool)
 
 void addTask(ThreadPool *threadPool, TaskFunc func, TaskArgs args, size_t argsSize)
 {
-    if (threadPool->capacity == 0 || threadPool->ntasks >= threadPool->capacity)
+    if (!threadPool->base)
     {
-        if (threadPool->capacity == 0)
-            threadPool->capacity = 1;
-        else
-            threadPool->capacity <<= 2;
-
-        Task **newPtr = realloc(threadPool->tasks, sizeof(Task *) * threadPool->capacity);
-        if (newPtr)
-        {
-            threadPool->tasks = newPtr;
-        }
-        else
-        {
-            fprintf(stderr, "failed to resize thread pool tasks queue!\n");
-            exit(EXIT_FAILURE);
-        }
+        threadPool->base = allocTask(func, args, argsSize);
+        threadPool->task = threadPool->base;
     }
-
-    threadPool->tasks[threadPool->ntasks++] = allocTask(func, args, argsSize);
+    else 
+    {
+        threadPool->task->next = allocTask(func, args, argsSize);
+        threadPool->task = threadPool->task->next;
+    }
 }
 
 void executeTasks(ThreadPool *threadPool)
 {
-    if (!threadPool || threadPool->ntasks < 1 || threadPool->nthreads < 1)
+    if (!threadPool || !threadPool->base || threadPool->nthreads < 1)
     {
         return;
     }
 
-    // Resize capacity to fit number of tasks to save memory.
-    if (threadPool->capacity > threadPool->ntasks)
-    {
-        threadPool->capacity = threadPool->ntasks;
-        threadPool->tasks = realloc(threadPool->tasks, sizeof(Task *) * threadPool->capacity);
-    }
+    // Set thread pool pointer to base.
+    threadPool->task = threadPool->base;
 
     ThreadInfo threadInfo[threadPool->nthreads];
 
@@ -143,6 +123,6 @@ void executeTasks(ThreadPool *threadPool)
 
     pthread_mutex_destroy(&mutex);
 
-    // Remove executed tasks. We can now reuse the thread pool.
-    deallocThreadTasks(threadPool);
+    // Tasks executed and deallocted.
+    threadPool->task = threadPool->base = NULL;
 }

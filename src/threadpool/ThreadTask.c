@@ -14,6 +14,9 @@ Task *allocTask(TaskFunc func, TaskArgs args, size_t argsSize)
 {
     Task *task = malloc(sizeof(Task));
 
+    // Set next pointer to NULL.
+    task->next = NULL;
+
     // Assume function pointer is safe. Address isn't going to change.
     task->func = func;
 

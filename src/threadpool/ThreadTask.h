@@ -17,6 +17,7 @@ typedef struct task_t
 {
     TaskFunc func;
     TaskArgs args;
+    struct task_t *next;
 } Task;
 
 
