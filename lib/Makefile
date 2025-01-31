@@ -22,7 +22,7 @@ $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@ $(INCLUDE_FLAGS)
 
-$(LIB_DIR)/$(TARGET): $(OBJECTS)
+$(TARGET): $(OBJECTS)
 	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJECTS)
 
 all: $(TARGET)
