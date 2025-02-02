@@ -13,11 +13,6 @@ CPhoton is a multithreaded ray-tracer written in plain C with no external librar
 Build Steps
 =======
 
-**Linking the shared library on macOS**<br/>
-On MacOS, before you build, you need to add the library path for the linker:<br /> 
-`export DYLD_LIBRARY_PATH=[top-level directory]/bin/lib`
-
-**Building on macOS, Linux, Unix:**<br/>
-`make all`
+To build on macOS, Linux and UNIX systems, execute: `make all`
 
 

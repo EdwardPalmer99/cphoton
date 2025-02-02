@@ -6,8 +6,10 @@ SHELL = /bin/sh
 CC				:= gcc
 CFLAGS			:= -std=gnu11 -g -Wall -Wno-missing-braces -O2
 
+# NB: need to provide abs path for linking!
+EXAMPLES_DIR	:= $(dir $(abspath $(firstword Makefile)))
+LIB_BIN_DIR		:= $(EXAMPLES_DIR)../bin/lib
 LIB_DIR			:= ../lib
-LIB_BIN_DIR		:= ../bin/lib
 
 BUILD_DIR		:= ../.build/examples
 BIN_DIR			:= ../bin/examples
@@ -35,6 +37,9 @@ $(BIN_DIR)/menger-cube: $(BUILD_DIR)/MengerCube.o
 	$(call do_link)
 
 all: $(BIN_DIR)/batcave $(BIN_DIR)/menger-cube
+
+print_location:
+	@echo $(dir $(abspath $(firstword Makefile)))
 
 .PHONY: clean 
 clean: 
