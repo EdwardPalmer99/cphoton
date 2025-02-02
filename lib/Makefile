@@ -8,6 +8,7 @@ CFLAGS		:= -std=gnu11 -g -Wall -Wno-missing-braces -O2 -fPIC
 
 LIB_DIR		:= .
 BUILD_DIR	:= ../.build/lib
+BIN_DIR		:= ../bin/lib
 
 TARGET 		:= libcphoton.so
 
@@ -15,7 +16,7 @@ SOURCES		:= $(shell find $(LIB_DIR) -name '*.c')
 OBJECTS		:= $(addprefix $(BUILD_DIR)/, $(patsubst %.c, %.o, $(SOURCES)))
 
 LDFLAGS 		:= -shared -lm
-INCLUDE_FLAGS	:= $(addprefix -I, $(shell find . -type d))
+INCLUDE_FLAGS	:= $(addprefix -I, $(shell find $(LIB_DIR) -type d))
 
 define do_compile
 	@mkdir -p $(dir $@)
@@ -23,16 +24,17 @@ define do_compile
 endef
 
 define do_link
+	@mkdir -p $(dir $@)
 	$(CC) -o $@ $^ $(LDFLAGS)
 endef
 
 $(BUILD_DIR)/%.o: %.c
 	$(call do_compile)
 
-$(TARGET): $(OBJECTS)
+$(BIN_DIR)/$(TARGET): $(OBJECTS)
 	$(call do_link)
 
-all: $(TARGET)
+all: $(BIN_DIR)/$(TARGET)
 
 .PHONY: debug
 debug:
@@ -41,4 +43,4 @@ debug:
 
 .PHONY: clean 
 clean: 
-	rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR) $(BIN_DIR)

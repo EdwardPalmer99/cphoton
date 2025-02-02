@@ -7,9 +7,12 @@ CC				:= gcc
 CFLAGS			:= -std=gnu11 -g -Wall -Wno-missing-braces -O2
 
 LIB_DIR			:= ../lib
-BUILD_DIR		:= ../.build/examples
+LIB_BIN_DIR		:= ../bin/lib
 
-LDFLAGS			:= -L$(LIB_DIR) -lcphoton
+BUILD_DIR		:= ../.build/examples
+BIN_DIR			:= ../bin/examples
+
+LDFLAGS			:= -L$(LIB_BIN_DIR) -lcphoton
 INCLUDE_FLAGS	:= $(addprefix -I, $(shell find $(LIB_DIR) -type d))
 
 define do_compile
@@ -18,20 +21,21 @@ define do_compile
 endef
 
 define do_link
+	@mkdir -p $(dir $@)
 	$(CC) -o $@ $^ $(LDFLAGS)
 endef
 
 $(BUILD_DIR)/%.o: %.c
 	$(call do_compile)
 
-batcave: $(BUILD_DIR)/BatCave.o
+$(BIN_DIR)/batcave: $(BUILD_DIR)/BatCave.o
 	$(call do_link)
 
-menger-cube: $(BUILD_DIR)/MengerCube.o 
+$(BIN_DIR)/menger-cube: $(BUILD_DIR)/MengerCube.o 
 	$(call do_link)
 
-all: batcave menger-cube
+all: $(BIN_DIR)/batcave $(BIN_DIR)/menger-cube
 
 .PHONY: clean 
 clean: 
-	rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR) $(BIN_DIR)
