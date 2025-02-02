@@ -7,14 +7,14 @@
  *
  */
 
-#include <cphoton/Camera.h>
-#include <cphoton/PPMWriter.h>
-#include <cphoton/Primitive.h>
-#include <cphoton/RayTracer.h>
-#include <cphoton/RenderSettings.h>
-#include <cphoton/Scene.h>
-#include <cphoton/Texture.h>
-#include <cphoton/Vector3.h>
+#include "Camera.h"
+#include "PPMWriter.h"
+#include "Primitive.h"
+#include "RayTracer.h"
+#include "RenderSettings.h"
+#include "Scene.h"
+#include "Texture.h"
+#include "Vector3.h"
 
 
 int main(int argc, const char *argv[])
