@@ -1,9 +1,16 @@
 SHELL = /bin/sh
 
-SUBDIRS	:= lib examples 
-TARGETS	:= all install clean 
+BUILD_DIR	:= .build
 
-$(SUBDIRS):
-	$(MAKE) -C $@ $(filter $(TARGETS),$(MAKECMDGOALS))
+lib: 
+	$(MAKE) -C $@
 
-.PHONY: $(TARGETS) $(SUBDIRS)
+examples:
+	$(MAKE) -C $@
+
+all: lib examples
+
+clean:
+	rm -rf $(BUILD_DIR)
+
+.PHONY: lib examples clean
