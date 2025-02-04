@@ -15,56 +15,14 @@
 #include "Scene.h"
 #include "Texture.h"
 #include "Vector3.h"
+#include <stdbool.h>
+#include <stdio.h>
 
+Primitive *makeDarkKnightRoom(double length, double width, double height);
 
 int main(int argc, const char *argv[])
 {
-    // Crude parsing of CLI arguments:
-    initRenderSettings();
-
-    for (int iarg = 1; iarg < (argc - 1); iarg += 2)
-    {
-        const char *arg = argv[iarg];
-        const char *next = argv[iarg + 1];
-
-        if (strcmp(arg, "--nthreads") == 0)
-        {
-            gRenderSettings.nthreads = atoi(next); // Dangerous!
-        }
-        else if (strcmp(arg, "--path") == 0)
-        {
-            gRenderSettings.outputPath = (char *)next; // No need to copy.
-        }
-        else if (strcmp(arg, "--width") == 0 || strcmp(arg, "-w") == 0)
-        {
-            gRenderSettings.pixelsWide = atoi(next);
-        }
-        else if (strcmp(arg, "--height") == 0 || strcmp(arg, "-h") == 0)
-        {
-            gRenderSettings.pixelsHigh = atoi(next);
-        }
-        else if (strcmp(arg, "--samples-per-pixel") == 0)
-        {
-            gRenderSettings.samplesPerPixel = atoi(next);
-        }
-        else if (strcmp(arg, "--max-depth") == 0)
-        {
-            gRenderSettings.maxDepth = atoi(next);
-        }
-        else
-        {
-            fprintf(stderr, "error: unexpected argument: %s\n", arg);
-            return EXIT_FAILURE;
-        }
-    }
-
-    // TODO: - add additional verification checks.
-
-    if (!gRenderSettings.outputPath)
-    {
-        fprintf(stderr, "error: no output path supplied\n");
-        return EXIT_FAILURE;
-    }
+    parseCLIOptions(argc, argv);
 
     // Create the camera:
     const double aspectRatio = ((double)gRenderSettings.pixelsWide / (double)gRenderSettings.pixelsHigh);
@@ -97,4 +55,59 @@ int main(int argc, const char *argv[])
     freePPMImage(outputImage);
 
     return 0;
+}
+
+
+Primitive *makeDarkKnightRoom(double length, double width, double height)
+{
+    const double halfRoomW = 0.5 * width;
+    const double halfRoomL = 0.5 * length;
+
+    Material *wallMaterial = makeLambertian(makeSolidTexture(color3(0.05, 0.05, 0.05)));
+    Material *lightMaterial = makeEmitter(color3(.9, .9, .9));
+
+    int numObjects = 0;
+    int objectCapacity = 100;
+
+    Primitive **objects = malloc(sizeof(Primitive *) * objectCapacity);
+    if (!objects)
+        return NULL;
+
+    objects[numObjects++] = makePlane(point3(halfRoomW, 0, 0), vector3(-1, 0, 0), wallMaterial);
+    objects[numObjects++] = makePlane(point3(-halfRoomW, 0, 0), vector3(1, 0, 0), wallMaterial);
+    objects[numObjects++] = makePlane(point3(0, 0, -halfRoomL), vector3(0, 0, 1), wallMaterial);
+    objects[numObjects++] = makePlane(point3(0, 0, halfRoomL), vector3(0, 0, -1), wallMaterial);
+    objects[numObjects++] = makePlane(point3(0, height, 0), vector3(0, -1, 0), wallMaterial);
+    objects[numObjects++] = makePlane(point3(0, 0, 0), vector3(0, 1, 0), wallMaterial);
+
+    // Create all of the lights on the ceiling:
+    for (int i = -halfRoomW; i <= halfRoomW; i += 1)
+    {
+        for (int j = -halfRoomL; j <= halfRoomL; j += 1)
+        {
+            Primitive *floorPanel = makeCube(point3(i + 0.495, -0.490, j + 0.495), zeroVector(), 0.99, wallMaterial);
+            Primitive *ceilingPanel = makeCube(point3(i + 0.495, height + .494, j + 0.495), zeroVector(), 0.99, lightMaterial);
+
+            if (numObjects > 0.8 * objectCapacity)
+            {
+                void *reallocPtr = realloc(objects, sizeof(Primitive *) * objectCapacity * 2);
+                if (!reallocPtr)
+                {
+                    free(objects);
+                    return NULL;
+                }
+
+                objects = reallocPtr;
+                objectCapacity *= 2;
+            }
+
+            objects[numObjects++] = floorPanel;
+            objects[numObjects++] = ceilingPanel;
+        }
+    }
+
+    Primitive *roomNode = makeBVHNode(objects, 0, numObjects);
+
+    free(objects);
+    return roomNode;
 }

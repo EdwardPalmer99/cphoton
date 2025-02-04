@@ -38,6 +38,10 @@ $(BIN_DIR)/menger-cube: $(BUILD_DIR)/MengerCube.o
 
 all: $(BIN_DIR)/batcave $(BIN_DIR)/menger-cube
 
+test: $(BIN_DIR)/batcave
+	$(shell ./$(BIN_DIR)/batcave --path=/var/tmp/cphoton-render.ppm --width=256 --height=160 --samples-per-pixel=10 --maxDepth=10)
+	rm -f /var/tmp/cphoton-render.ppm
+
 print_location:
 	@echo $(dir $(abspath $(firstword Makefile)))
 

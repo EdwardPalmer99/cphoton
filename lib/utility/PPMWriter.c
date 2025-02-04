@@ -197,7 +197,7 @@ bool writeBinary16BitPPMImage(PPMImage *image, const char *fpath)
     FILE *fp = fopen(fpath, "wb");
     if (!fp)
     {
-        fprintf(stderr, "The file could not be opened!\n");
+        fprintf(stderr, "error: file '%s' could not be opened!\n", fpath);
         return false;
     }
 

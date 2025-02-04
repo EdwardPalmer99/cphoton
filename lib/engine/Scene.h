@@ -13,7 +13,6 @@
 typedef struct scene_t Scene;
 
 Scene *makeScene(void);
-Primitive *makeDarkKnightRoom(double length, double width, double height);
 
 struct scene_t
 {

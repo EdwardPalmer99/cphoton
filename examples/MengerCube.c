@@ -7,9 +7,9 @@
  *
  */
 
+#include "MengerCube.h"
 #include "Camera.h"
 #include "Material.h"
-#include "MengerCube.h"
 #include "PPMWriter.h"
 #include "RayTracer.h"
 #include "RenderSettings.h"
@@ -18,56 +18,11 @@
 
 int main(int argc, const char *argv[])
 {
-    // Crude parsing of CLI arguments:
-    initRenderSettings();
-
-    for (int iarg = 1; iarg < (argc - 1); iarg += 2)
-    {
-        const char *arg = argv[iarg];
-        const char *next = argv[iarg + 1];
-
-        if (strcmp(arg, "--nthreads") == 0)
-        {
-            gRenderSettings.nthreads = atoi(next); // Dangerous!
-        }
-        else if (strcmp(arg, "--path") == 0)
-        {
-            gRenderSettings.outputPath = (char *)next; // No need to copy.
-        }
-        else if (strcmp(arg, "--width") == 0 || strcmp(arg, "-w") == 0)
-        {
-            gRenderSettings.pixelsWide = atoi(next);
-        }
-        else if (strcmp(arg, "--height") == 0 || strcmp(arg, "-h") == 0)
-        {
-            gRenderSettings.pixelsHigh = atoi(next);
-        }
-        else if (strcmp(arg, "--samples-per-pixel") == 0)
-        {
-            gRenderSettings.samplesPerPixel = atoi(next);
-        }
-        else if (strcmp(arg, "--max-depth") == 0)
-        {
-            gRenderSettings.maxDepth = atoi(next);
-        }
-        else
-        {
-            fprintf(stderr, "error: unexpected argument: %s\n", arg);
-            return EXIT_FAILURE;
-        }
-    }
-
-    // TODO: - add additional verification checks.
-
-    if (!gRenderSettings.outputPath)
-    {
-        fprintf(stderr, "error: no output path supplied\n");
-        return EXIT_FAILURE;
-    }
-
+    gRenderSettings.pixelsWide = 800;
+    gRenderSettings.pixelsHigh = 600;
+    parseCLIOptions(argc, argv);
 
     // Create the camera:
-    // Works well with 4/3 aspect ratio, width=800.
     const double aspectRatio = ((double)gRenderSettings.pixelsWide / (double)gRenderSettings.pixelsHigh);
 
     Camera camera = makeCamera(45.0, aspectRatio, 4, 0.0, point3(2, 5, 5), point3(0.2, 0.6, 1.0));

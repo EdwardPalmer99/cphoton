@@ -9,7 +9,6 @@
 
 #pragma once
 #include <stdint.h>
-#include <stdlib.h>
 
 typedef struct renderSettings_t
 {
@@ -23,7 +22,4 @@ typedef struct renderSettings_t
 
 extern RenderSettings gRenderSettings;
 
-// Sets render settings to sensible defaults.
-void initRenderSettings(void);
-
-void printRenderSettings(void);
+void parseCLIOptions(int argc, const char *argv[]);
