@@ -19,6 +19,7 @@
 #include "engine/RenderSettings.h"
 #include "engine/Scene.h"
 #include "engine/Texture.h"
+#include "logger/Logger.h"
 #include "models/Fractals3D.h"
 #include "models/MengerCube.h"
 #include "models/PolyhedralModels.h"
