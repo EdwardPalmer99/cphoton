@@ -5,7 +5,7 @@
 //  Created by Edward on 30/01/2023.
 //
 
-#include "PolyhedralModels.h"
+#include "models/PolyhedralModels.h"
 
 Primitive *makeTetrahedron(Point3 baseCenter, Vector3 rotationAngles, double sideLength, Material *material)
 {

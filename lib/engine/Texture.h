@@ -8,11 +8,11 @@
 #ifndef Texture_h
 #define Texture_h
 
-#include "Vector3.h"
+#include "utility/Vector3.h"
 #include <math.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
 
 typedef struct texture_t Texture;
 typedef struct solidColor_t SolidColor;

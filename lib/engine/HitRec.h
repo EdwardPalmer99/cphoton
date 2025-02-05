@@ -8,7 +8,7 @@
 #ifndef HitRec_h
 #define HitRec_h
 
-#include "Vector3.h"
+#include "utility/Vector3.h"
 #include <stdbool.h>
 #include <stdlib.h>
 

@@ -8,12 +8,12 @@
 #ifndef PolyhedralModels_h
 #define PolyhedralModels_h
 
-#include "Material.h"
-#include "Matrix3.h"
-#include "Primitive.h"
-#include "Texture.h"
-#include "Utility.h"
-#include "Vector3.h"
+#include "engine/Material.h"
+#include "engine/Primitive.h"
+#include "engine/Texture.h"
+#include "utility/Matrix3.h"
+#include "utility/Utility.h"
+#include "utility/Vector3.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>

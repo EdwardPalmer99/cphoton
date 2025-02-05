@@ -8,7 +8,7 @@
 #ifndef Ray_h
 #define Ray_h
 
-#include "Vector3.h"
+#include "utility/Vector3.h"
 
 typedef struct
 {

@@ -7,14 +7,14 @@
  *
  */
 
-#include "MengerCube.h"
-#include "Camera.h"
-#include "Material.h"
-#include "PPMWriter.h"
-#include "RayTracer.h"
-#include "RenderSettings.h"
-#include "Scene.h"
-#include "Texture.h"
+#include "models/MengerCube.h"
+#include "engine/Camera.h"
+#include "engine/Material.h"
+#include "engine/RayTracer.h"
+#include "engine/RenderSettings.h"
+#include "engine/Scene.h"
+#include "engine/Texture.h"
+#include "utility/PPMWriter.h"
 
 int main(int argc, const char *argv[])
 {

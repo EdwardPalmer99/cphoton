@@ -5,7 +5,7 @@
 //  Created by Edward on 23/01/2023.
 //
 
-#include "Matrix3.h"
+#include "utility/Matrix3.h"
 
 typedef double Matrix3[3][3];
 

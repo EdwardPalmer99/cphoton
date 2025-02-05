@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "KeyValue.h"
+#include "dict/KeyValue.h"
 #include <stdbool.h>
 
 // Forward declarations to hide implementation.

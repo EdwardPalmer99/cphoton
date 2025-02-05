@@ -7,7 +7,7 @@
  *
  */
 
-#include "RenderSettings.h"
+#include "engine/RenderSettings.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>

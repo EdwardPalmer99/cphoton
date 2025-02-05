@@ -8,7 +8,7 @@
 #ifndef PPMWriter_h
 #define PPMWriter_h
 
-#include "Vector3.h"
+#include "utility/Vector3.h"
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>

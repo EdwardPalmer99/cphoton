@@ -5,7 +5,7 @@
 //  Created by Edward on 19/01/2023.
 //
 
-#include "Utility.h"
+#include "utility/Utility.h"
 
 /// Returns a double in the range [0, 1).
 double randomDouble(void)

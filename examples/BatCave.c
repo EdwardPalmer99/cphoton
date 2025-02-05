@@ -7,14 +7,14 @@
  *
  */
 
-#include "Camera.h"
-#include "PPMWriter.h"
-#include "Primitive.h"
-#include "RayTracer.h"
-#include "RenderSettings.h"
-#include "Scene.h"
-#include "Texture.h"
-#include "Vector3.h"
+#include "engine/Camera.h"
+#include "engine/Primitive.h"
+#include "engine/RayTracer.h"
+#include "engine/RenderSettings.h"
+#include "engine/Scene.h"
+#include "engine/Texture.h"
+#include "utility/PPMWriter.h"
+#include "utility/Vector3.h"
 #include <stdbool.h>
 #include <stdio.h>
 

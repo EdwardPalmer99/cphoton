@@ -5,7 +5,7 @@
 //  Created by Edward on 02/11/2022.
 //
 
-#include "PPMWriter.h"
+#include "utility/PPMWriter.h"
 #include <stdint.h>
 // #include <Cocoa/Cocoa.h>
 

@@ -8,7 +8,7 @@
 #ifndef Scene_h
 #define Scene_h
 
-#include "Primitive.h"
+#include "engine/Primitive.h"
 
 typedef struct scene_t Scene;
 

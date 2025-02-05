@@ -8,8 +8,8 @@
 #ifndef Matrix3_h
 #define Matrix3_h
 
-#include "Utility.h"
-#include "Vector3.h"
+#include "utility/Utility.h"
+#include "utility/Vector3.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

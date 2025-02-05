@@ -8,9 +8,9 @@
 #ifndef MengerCube_h
 #define MengerCube_h
 
-#include "Primitive.h"
-#include "Scene.h"
-#include "Vector3.h"
+#include "engine/Primitive.h"
+#include "engine/Scene.h"
+#include "utility/Vector3.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
