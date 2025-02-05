@@ -16,7 +16,4 @@ Ray makeRay(Point3 origin, Vector3 direction)
 }
 
 
-Point3 pointAtTime(Ray *ray, double t)
-{
-    return addVectors(ray->origin, scaleVector(ray->direction, t));
-}
+Point3 pointAtTime(Ray *ray, double t) { return addVectors(ray->origin, scaleVector(ray->direction, t)); }

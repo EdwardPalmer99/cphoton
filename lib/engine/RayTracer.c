@@ -7,6 +7,7 @@
 
 #include "engine/RayTracer.h"
 #include "engine/RenderSettings.h"
+#include "logger/Logger.h"
 #include "threadpool/ThreadPool.h"
 #include <stdint.h>
 
@@ -28,20 +29,18 @@ static void renderPixel(void *args);
 
 PPMImage *renderScene(Scene *scene, Camera *camera)
 {
-    if (!scene || !scene->sceneNode || !camera)
-        return NULL;
+    if (!scene || !scene->sceneNode || !camera) return NULL;
 
     PPMImage *image = makePPMImage(gRenderSettings.pixelsWide, gRenderSettings.pixelsHigh);
     if (!image) return NULL;
 
     ThreadPool *threadPool = allocThreadPool(gRenderSettings.nthreads);
 
-    RenderPixelArgs args = {
-        .row = 0,
-        .col = 0,
-        .camera = camera,
-        .objects = scene->sceneNode,
-        .image = image};
+    RenderPixelArgs args = {.row = 0, .col = 0, .camera = camera, .objects = scene->sceneNode, .image = image};
+
+    Logger(LoggerInfo, "Render settings: width=%u, height=%u, samplesPerPixel=%u, maxDepth=%u",
+           gRenderSettings.pixelsWide, gRenderSettings.pixelsHigh, gRenderSettings.samplesPerPixel,
+           gRenderSettings.maxDepth);
 
     for (int iRow = 0; iRow < image->height; ++iRow)
     {
@@ -55,8 +54,9 @@ PPMImage *renderScene(Scene *scene, Camera *camera)
     }
 
     executeTasks(threadPool);
-    deallocThreadPool(threadPool);
+    Logger(LoggerInfo, "Render completed");
 
+    deallocThreadPool(threadPool);
     return image;
 }
 
@@ -65,8 +65,7 @@ static inline Color3 rayColor(Ray *ray, Primitive *objectsBVH, int depth)
 {
     HitRec hit;
 
-    if (depth <= 0)
-        return color3(0, 0, 0); // Exceeded ray bounce limit.
+    if (depth <= 0) return color3(0, 0, 0); // Exceeded ray bounce limit.
 
     if (objectsBVH->hit(objectsBVH, ray, kMinHitTime, INFINITY, &hit))
     {

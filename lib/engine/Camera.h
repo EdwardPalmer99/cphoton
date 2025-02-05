@@ -24,7 +24,8 @@ typedef struct
 } Camera;
 
 
-Camera makeCamera(double verticalFOV, double aspectRatio, double focalLength, double aperture, Point3 origin, Point3 target);
+Camera makeCamera(double verticalFOV, double aspectRatio, double focalLength, double aperture, Point3 origin,
+                  Point3 target);
 Ray getRay(Camera *camera, double s, double t);
 
 #endif /* Camera_h */

@@ -30,7 +30,8 @@ int main(int argc, const char *argv[])
     {
         for (int j = 0; j < 9; j++)
         {
-            Primitive *cube = makeCube(point3(0.5 * i, 0.25 + 0.5 * j, 0), zeroVector(), 0.5, makeLambertian(makeSolidTexture(color3(.01, .01, .01))));
+            Primitive *cube = makeCube(point3(0.5 * i, 0.25 + 0.5 * j, 0), zeroVector(), 0.5,
+                                       makeLambertian(makeSolidTexture(color3(.01, .01, .01))));
 
             scene->addObject(scene, cube);
         }
@@ -61,8 +62,7 @@ Primitive *makeDarkKnightRoom(double length, double width, double height)
     int objectCapacity = 100;
 
     Primitive **objects = malloc(sizeof(Primitive *) * objectCapacity);
-    if (!objects)
-        return NULL;
+    if (!objects) return NULL;
 
     objects[numObjects++] = makePlane(point3(halfRoomW, 0, 0), vector3(-1, 0, 0), wallMaterial);
     objects[numObjects++] = makePlane(point3(-halfRoomW, 0, 0), vector3(1, 0, 0), wallMaterial);
@@ -77,7 +77,8 @@ Primitive *makeDarkKnightRoom(double length, double width, double height)
         for (int j = -halfRoomL; j <= halfRoomL; j += 1)
         {
             Primitive *floorPanel = makeCube(point3(i + 0.495, -0.490, j + 0.495), zeroVector(), 0.99, wallMaterial);
-            Primitive *ceilingPanel = makeCube(point3(i + 0.495, height + .494, j + 0.495), zeroVector(), 0.99, lightMaterial);
+            Primitive *ceilingPanel =
+                makeCube(point3(i + 0.495, height + .494, j + 0.495), zeroVector(), 0.99, lightMaterial);
 
             if (numObjects > 0.8 * objectCapacity)
             {

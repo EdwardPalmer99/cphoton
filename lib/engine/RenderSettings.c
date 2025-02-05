@@ -13,12 +13,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+// clang-format off
 RenderSettings gRenderSettings = {.nthreads = 8,
                                   .pixelsWide = 2560,
                                   .pixelsHigh = 1600,
                                   .samplesPerPixel = 100,
                                   .maxDepth = 50,
                                   .outputPath = NULL};
+// clang-format on
 
 void printCLIOptions(const char *programName);
 
@@ -117,10 +119,6 @@ void printCLIOptions(const char *programName)
             "  --height            image output height in pixels (default: %u)\n"
             "  --samples-per-pixel number of rays averaged over for a pixel (default: %u)\n"
             "  --max-depth         maximum number of bounces of a ray (default: %u)\n",
-            programName,
-            gRenderSettings.nthreads,
-            gRenderSettings.pixelsWide,
-            gRenderSettings.pixelsHigh,
-            gRenderSettings.samplesPerPixel,
-            gRenderSettings.maxDepth);
+            programName, gRenderSettings.nthreads, gRenderSettings.pixelsWide, gRenderSettings.pixelsHigh,
+            gRenderSettings.samplesPerPixel, gRenderSettings.maxDepth);
 }

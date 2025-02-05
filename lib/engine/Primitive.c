@@ -13,7 +13,12 @@
 
 // Function Prototypes:
 
-#define swap(val1, val2) ({ double temp = (val1); (val1) = (val2); (val2) = temp; })
+#define swap(val1, val2)                                                                                               \
+    ({                                                                                                                 \
+        double temp = (val1);                                                                                          \
+        (val1) = (val2);                                                                                               \
+        (val2) = temp;                                                                                                 \
+    })
 
 static inline bool isValidIntersectionTime(double hitTime, double tmin, double tmax);
 static inline bool intersectionWithPlane(Point3 p0, Vector3 n, Ray *ray, double *hitTime);
@@ -128,8 +133,7 @@ struct triangle_t
 
 static inline void resetBoundingBox(AABB *outputBox)
 {
-    if (!outputBox)
-        return;
+    if (!outputBox) return;
 
     outputBox->min = point3(INFINITY, INFINITY, INFINITY);
     outputBox->max = point3(-INFINITY, -INFINITY, -INFINITY);
@@ -138,20 +142,14 @@ static inline void resetBoundingBox(AABB *outputBox)
 
 static inline void addPointToBoundingBox(Point3 pt, AABB *outputBox)
 {
-    if (pt.x < outputBox->min.x)
-        outputBox->min.x = pt.x;
-    if (pt.x > outputBox->max.x)
-        outputBox->max.x = pt.x;
+    if (pt.x < outputBox->min.x) outputBox->min.x = pt.x;
+    if (pt.x > outputBox->max.x) outputBox->max.x = pt.x;
 
-    if (pt.y < outputBox->min.y)
-        outputBox->min.y = pt.y;
-    if (pt.y > outputBox->max.y)
-        outputBox->max.y = pt.y;
+    if (pt.y < outputBox->min.y) outputBox->min.y = pt.y;
+    if (pt.y > outputBox->max.y) outputBox->max.y = pt.y;
 
-    if (pt.z < outputBox->min.z)
-        outputBox->min.z = pt.z;
-    if (pt.z > outputBox->max.z)
-        outputBox->max.z = pt.z;
+    if (pt.z < outputBox->min.z) outputBox->min.z = pt.z;
+    if (pt.z > outputBox->max.z) outputBox->max.z = pt.z;
 }
 
 
@@ -474,8 +472,7 @@ static void destructTriangle(Primitive *primitive)
 {
     if (primitive)
     {
-        if (primitive->triangle)
-            free(primitive->triangle);
+        if (primitive->triangle) free(primitive->triangle);
 
         primitive->material->decrementRefCounter(primitive->material);
         free(primitive);
@@ -490,8 +487,7 @@ static void destructCube(Primitive *primitive)
         Cube *cube = primitive->cube;
         if (cube)
         {
-            if (cube->rotation)
-                free(cube->rotation);
+            if (cube->rotation) free(cube->rotation);
 
             free(cube);
         }
@@ -507,8 +503,7 @@ static void destructSphere(Primitive *primitive)
     if (primitive)
     {
         Sphere *sphere = primitive->sphere;
-        if (sphere)
-            free(sphere);
+        if (sphere) free(sphere);
 
         primitive->material->decrementRefCounter(primitive->material);
         free(primitive);
@@ -523,13 +518,10 @@ static void destructCylinder(Primitive *primitive)
         Cylinder *cylinder = primitive->cylinder;
         if (cylinder)
         {
-            if (cylinder->rotation)
-                free(cylinder->rotation);
+            if (cylinder->rotation) free(cylinder->rotation);
 
-            if (cylinder->topCap)
-                cylinder->topCap->destructor(cylinder->topCap);
-            if (cylinder->bottomCap)
-                cylinder->bottomCap->destructor(cylinder->bottomCap);
+            if (cylinder->topCap) cylinder->topCap->destructor(cylinder->topCap);
+            if (cylinder->bottomCap) cylinder->bottomCap->destructor(cylinder->bottomCap);
 
             free(cylinder);
         }
@@ -545,8 +537,7 @@ static void destructPlane(Primitive *primitive)
     if (primitive)
     {
         Plane *plane = primitive->plane;
-        if (plane)
-            free(plane);
+        if (plane) free(plane);
 
         primitive->material->decrementRefCounter(primitive->material);
         free(primitive);
@@ -559,8 +550,7 @@ static void destructDisc(Primitive *primitive)
     if (primitive)
     {
         Disc *disc = primitive->disc;
-        if (disc)
-            free(disc);
+        if (disc) free(disc);
 
         primitive->material->decrementRefCounter(primitive->material);
         free(primitive);
@@ -575,10 +565,8 @@ static void destructCone(Primitive *primitive)
         Cone *cone = primitive->cone;
         if (cone)
         {
-            if (cone->rotation)
-                free(cone->rotation);
-            if (cone->base)
-                cone->base->destructor(cone->base);
+            if (cone->rotation) free(cone->rotation);
+            if (cone->base) cone->base->destructor(cone->base);
 
             free(cone);
         }
@@ -596,10 +584,8 @@ static void destructBVHNode(Primitive *primitive)
         BVHNode *node = primitive->node;
         if (node)
         {
-            if (node->left)
-                node->left->destructor(node->left);
-            if (node->right)
-                node->right->destructor(node->right);
+            if (node->left) node->left->destructor(node->left);
+            if (node->right) node->right->destructor(node->right);
 
             free(node);
         }
@@ -614,8 +600,7 @@ static void destructBVHNode(Primitive *primitive)
 Primitive *makeCube(Point3 center, Vector3 rotAngles, double length, Material *material)
 {
     Primitive *primitive = malloc(sizeof(Primitive));
-    if (!primitive)
-        return NULL;
+    if (!primitive) return NULL;
 
     Cube *cube = malloc(sizeof(Cube));
     if (!cube)
@@ -643,8 +628,7 @@ Primitive *makeCube(Point3 center, Vector3 rotAngles, double length, Material *m
 Primitive *makeSphere(Point3 center, double radius, Material *material)
 {
     Primitive *primitive = malloc(sizeof(Primitive));
-    if (!primitive)
-        return NULL;
+    if (!primitive) return NULL;
 
     Sphere *sphere = malloc(sizeof(Sphere));
     if (!sphere)
@@ -671,8 +655,7 @@ Primitive *makeSphere(Point3 center, double radius, Material *material)
 Primitive *makeCylinder(Point3 center, Vector3 rotAngles, double radius, double height, Material *material)
 {
     Primitive *primitive = malloc(sizeof(Primitive));
-    if (!primitive)
-        return NULL;
+    if (!primitive) return NULL;
 
     Cylinder *cylinder = malloc(sizeof(Cylinder));
     if (!cylinder)
@@ -722,8 +705,7 @@ Primitive *makePlane(Point3 p0, Vector3 normal, Material *material)
     normal = isNearlyZero(normal) ? vector3(0, 1, 0) : unitVector(normal);
 
     Primitive *primitive = malloc(sizeof(Primitive));
-    if (!primitive)
-        return NULL;
+    if (!primitive) return NULL;
 
     Plane *plane = malloc(sizeof(Plane));
     if (!plane)
@@ -752,8 +734,7 @@ Primitive *makeDisc(Point3 center, Point3 normal, double radius, Material *mater
     normal = isNearlyZero(normal) ? vector3(0, 1, 0) : unitVector(normal);
 
     Primitive *primitive = malloc(sizeof(Primitive));
-    if (!primitive)
-        return NULL;
+    if (!primitive) return NULL;
 
     Disc *disc = malloc(sizeof(Disc));
     if (!disc)
@@ -781,8 +762,7 @@ Primitive *makeDisc(Point3 center, Point3 normal, double radius, Material *mater
 Primitive *makeCone(Point3 center, Vector3 rotAngles, double height, Material *material)
 {
     Primitive *primitive = malloc(sizeof(Primitive));
-    if (!primitive)
-        return NULL;
+    if (!primitive) return NULL;
 
     Cone *cone = malloc(sizeof(Cone));
     if (!cone)
@@ -820,8 +800,7 @@ Primitive *makeCone(Point3 center, Vector3 rotAngles, double height, Material *m
 Primitive *makeTriangle(Point3 v0, Point3 v1, Point3 v2, Material *material)
 {
     Primitive *primitive = malloc(sizeof(Primitive));
-    if (!primitive)
-        return NULL;
+    if (!primitive) return NULL;
 
     Triangle *triangle = malloc(sizeof(Triangle));
     if (!triangle)
@@ -851,8 +830,7 @@ Primitive *makeBVHNode(Primitive **objects, int start, int end)
 {
     // Allocate memory and initialize primitive:
     Primitive *primitive = malloc(sizeof(Primitive));
-    if (!primitive)
-        return NULL;
+    if (!primitive) return NULL;
 
     BVHNode *node = malloc(sizeof(BVHNode));
     if (!node)
@@ -983,15 +961,13 @@ static inline bool isTriangleHit(Primitive *primitive, Ray *ray, double tmin, do
 
         const double u = invPDotE1 * dot(vecP, vecT);
 
-        if (u < 0.0 || u > 1.0)
-            return false;
+        if (u < 0.0 || u > 1.0) return false;
 
         Vector3 vecQ = cross(vecT, vecE1);
 
         const double v = invPDotE1 * dot(vecQ, vecD);
 
-        if (v < 0.0 || u + v > 1.0)
-            return false;
+        if (v < 0.0 || u + v > 1.0) return false;
 
         // Compute the normal vector:
         Point3 hitPoint = pointAtTime(ray, hitTime);
@@ -1048,8 +1024,7 @@ static inline bool isSphereHit(Primitive *primitive, Ray *ray, double tmin, doub
 
     double t1, t2;
 
-    if (!solveQuadratic(quadA, quadB, quadC, &t1, &t2))
-        return false;
+    if (!solveQuadratic(quadA, quadB, quadC, &t1, &t2)) return false;
 
     double hitTime;
 
@@ -1086,8 +1061,7 @@ static inline bool isPlaneHit(Primitive *primitive, Ray *ray, double tmin, doubl
 
     double hitTime = 0.0;
 
-    if (intersectionWithPlane(plane->p0, plane->normal, ray, &hitTime) &&
-        isValidIntersectionTime(hitTime, tmin, tmax))
+    if (intersectionWithPlane(plane->p0, plane->normal, ray, &hitTime) && isValidIntersectionTime(hitTime, tmin, tmax))
     {
         Vector3 outwardNormal = plane->normal;
 
@@ -1159,42 +1133,36 @@ static inline bool isAABBHit(AABB *aabb, Ray *ray, double tmin, double tmax)
     double t0 = (minAABB.x - origin.x) * invD;
     double t1 = (maxAABB.x - origin.x) * invD;
 
-    if (invD < 0.0)
-        swap(t0, t1);
+    if (invD < 0.0) swap(t0, t1);
 
     tmin = max(t0, tmin);
     tmax = min(t1, tmax);
 
-    if (tmax <= tmin)
-        return false;
+    if (tmax <= tmin) return false;
 
     // Now test against y-direction.
     invD = 1.0 / ray->direction.y;
     t0 = (minAABB.y - origin.y) * invD;
     t1 = (maxAABB.y - origin.y) * invD;
 
-    if (invD < 0.0)
-        swap(t0, t1);
+    if (invD < 0.0) swap(t0, t1);
 
     tmin = max(t0, tmin);
     tmax = min(t1, tmax);
 
-    if (tmax <= tmin)
-        return false;
+    if (tmax <= tmin) return false;
 
     // Now test against z-direction:
     invD = 1.0 / ray->direction.z;
     t0 = (minAABB.z - origin.z) * invD;
     t1 = (maxAABB.z - origin.z) * invD;
 
-    if (invD < 0.0)
-        swap(t0, t1);
+    if (invD < 0.0) swap(t0, t1);
 
     tmin = max(t0, tmin);
     tmax = min(t1, tmax);
 
-    if (tmax <= tmin)
-        return false;
+    if (tmax <= tmin) return false;
 
     return true;
 }
@@ -1204,8 +1172,7 @@ static inline bool isBoundingBoxHit(Primitive *primitive, Ray *ray, double tmin,
 {
     BVHNode *node = primitive->node;
 
-    if (!isAABBHit(&node->box, ray, tmin, tmax))
-        return false;
+    if (!isAABBHit(&node->box, ray, tmin, tmax)) return false;
 
     Primitive *left = node->left;
     Primitive *right = node->right;
@@ -1259,8 +1226,7 @@ static inline bool isCubeHit(Primitive *primitive, Ray *ray, double tmin, double
     tEnter = max(tEnter, tyEnter);
     tExit = min(tExit, tyExit);
 
-    if (tExit < tEnter)
-        return false; // No intersection.
+    if (tExit < tEnter) return false; // No intersection.
 
     double tzEnter, tzExit;
     const double divZ = 1.0 / tDir.z;
@@ -1279,8 +1245,7 @@ static inline bool isCubeHit(Primitive *primitive, Ray *ray, double tmin, double
     tEnter = max(tEnter, tzEnter);
     tExit = min(tExit, tzExit);
 
-    if (tExit < tEnter || tEnter > tmax || tEnter < tmin)
-        return false;
+    if (tExit < tEnter || tEnter > tmax || tEnter < tmin) return false;
 
     const double hitTime = tEnter;
     Vector3 outwardNormal;
@@ -1335,8 +1300,7 @@ static inline bool isCylinderHit(Primitive *primitive, Ray *ray, double tmin, do
 
     double t1, t2;
 
-    if (!solveQuadratic(quadA, quadB, quadC, &t1, &t2))
-        return false;
+    if (!solveQuadratic(quadA, quadB, quadC, &t1, &t2)) return false;
 
     const bool t1Valid = isValidIntersectionTime(t1, tmin, tmax);
     const bool t2Valid = isValidIntersectionTime(t2, tmin, tmax);
@@ -1379,8 +1343,7 @@ static inline bool isCylinderHit(Primitive *primitive, Ray *ray, double tmin, do
     }
 
     // Check for any hits:
-    if (hitTime == tmax)
-        return false;
+    if (hitTime == tmax) return false;
 
     // Calculate the hit point and outward normal in original coordinates
     // (rotate back to original). hitTime is correct in both coordinates.
@@ -1416,8 +1379,7 @@ static inline bool isConeHit(Primitive *primitive, Ray *ray, double tmin, double
 
     double t1, t2;
 
-    if (!solveQuadratic(quadA, quadB, quadC, &t1, &t2))
-        return false;
+    if (!solveQuadratic(quadA, quadB, quadC, &t1, &t2)) return false;
 
     double hitTime = tmax; // Initialize to maximum time.
     Point3 hitPoint = {0};
@@ -1457,8 +1419,7 @@ static inline bool isConeHit(Primitive *primitive, Ray *ray, double tmin, double
     }
 
     // No intersections --> return false;
-    if (hitTime == tmax)
-        return false;
+    if (hitTime == tmax) return false;
 
     // Calculate the hit point in original coordinates and rotate normal:
     hitPoint = pointAtTime(ray, hitTime);
@@ -1516,13 +1477,11 @@ static inline bool intersectionWithPlane(Point3 p0, Vector3 n, Ray *ray, double 
     const double p0MinusOriginDotN = dot(subtractVectors(p0, ray->origin), n);
 
     // Line and plane are parallel --> no intersection point:
-    if (directionDotN == 0)
-        return false;
+    if (directionDotN == 0) return false;
 
     // Negative intersect time --> intersects behind ray's position:
     const double intersectTime = (p0MinusOriginDotN / directionDotN);
-    if (intersectTime < 0.0)
-        return false;
+    if (intersectTime < 0.0) return false;
 
     *hitTime = intersectTime;
     return true;
@@ -1533,8 +1492,7 @@ static inline bool solveQuadratic(double a, double b, double c, double *t1, doub
 {
     const double discriminant = b * b - 4.0 * a * c;
 
-    if (discriminant < 0.0)
-        return 0; // No roots.
+    if (discriminant < 0.0) return 0; // No roots.
 
     const double sqrtDiscriminant = sqrt(discriminant);
 

@@ -32,14 +32,12 @@ static MengerCube makeMengerCube(short int iter, double len, double x, double y,
 
 Primitive *makeMengerSponge(int8_t n, Point3 center, double sideLength, Material *material)
 {
-    if (n < 0 || n > 6 || sideLength <= 0.0 || !material)
-        return NULL;
+    if (n < 0 || n > 6 || sideLength <= 0.0 || !material) return NULL;
 
     const int numOutputCubes = pow(20, n);
 
     CubeStack *inputStack = makeCubeStack();
-    if (!inputStack)
-        return NULL;
+    if (!inputStack) return NULL;
 
     Primitive **objects = malloc(sizeof(Primitive *) * numOutputCubes);
     if (!objects)
@@ -93,11 +91,7 @@ Primitive *makeMengerSponge(int8_t n, Point3 center, double sideLength, Material
 
 static MengerCube makeMengerCube(short int iter, double len, double x, double y, double z)
 {
-    MengerCube cube =
-        {
-            .iteration = iter,
-            .sideLen = len,
-            .center = {x, y, z}};
+    MengerCube cube = {.iteration = iter, .sideLen = len, .center = {x, y, z}};
 
     return cube;
 }
@@ -106,8 +100,7 @@ static MengerCube makeMengerCube(short int iter, double len, double x, double y,
 static CubeStack *makeCubeStack(void)
 {
     CubeStack *stack = malloc(sizeof(CubeStack));
-    if (!stack)
-        return NULL;
+    if (!stack) return NULL;
 
     stack->ncubes = 0;
     stack->capacity = kInitialCubeStackCapacity;
@@ -127,8 +120,7 @@ static void freeCubeStack(CubeStack *stack)
 {
     if (stack)
     {
-        if (stack->cubes)
-            free(stack->cubes);
+        if (stack->cubes) free(stack->cubes);
         free(stack);
     }
 }
@@ -156,10 +148,7 @@ static void pushCube(CubeStack *stack, MengerCube *cube)
 }
 
 
-static MengerCube popCube(CubeStack *stack)
-{
-    return stack->cubes[--stack->ncubes];
-}
+static MengerCube popCube(CubeStack *stack) { return stack->cubes[--stack->ncubes]; }
 
 
 /// Subdivides a parent cube into 20 children cubes. These are stored in a
@@ -167,8 +156,7 @@ static MengerCube popCube(CubeStack *stack)
 /// and the center of each face.
 static bool subdivideCube(MengerCube *subCubes, MengerCube *parent)
 {
-    if (!subCubes || !parent)
-        return false;
+    if (!subCubes || !parent) return false;
 
     const Point3 center = parent->center;
 

@@ -24,10 +24,7 @@ Point3 point3(double x, double y, double z)
 }
 
 
-Vector3 makeVectorFromPoints(Point3 ptA, Point3 ptB)
-{
-    return subtractVectors(ptA, ptB);
-}
+Vector3 makeVectorFromPoints(Point3 ptA, Point3 ptB) { return subtractVectors(ptA, ptB); }
 
 
 Vector3 vector3(double x, double y, double z)
@@ -38,22 +35,13 @@ Vector3 vector3(double x, double y, double z)
 }
 
 
-Vector3 addVectors(Vector3 u, Vector3 v)
-{
-    return vector3(u.x + v.x, u.y + v.y, u.z + v.z);
-}
+Vector3 addVectors(Vector3 u, Vector3 v) { return vector3(u.x + v.x, u.y + v.y, u.z + v.z); }
 
 
-Vector3 subtractVectors(Vector3 u, Vector3 v)
-{
-    return vector3(u.x - v.x, u.y - v.y, u.z - v.z);
-}
+Vector3 subtractVectors(Vector3 u, Vector3 v) { return vector3(u.x - v.x, u.y - v.y, u.z - v.z); }
 
 
-double dot(Vector3 u, Vector3 v)
-{
-    return (u.x * v.x + u.y * v.y + u.z * v.z);
-}
+double dot(Vector3 u, Vector3 v) { return (u.x * v.x + u.y * v.y + u.z * v.z); }
 
 
 Vector3 cross(Vector3 u, Vector3 v)
@@ -66,31 +54,18 @@ Vector3 cross(Vector3 u, Vector3 v)
 }
 
 
-double vectorLength(Vector3 v)
-{
-    return sqrt(lengthSquared(v));
-}
+double vectorLength(Vector3 v) { return sqrt(lengthSquared(v)); }
 
 
-Vector3 flipVector(Vector3 v)
-{
-    return vector3(-v.x, -v.y, -v.z);
-}
+Vector3 flipVector(Vector3 v) { return vector3(-v.x, -v.y, -v.z); }
 
 
-Vector3 scaleVector(Vector3 v, const double scalar)
-{
-    return vector3(v.x * scalar, v.y * scalar, v.z * scalar);
-}
+Vector3 scaleVector(Vector3 v, const double scalar) { return vector3(v.x * scalar, v.y * scalar, v.z * scalar); }
 
 
 Color3 multiplyColors(Color3 color1, Color3 color2)
 {
-    Color3 outputColor =
-        {
-            .r = color1.r * color2.r,
-            .g = color1.g * color2.g,
-            .b = color1.b * color2.b};
+    Color3 outputColor = {.r = color1.r * color2.r, .g = color1.g * color2.g, .b = color1.b * color2.b};
 
     return outputColor;
 }
@@ -104,24 +79,16 @@ Vector3 unitVector(Vector3 v)
 }
 
 
-Vector3 randomVector(void)
-{
-    return vector3(randomDouble(), randomDouble(), randomDouble());
-}
+Vector3 randomVector(void) { return vector3(randomDouble(), randomDouble(), randomDouble()); }
 
 
 Vector3 randomVectorBetween(double min, double max)
 {
-    return vector3(randomDoubleRange(min, max),
-                   randomDoubleRange(min, max),
-                   randomDoubleRange(min, max));
+    return vector3(randomDoubleRange(min, max), randomDoubleRange(min, max), randomDoubleRange(min, max));
 }
 
 
-double lengthSquared(Vector3 v)
-{
-    return (v.x * v.x + v.y * v.y + v.z * v.z);
-}
+double lengthSquared(Vector3 v) { return (v.x * v.x + v.y * v.y + v.z * v.z); }
 
 
 /// Returns a vector inside a unit sphere. Points are generated in the range
@@ -143,10 +110,7 @@ Vector3 randomUnitSphereVector(void)
 
 
 /// Generate a vector inside the unit sphere and then normalize.
-Vector3 randomUnitVector(void)
-{
-    return unitVector(randomUnitSphereVector());
-}
+Vector3 randomUnitVector(void) { return unitVector(randomUnitSphereVector()); }
 
 
 Vector3 randomInUnitDisk(void)
@@ -166,19 +130,11 @@ Vector3 randomInUnitDisk(void)
 
 bool isNearlyZero(Vector3 v)
 {
-    return (fabs(v.x) < kZeroTolerance &&
-            fabs(v.y) < kZeroTolerance &&
-            fabs(v.z) < kZeroTolerance);
+    return (fabs(v.x) < kZeroTolerance && fabs(v.y) < kZeroTolerance && fabs(v.z) < kZeroTolerance);
 }
 
 
-int randomInt(int min, int max)
-{
-    return (int)randomDoubleRange(min, max + 1);
-}
+int randomInt(int min, int max) { return (int)randomDoubleRange(min, max + 1); }
 
 
-Vector3 zeroVector(void)
-{
-    return vector3(0, 0, 0);
-}
+Vector3 zeroVector(void) { return vector3(0, 0, 0); }

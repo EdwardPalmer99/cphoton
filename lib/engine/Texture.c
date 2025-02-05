@@ -50,8 +50,7 @@ struct imageTexture_t
 static inline Texture *makeEmptyTexture(void)
 {
     Texture *emptyTexture = malloc(sizeof(Texture));
-    if (!emptyTexture)
-        return NULL;
+    if (!emptyTexture) return NULL;
 
     emptyTexture->refCount = 0;
     emptyTexture->incrementRefCounter = incrementRefCounter;
@@ -67,8 +66,7 @@ static inline Texture *makeEmptyTexture(void)
 Texture *makeSolidTexture(Color3 color)
 {
     Texture *texture = makeEmptyTexture();
-    if (!texture)
-        return NULL;
+    if (!texture) return NULL;
 
     texture->solidColor = malloc(sizeof(SolidColor));
     if (!texture->solidColor)
@@ -87,12 +85,10 @@ Texture *makeSolidTexture(Color3 color)
 
 Texture *makeCheckerTexture(Texture *even, Texture *odd)
 {
-    if (!even || !odd)
-        return NULL;
+    if (!even || !odd) return NULL;
 
     Texture *texture = makeEmptyTexture();
-    if (!texture)
-        return NULL;
+    if (!texture) return NULL;
 
     texture->checker = malloc(sizeof(Checker));
     if (!texture->checker)
@@ -122,12 +118,10 @@ Texture *makeCheckerTextureWithColors(Color3 color1, Color3 color2)
 
 Texture *makeImageTexture(uint8_t *bytes, size_t pixelsWide, size_t pixelsHigh, size_t bitsPerPixel)
 {
-    if (!bytes)
-        return NULL;
+    if (!bytes) return NULL;
 
     Texture *texture = makeEmptyTexture();
-    if (!texture)
-        return NULL;
+    if (!texture) return NULL;
 
     ImageTexture *image = malloc(sizeof(ImageTexture));
     if (!image)
@@ -154,18 +148,15 @@ Texture *makeImageTexture(uint8_t *bytes, size_t pixelsWide, size_t pixelsHigh, 
 
 static inline void incrementRefCounter(Texture *texture)
 {
-    if (texture)
-        texture->refCount++;
+    if (texture) texture->refCount++;
 }
 
 
 static inline void decrementRefCounter(Texture *texture)
 {
-    if (!texture)
-        return;
+    if (!texture) return;
 
-    if (--texture->refCount <= 0)
-        texture->destructor(texture);
+    if (--texture->refCount <= 0) texture->destructor(texture);
 }
 
 
@@ -175,8 +166,7 @@ static inline void destructSolidColor(Texture *texture)
 {
     if (texture)
     {
-        if (texture->solidColor)
-            free(texture->solidColor);
+        if (texture->solidColor) free(texture->solidColor);
         free(texture);
     }
 }
@@ -193,10 +183,8 @@ static inline void destructChecker(Texture *texture)
             Texture *even = texture->checker->even;
             Texture *odd = texture->checker->odd;
 
-            if (even)
-                even->decrementRefCounter(even);
-            if (odd)
-                odd->decrementRefCounter(odd);
+            if (even) even->decrementRefCounter(even);
+            if (odd) odd->decrementRefCounter(odd);
 
             free(texture->checker);
         }
@@ -211,8 +199,7 @@ static inline void destructImageTexture(Texture *texture)
     if (texture)
     {
         // Don't free the image bytes as we assume that they are freed elsewhere.
-        if (texture->imageTexture)
-            free(texture->imageTexture);
+        if (texture->imageTexture) free(texture->imageTexture);
 
         free(texture);
     }
@@ -245,8 +232,7 @@ static inline Color3 imageTextureValue(Texture *texture, double u, double v, Poi
     ImageTexture *imageTexture = texture->imageTexture;
     uint8_t *bytes = imageTexture->bytes;
 
-    if (!imageTexture->bytes)
-        return color3(1, 1, 0);
+    if (!imageTexture->bytes) return color3(1, 1, 0);
 
     u = clamp(u, 0, 1);
     v = 1.0 - clamp(v, 0, 1); // Image is flipped!
@@ -254,10 +240,8 @@ static inline Color3 imageTextureValue(Texture *texture, double u, double v, Poi
     size_t i = (size_t)(u * imageTexture->pixelsWide);
     size_t j = (size_t)(v * imageTexture->pixelsHigh);
 
-    if (i >= imageTexture->pixelsWide)
-        i = imageTexture->pixelsWide - 1;
-    if (j >= imageTexture->pixelsHigh)
-        j = imageTexture->pixelsHigh - 1;
+    if (i >= imageTexture->pixelsWide) i = imageTexture->pixelsWide - 1;
+    if (j >= imageTexture->pixelsHigh) j = imageTexture->pixelsHigh - 1;
 
     const double invMaxByte = 1.0 / 255.0;
 

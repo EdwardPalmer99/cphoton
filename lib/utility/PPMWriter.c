@@ -6,8 +6,8 @@
 //
 
 #include "utility/PPMWriter.h"
+#include "logger/Logger.h"
 #include <stdint.h>
-// #include <Cocoa/Cocoa.h>
 
 #define MAX_BYTE 255
 #define MAX_2BYTES 65535
@@ -34,12 +34,10 @@ static bool isValidPPMImage(PPMImage *image)
 
 PPMImage *makePPMImage(int width, int height)
 {
-    if (width < 1 || height < 1)
-        return NULL;
+    if (width < 1 || height < 1) return NULL;
 
     PPMImage *newImage = malloc(sizeof(PPMImage));
-    if (!newImage)
-        return NULL;
+    if (!newImage) return NULL;
 
     newImage->width = width;
     newImage->height = height;
@@ -72,10 +70,8 @@ void freePPMImage(PPMImage *image)
 {
     if (image)
     {
-        if (image->pixels)
-            free(image->pixels);
-        if (image->pixelValue)
-            free(image->pixelValue);
+        if (image->pixels) free(image->pixels);
+        if (image->pixelValue) free(image->pixelValue);
 
         free(image);
     }
@@ -84,8 +80,7 @@ void freePPMImage(PPMImage *image)
 
 void clearImage(PPMImage *image)
 {
-    if (!isValidPPMImage(image))
-        return;
+    if (!isValidPPMImage(image)) return;
 
     memset(image->pixels, 0, sizeof(Color3) * image->height * image->width);
 }
@@ -94,8 +89,7 @@ void clearImage(PPMImage *image)
 /// A white image will fade to black over successive frames.
 void fadeImage(PPMImage *image, double fadeFactor)
 {
-    if (!image || fadeFactor <= 0.0 || fadeFactor > 1.0)
-        return;
+    if (!image || fadeFactor <= 0.0 || fadeFactor > 1.0) return;
 
     Color3 *pixel = NULL;
 
@@ -124,8 +118,7 @@ void copyImage(PPMImage *imageDst, PPMImage *imageSrc)
 bool writePPMImage(PPMImage *image, const char *fpath)
 {
     // 1. Check image structure and fpath.
-    if (!isValidPPMImage(image) || !fpath)
-        return false;
+    if (!isValidPPMImage(image) || !fpath) return false;
 
     // 2. Open file.
     FILE *fp = fopen(fpath, "w");
@@ -157,8 +150,7 @@ bool writePPMImage(PPMImage *image, const char *fpath)
 bool writeBinaryPPMImage(PPMImage *image, const char *fpath)
 {
     // 1. Check image structure and fpath.
-    if (!isValidPPMImage(image) || !fpath)
-        return false;
+    if (!isValidPPMImage(image) || !fpath) return false;
 
     // 2. Open file.
     FILE *fp = fopen(fpath, "wb");
@@ -190,14 +182,13 @@ bool writeBinaryPPMImage(PPMImage *image, const char *fpath)
 bool writeBinary16BitPPMImage(PPMImage *image, const char *fpath)
 {
     // 1. Check image structure and fpath.
-    if (!isValidPPMImage(image) || !fpath)
-        return false;
+    if (!isValidPPMImage(image) || !fpath) return false;
 
     // 2. Open file.
     FILE *fp = fopen(fpath, "wb");
     if (!fp)
     {
-        fprintf(stderr, "error: file '%s' could not be opened!\n", fpath);
+        Logger(LoggerError, "Could not write to file '%s'", fpath);
         return false;
     }
 
@@ -222,8 +213,7 @@ bool writeBinary16BitPPMImage(PPMImage *image, const char *fpath)
 
 static inline void writePixelToFile(FILE *fp, Color3 *pixel)
 {
-    if (!fp || !pixel)
-        return;
+    if (!fp || !pixel) return;
 
     // Gamma correct. The pixel input values should be in the range [0, 1].
     static const double invGamma = (1.0 / 2.2);
@@ -233,17 +223,14 @@ static inline void writePixelToFile(FILE *fp, Color3 *pixel)
     double b = pow(pixel->b, invGamma);
 
     // Write translated [0, 255] value for each color component.
-    fprintf(fp, "%d %d %d\n",
-            (int)(256 * clamp(r, 0.0, 0.999)),
-            (int)(256 * clamp(g, 0.0, 0.999)),
+    fprintf(fp, "%d %d %d\n", (int)(256 * clamp(r, 0.0, 0.999)), (int)(256 * clamp(g, 0.0, 0.999)),
             (int)(256 * clamp(b, 0.0, 0.999)));
 }
 
 
 static inline void writeBinaryPixelToFile(FILE *fp, Color3 *pixel)
 {
-    if (!fp || !pixel)
-        return;
+    if (!fp || !pixel) return;
 
     // Gamma correct. The pixel input values should be in the range [0, 1].
     static const double invGamma = (1.0 / 2.2);
@@ -265,8 +252,7 @@ static inline void writeBinaryPixelToFile(FILE *fp, Color3 *pixel)
 
 static inline void writeBinary16BitPixelToFile(FILE *fp, Color3 *pixel)
 {
-    if (!fp || !pixel)
-        return;
+    if (!fp || !pixel) return;
 
     // Gamma correct. The pixel input values should be in the range [0, 1].
     static const double invGamma = (1.0 / 2.2);
