@@ -16,7 +16,7 @@ SOURCES		:= $(shell find $(LIB_DIR) -name '*.c')
 OBJECTS		:= $(addprefix $(BUILD_DIR)/, $(patsubst %.c, %.o, $(SOURCES)))
 
 LDFLAGS 		:= -shared -lm
-INCLUDE_FLAGS	:= $(addprefix -I, $(shell find $(LIB_DIR) -type d))
+INCLUDE_FLAGS	:= -I$(LIB_DIR)
 
 define do_compile
 	@mkdir -p $(dir $@)

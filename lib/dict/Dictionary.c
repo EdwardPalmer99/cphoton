@@ -7,7 +7,7 @@
  *
  */
 
-#include "Dictionary.h"
+#include "dict/Dictionary.h"
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>

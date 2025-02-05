@@ -5,7 +5,7 @@
 //  Created by Edward on 05/02/2023.
 //
 
-#include "Fractals3D.h"
+#include "models/Fractals3D.h"
 
 #define kEpsilon 0.0001
 #define kMaxIteration 128

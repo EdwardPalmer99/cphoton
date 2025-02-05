@@ -5,9 +5,9 @@
 //  Created by Edward on 19/01/2023.
 //
 
-#include "RayTracer.h"
-#include "RenderSettings.h"
-#include "ThreadPool.h"
+#include "engine/RayTracer.h"
+#include "engine/RenderSettings.h"
+#include "threadpool/ThreadPool.h"
 #include <stdint.h>
 
 #define kMinHitTime 0.001 // Positive tmin fixes shadow acne.

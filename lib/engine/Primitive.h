@@ -8,12 +8,12 @@
 #ifndef Primitive_h
 #define Primitive_h
 
-#include "Fractals3D.h"
-#include "HitRec.h"
-#include "Material.h"
-#include "Matrix3.h"
-#include "Ray.h"
-#include "Vector3.h"
+#include "engine/HitRec.h"
+#include "engine/Material.h"
+#include "engine/Ray.h"
+#include "models/Fractals3D.h"
+#include "utility/Matrix3.h"
+#include "utility/Vector3.h"
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>

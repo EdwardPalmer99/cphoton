@@ -8,9 +8,9 @@
 #ifndef Camera_h
 #define Camera_h
 
-#include "Ray.h"
-#include "Utility.h"
-#include "Vector3.h"
+#include "engine/Ray.h"
+#include "utility/Utility.h"
+#include "utility/Vector3.h"
 #include <stdlib.h>
 
 typedef struct

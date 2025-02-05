@@ -5,7 +5,7 @@
 //  Created by Edward on 19/01/2023.
 //
 
-#include "Primitive.h"
+#include "engine/Primitive.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846

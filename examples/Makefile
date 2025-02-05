@@ -14,8 +14,8 @@ LIB_DIR			:= ../lib
 BUILD_DIR		:= ../.build/examples
 BIN_DIR			:= ../bin/examples
 
-LDFLAGS			:=   -L$(LIB_BIN_DIR) -Wl,-rpath,$(LIB_BIN_DIR) -lcphoton
-INCLUDE_FLAGS	:= $(addprefix -I, $(shell find $(LIB_DIR) -type d))
+LDFLAGS			:= -L$(LIB_BIN_DIR) -Wl,-rpath,$(LIB_BIN_DIR) -lcphoton
+INCLUDE_FLAGS	:= -I$(LIB_DIR)
 
 define do_compile
 	@mkdir -p $(dir $@)

@@ -1,4 +1,4 @@
-#include "MengerCube.h"
+#include "models/MengerCube.h"
 
 #define kInitialCubeStackCapacity 8
 

@@ -8,10 +8,10 @@
 #ifndef Material_h
 #define Material_h
 
-#include "HitRec.h"
-#include "Ray.h"
-#include "Texture.h"
-#include "Vector3.h"
+#include "engine/HitRec.h"
+#include "engine/Ray.h"
+#include "engine/Texture.h"
+#include "utility/Vector3.h"
 
 #define makeSilverColor() color3(0.972, 0.960, 0.816)
 #define makeGoldColor() color3(1.000, 0.766, 0.336)

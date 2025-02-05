@@ -5,7 +5,7 @@
 //  Created by Edward on 19/01/2023.
 //
 
-#include "Camera.h"
+#include "engine/Camera.h"
 
 Camera makeCamera(double verticalFOV, double aspectRatio, double focalLength, double aperture, Point3 origin, Point3 target)
 {

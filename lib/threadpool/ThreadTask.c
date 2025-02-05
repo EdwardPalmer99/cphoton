@@ -7,7 +7,7 @@
  *
  */
 
-#include "ThreadTask.h"
+#include "threadpool/ThreadTask.h"
 #include <string.h>
 
 Task *allocTask(TaskFunc func, TaskArgs args, size_t argsSize)

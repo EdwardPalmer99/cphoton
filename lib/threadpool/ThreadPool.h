@@ -8,7 +8,7 @@
  */
 
 #pragma once
-#include "ThreadTask.h"
+#include "threadpool/ThreadTask.h"
 #include <pthread.h>
 
 // TODO: - use linked list.
@@ -16,7 +16,7 @@ typedef struct threadPool_t
 {
     unsigned int nthreads;
     pthread_t *threads;
-    
+
     Task *base;
     Task *task;
 } ThreadPool;

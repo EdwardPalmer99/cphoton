@@ -5,7 +5,7 @@
 //  Created by Edward on 19/01/2023.
 //
 
-#include "Vector3.h"
+#include "utility/Vector3.h"
 
 
 Color3 color3(double r, double g, double b)
