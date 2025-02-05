@@ -52,10 +52,4 @@ void PrintLogMessage(LogLevel level, const char *func, const char *file, unsigne
     strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M:%S", gmtNow);
 
     fprintf(stdout, "%s %s [%s] [%s:%u] %s\n", timeBuffer, nameForLevel[level], func, file, line, buffer);
-
-    if (level == LoggerCritical)
-    {
-        fflush(stdout);
-        abort();
-    }
 }

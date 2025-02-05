@@ -26,12 +26,10 @@ static inline void transposeMatrix(Matrix3 matT, Matrix3 mat);
 
 Rotate3 *makeRotate3(Vector3 rotationAngles)
 {
-    if (isNearlyZero(rotationAngles))
-        return NULL; // No rotation matrix required.
+    if (isNearlyZero(rotationAngles)) return NULL; // No rotation matrix required.
 
     Rotate3 *rotation = malloc(sizeof(Rotate3));
-    if (!rotation)
-        return NULL;
+    if (!rotation) return NULL;
 
     setRotationMatrices(rotation->rotate, rotation->inverse, rotationAngles);
     return rotation;
@@ -40,8 +38,7 @@ Rotate3 *makeRotate3(Vector3 rotationAngles)
 
 Vector3 rotation(Vector3 v, Rotate3 *rotation)
 {
-    if (!rotation)
-        return v;
+    if (!rotation) return v;
 
     return transformVector(v, rotation->rotate);
 }
@@ -49,8 +46,7 @@ Vector3 rotation(Vector3 v, Rotate3 *rotation)
 
 Vector3 inverseRotation(Vector3 v, Rotate3 *rotation)
 {
-    if (!rotation)
-        return v;
+    if (!rotation) return v;
 
     return transformVector(v, rotation->inverse);
 }

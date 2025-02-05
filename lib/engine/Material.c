@@ -28,8 +28,7 @@ static inline Vector3 refract(Vector3 vin, Vector3 n, double refractionRatio);
 static inline Material *makeEmptyMaterial(void)
 {
     Material *emptyMaterial = malloc(sizeof(Material));
-    if (!emptyMaterial)
-        return NULL;
+    if (!emptyMaterial) return NULL;
 
     emptyMaterial->refCount = 0;
     emptyMaterial->incrementRefCounter = incrementRefCounter;
@@ -48,8 +47,7 @@ static inline Material *makeEmptyMaterial(void)
 Material *makeEmitter(Color3 color)
 {
     Material *emitter = makeEmptyMaterial();
-    if (!emitter)
-        return NULL;
+    if (!emitter) return NULL;
 
     emitter->emitted = color;
     emitter->scatter = absorbRay;
@@ -60,12 +58,10 @@ Material *makeEmitter(Color3 color)
 
 Material *makeMetal(Texture *albedo, double fuzziness)
 {
-    if (!albedo)
-        return NULL;
+    if (!albedo) return NULL;
 
     Material *metal = makeEmptyMaterial();
-    if (!metal)
-        return NULL;
+    if (!metal) return NULL;
 
     metal->albedo = albedo;
     metal->fuzziness = clamp(fuzziness, 0, 1);
@@ -79,12 +75,10 @@ Material *makeMetal(Texture *albedo, double fuzziness)
 
 Material *makeLambertian(Texture *albedo)
 {
-    if (!albedo)
-        return NULL;
+    if (!albedo) return NULL;
 
     Material *lambertian = makeEmptyMaterial();
-    if (!lambertian)
-        return NULL;
+    if (!lambertian) return NULL;
 
     lambertian->albedo = albedo;
     lambertian->scatter = scatterRay;
@@ -95,17 +89,13 @@ Material *makeLambertian(Texture *albedo)
 }
 
 
-Material *makeLambertianWithColor(Color3 color)
-{
-    return makeLambertian(makeSolidTexture(color));
-}
+Material *makeLambertianWithColor(Color3 color) { return makeLambertian(makeSolidTexture(color)); }
 
 
 Material *makeDielectric(double indexOfRefraction)
 {
     Material *dielectric = makeEmptyMaterial();
-    if (!dielectric)
-        return NULL;
+    if (!dielectric) return NULL;
 
     dielectric->indexOfRefraction = indexOfRefraction;
     dielectric->scatter = refractRay;
@@ -118,13 +108,11 @@ Material *makeDielectric(double indexOfRefraction)
 
 static inline void destructMaterial(Material *material)
 {
-    if (!material)
-        return;
+    if (!material) return;
 
     Texture *albedo = material->albedo;
 
-    if (albedo)
-        albedo->decrementRefCounter(albedo);
+    if (albedo) albedo->decrementRefCounter(albedo);
 
     free(material);
 }
@@ -134,25 +122,19 @@ static inline void destructMaterial(Material *material)
 
 static inline void incrementRefCounter(Material *material)
 {
-    if (material)
-        ++material->refCount;
+    if (material) ++material->refCount;
 }
 
 
 static inline void decrementRefCounter(Material *material)
 {
-    if (!material)
-        return;
+    if (!material) return;
 
-    if (--material->refCount <= 0)
-        material->destructor(material);
+    if (--material->refCount <= 0) material->destructor(material);
 }
 
 
-static inline bool absorbRay(Ray *incidentRay, HitRec *hit, Ray *scatteredRay, Color3 *attenuation)
-{
-    return false;
-}
+static inline bool absorbRay(Ray *incidentRay, HitRec *hit, Ray *scatteredRay, Color3 *attenuation) { return false; }
 
 
 static inline bool scatterRay(Ray *incidentRay, HitRec *hit, Ray *scatteredRay, Color3 *attenuation)

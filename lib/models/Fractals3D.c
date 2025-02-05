@@ -43,12 +43,7 @@ struct quaternion_t
 // https://en.wikipedia.org/wiki/Quaternion
 static inline Quaternion qAdd(Quaternion q1, Quaternion q2)
 {
-    Quaternion result =
-        {
-            .a = q1.a + q2.a,
-            .b = q1.b + q2.b,
-            .c = q1.c + q2.c,
-            .d = q1.d + q2.d};
+    Quaternion result = {.a = q1.a + q2.a, .b = q1.b + q2.b, .c = q1.c + q2.c, .d = q1.d + q2.d};
 
     return result;
 }
@@ -56,33 +51,22 @@ static inline Quaternion qAdd(Quaternion q1, Quaternion q2)
 
 static inline Quaternion qMultiply(Quaternion q1, Quaternion q2)
 {
-    Quaternion result =
-        {
-            .a = q1.a * q2.a - q1.b * q2.b - q1.c * q2.c - q1.d * q2.d,
-            .b = q1.a * q2.b + q1.b * q2.a + q1.c * q2.d - q1.d * q2.c,
-            .c = q1.a * q2.c - q1.b * q2.d + q1.c * q2.a + q1.d * q2.b,
-            .d = q1.a * q2.d + q1.b * q2.c - q1.c * q2.b + q1.d * q2.a};
+    Quaternion result = {.a = q1.a * q2.a - q1.b * q2.b - q1.c * q2.c - q1.d * q2.d,
+                         .b = q1.a * q2.b + q1.b * q2.a + q1.c * q2.d - q1.d * q2.c,
+                         .c = q1.a * q2.c - q1.b * q2.d + q1.c * q2.a + q1.d * q2.b,
+                         .d = q1.a * q2.d + q1.b * q2.c - q1.c * q2.b + q1.d * q2.a};
 
     return result;
 }
 
 
-static inline double qLength2(Quaternion q1)
-{
-    return (q1.a * q1.a + q1.b * q1.b + q1.c * q1.c + q1.d * q1.d);
-}
+static inline double qLength2(Quaternion q1) { return (q1.a * q1.a + q1.b * q1.b + q1.c * q1.c + q1.d * q1.d); }
 
 
-static inline Quaternion qSquare(Quaternion q1)
-{
-    return qMultiply(q1, q1);
-}
+static inline Quaternion qSquare(Quaternion q1) { return qMultiply(q1, q1); }
 
 
-static inline Quaternion qCube(Quaternion q1)
-{
-    return qMultiply(q1, qSquare(q1));
-}
+static inline Quaternion qCube(Quaternion q1) { return qMultiply(q1, qSquare(q1)); }
 
 
 static inline bool fractalBoundingBox(Primitive *primitive, AABB *outputBox)
@@ -100,8 +84,7 @@ static inline bool fractalBoundingBox(Primitive *primitive, AABB *outputBox)
 Primitive *makeMandelbulbFractal(Point3 center, Material *material)
 {
     Primitive *primitive = malloc(sizeof(Primitive));
-    if (!primitive)
-        return NULL;
+    if (!primitive) return NULL;
 
     Fractal *fractal = malloc(sizeof(Fractal));
     if (!fractal)
@@ -129,8 +112,7 @@ Primitive *makeMandelbulbFractal(Point3 center, Material *material)
 Primitive *makeQuaternionFractal(Point3 center, Material *material)
 {
     Primitive *primitive = malloc(sizeof(Primitive));
-    if (!primitive)
-        return NULL;
+    if (!primitive) return NULL;
 
     Fractal *fractal = malloc(sizeof(Fractal));
     if (!fractal)
@@ -159,8 +141,7 @@ static void destructFractal(Primitive *primitive)
 {
     if (primitive)
     {
-        if (primitive->fractal)
-            free(primitive->fractal);
+        if (primitive->fractal) free(primitive->fractal);
 
         primitive->material->decrementRefCounter(primitive->material);
         free(primitive);
@@ -182,8 +163,7 @@ static inline double mandelbulb8DistanceEstimator(Point3 c)
 
     for (int iter = 0; iter < kMaxIteration; iter++)
     {
-        if ((r = vectorLength(z)) > kBailoutRadius)
-            break;
+        if ((r = vectorLength(z)) > kBailoutRadius) break;
 
         // Length of the running derivative, dr:
         dr = kPower * pow(r, kPower - 1) * dr + 1.0;
@@ -195,9 +175,7 @@ static inline double mandelbulb8DistanceEstimator(Point3 c)
         const double nTheta = kPower * acos(z.z / r);
 
         // z^n formula:
-        Vector3 zPowerN = {rPowerN * sin(nTheta) * cos(nPhi),
-                           rPowerN * sin(nTheta) * sin(nPhi),
-                           rPowerN * cos(nTheta)};
+        Vector3 zPowerN = {rPowerN * sin(nTheta) * cos(nPhi), rPowerN * sin(nTheta) * sin(nPhi), rPowerN * cos(nTheta)};
 
         // z -> z^n + c
         z = addVectors(zPowerN, c);
@@ -223,8 +201,7 @@ static inline double quaternion3DistanceEstimator(Point3 p)
 
         r2 = qLength2(z);
 
-        if (r2 > kBailoutRadius)
-            break;
+        if (r2 > kBailoutRadius) break;
     }
 
     return (0.25 * log(r2) * sqrt(r2 / dr2));
@@ -278,8 +255,7 @@ bool isFractalHit(Primitive *primitive, Ray *ray, double tmin, double tmax, HitR
         }
     }
 
-    if (!converged)
-        return false;
+    if (!converged) return false;
 
     const bool frontFace = (dot(ray->direction, normal) < 0.0);
 

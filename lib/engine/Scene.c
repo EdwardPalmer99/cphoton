@@ -14,8 +14,7 @@ static inline void markAsFinished(Scene *scene);
 Scene *makeScene(void)
 {
     Scene *scene = malloc(sizeof(Scene));
-    if (!scene)
-        return NULL;
+    if (!scene) return NULL;
 
     scene->numObjects = 0;
     scene->objectCapacity = 8;
@@ -42,16 +41,14 @@ Scene *makeScene(void)
 /// marked as completed!
 static inline bool addSceneObject(Scene *scene, Primitive *object)
 {
-    if (!scene || !object || scene->sceneNode)
-        return false;
+    if (!scene || !object || scene->sceneNode) return false;
 
     if (scene->numObjects >= scene->objectCapacity)
     {
         const size_t blockSize = scene->objectCapacity * 2 * sizeof(Primitive *);
         void *reallocPtr = realloc(scene->objects, blockSize);
 
-        if (!reallocPtr)
-            return false;
+        if (!reallocPtr) return false;
 
         scene->objects = reallocPtr;
         scene->objectCapacity *= 2;
@@ -66,8 +63,7 @@ static inline bool addSceneObject(Scene *scene, Primitive *object)
 /// containing pointers to all objects in the scene.
 static inline void markAsFinished(Scene *scene)
 {
-    if (!scene || scene->sceneNode || scene->numObjects < 1)
-        return;
+    if (!scene || scene->sceneNode || scene->numObjects < 1) return;
 
     if (scene->numObjects > scene->objectCapacity)
     {
