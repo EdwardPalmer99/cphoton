@@ -7,16 +7,7 @@
  *
  */
 
-#include "engine/Camera.h"
-#include "engine/Primitive.h"
-#include "engine/RayTracer.h"
-#include "engine/RenderSettings.h"
-#include "engine/Scene.h"
-#include "engine/Texture.h"
-#include "utility/PPMWriter.h"
-#include "utility/Vector3.h"
-#include <stdbool.h>
-#include <stdio.h>
+#include "CPhoton.h"
 
 Primitive *makeDarkKnightRoom(double length, double width, double height);
 

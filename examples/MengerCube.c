@@ -7,14 +7,7 @@
  *
  */
 
-#include "models/MengerCube.h"
-#include "engine/Camera.h"
-#include "engine/Material.h"
-#include "engine/RayTracer.h"
-#include "engine/RenderSettings.h"
-#include "engine/Scene.h"
-#include "engine/Texture.h"
-#include "utility/PPMWriter.h"
+#include "CPhoton.h"
 
 int main(int argc, const char *argv[])
 {
