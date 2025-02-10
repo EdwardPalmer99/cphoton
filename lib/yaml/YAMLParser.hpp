@@ -15,20 +15,42 @@
 #include <unordered_set>
 #include <variant>
 
-using YAMLCore = std::variant<long, double, std::string, std::array<double, 3>>;
-using YAMLList = std::unordered_map<std::string, YAMLCore>;
-using YAMLLists = std::unordered_map<std::string, YAMLList>;
+using Double3 = std::array<double, 3>;
 
-// using YAMLMap = std::unordered_map<std::string, std::variant<YAMLList, YAMLLists>>;
-using YAMLMap = std::unordered_map<std::string, YAMLList>;
+using YAMLValue = std::variant<long, double, std::string, std::array<double, 3>>;
+using YAMLSubBlock = std::unordered_map<std::string, YAMLValue>;
+using YAMLBlock = std::unordered_map<std::string, std::variant<YAMLValue, YAMLSubBlock>>;
+
+using YAMLBlocks = std::unordered_map<std::string, YAMLBlock>;
+
 
 class YAMLParser
 {
 public:
     ~YAMLParser();
 
-    YAMLMap parseYAMLFile(const std::string &path);
+    YAMLBlocks parseYAMLFile(const std::string &path);
 
+    static YAMLBlock &getBlock(YAMLBlocks &data, std::string blockName)
+    {
+        return data[blockName];
+    }
+
+    static YAMLSubBlock &getSubBlock(YAMLBlocks &data, std::string blockName, std::string subBlockName)
+    {
+        return std::get<YAMLSubBlock>(getBlock(data, blockName)[subBlockName]);
+    }
+
+    template <typename T> static T &getBlockValue(YAMLBlocks &data, std::string blockName, std::string paramName)
+    {
+        return std::get<T>(getBlock(data, blockName)[paramName]);
+    }
+
+    template <typename T>
+    static T &getSubBlockValue(YAMLBlocks &data, std::string blockName, std::string subBlockName, std::string paramName)
+    {
+        return std::get<T>(getSubBlock(data, blockName, subBlockName)[paramName]);
+    }
 
 protected:
     enum CoreType
@@ -39,6 +61,8 @@ protected:
         Double,
         Double3 // i.e. list of 3 doubles.
     };
+
+    int countIndent();
 
     CoreType classifyCoreType(const char *buffer) const;
 
@@ -58,8 +82,10 @@ protected:
 
     std::string parseKey();
 
-    YAMLCore parseYAMLCoreValue();
-    YAMLList parseYAMLListValue(int indentLevel);
+    YAMLValue parseYAMLValue();
+    YAMLSubBlock parseYAMLSubBlock(int indentLevel);
+
+    YAMLBlock parseYAMLBlock(int indentLevel);
 
 private:
     FILE *fp{nullptr};

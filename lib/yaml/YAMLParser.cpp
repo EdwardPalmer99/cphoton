@@ -11,15 +11,21 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <stack>
 #include <stdexcept>
 #include <unordered_map>
 
-YAMLMap YAMLParser::parseYAMLFile(const std::string &path)
+static constexpr bool isNumber(char c)
+{
+    return (c >= '0' && c <= '9');
+}
+
+YAMLBlocks YAMLParser::parseYAMLFile(const std::string &path)
 {
     fp = fopen(path.c_str(), "r");
     if (!fp) throw std::runtime_error("failed to open file: " + path);
 
-    YAMLMap parsedYAMLFile;
+    YAMLBlocks parsedYAMLFile;
 
     // Skip top of file.
     skipRequiredChar('-', 3);
@@ -29,21 +35,23 @@ YAMLMap YAMLParser::parseYAMLFile(const std::string &path)
 
     while (!isEOF())
     {
-        // Skip comment lines.
-        skipOptionalCommentLine();
-        skipOptionalChar('\n');
+        char c = peek();
+        if (c == ' ' || c == '\t' || c == '\n' || c == '#')
+        {
+            skipLine();
+            continue; // Back to top.
+        }
 
-        if (isEOF()) break;
-
-        // Read name of list group:
+        // Read name of subBlock group:
         std::string key = parseKey();
-
         skipRequiredChar(':');
         skipRequiredChar('\n');
 
-        // Read list:
-        YAMLList value = parseYAMLListValue(indentLevel);
-        parsedYAMLFile[key] = std::move(value);
+        std::cout << "parsing block for key: " << key << std::endl;
+
+        YAMLBlock yamlBlock = parseYAMLBlock(indentLevel);
+
+        parsedYAMLFile[key] = std::move(yamlBlock);
     }
 
     // Cleanup:
@@ -94,7 +102,7 @@ std::array<double, 3> YAMLParser::parseDouble3(const char *buffer)
 
     for (char *c = (char *)buffer + 1; *c; ++c)
     {
-        if (isnumber(*c) || (!hasDot && *c == '.'))
+        if (isNumber(*c) || (!hasDot && *c == '.'))
         {
             if (*c == '.') hasDot = true;
             numBuffer[iBuffer++] = *c;
@@ -185,7 +193,7 @@ std::string YAMLParser::parseKey()
 }
 
 
-YAMLCore YAMLParser::parseYAMLCoreValue()
+YAMLValue YAMLParser::parseYAMLValue()
 {
     char buffer[100];
 
@@ -201,17 +209,40 @@ YAMLCore YAMLParser::parseYAMLCoreValue()
     switch (classifyCoreType(buffer))
     {
         case String:
-            return YAMLCore(std::string(buffer));
+            return YAMLValue(std::string(buffer));
         case Integer:
-            return YAMLCore((long)atoi(buffer));
+            return YAMLValue((long)atoi(buffer));
         case Double:
-            return YAMLCore((long)atof(buffer));
+            return YAMLValue((long)atof(buffer));
         case Double3:
-            return YAMLCore(parseDouble3(buffer));
+            return YAMLValue(parseDouble3(buffer));
         case Invalid:
         default:
             throw std::runtime_error("failed to classify core type");
     }
+}
+
+YAMLSubBlock YAMLParser::parseYAMLSubBlock(int indentLevel)
+{
+    YAMLSubBlock subBlock;
+
+    while (!isEOF() && countIndent() == indentLevel)
+    {
+        skipRequiredChar(' ', indentLevel);
+
+        std::string key = parseKey();
+        std::cout << "parsing subblock key: " << key << std::endl;
+        skipRequiredChar(':');
+        skipOptionalChar(' ');
+
+        YAMLValue value = parseYAMLValue();
+
+        subBlock[key] = std::move(value);
+
+        skipRequiredChar('\n'); // Skip newline.
+    }
+
+    return subBlock;
 }
 
 bool YAMLParser::isEOF()
@@ -268,11 +299,38 @@ char YAMLParser::peek()
 }
 
 
-YAMLList YAMLParser::parseYAMLListValue(int indentLevel)
+int YAMLParser::countIndent()
 {
-    YAMLList parsedList;
+    int indent = 0;
 
-    while (peek() == ' ')
+    while (!isEOF())
+    {
+        char next = getc(fp);
+
+        if (next == ' ')
+        {
+            ++indent;
+        }
+        else
+        {
+            ungetc(next, fp);
+            break;
+        }
+    }
+
+    for (int i = 0; i < indent; ++i)
+    {
+        ungetc(' ', fp);
+    }
+
+    return indent;
+}
+
+YAMLBlock YAMLParser::parseYAMLBlock(int indentLevel)
+{
+    YAMLBlock block;
+
+    while (!isEOF() && countIndent() == indentLevel)
     {
         skipRequiredChar(' ', indentLevel);
 
@@ -282,21 +340,21 @@ YAMLList YAMLParser::parseYAMLListValue(int indentLevel)
 
         if (peek() == '\n') // Further nesting!
         {
-            // TODO: - handle additional nesting here.
-            // YAMLList values = parseYAMLListValue(indentLevel + 2);
+            std::cout << "parsing subblock for key: " << key << std::endl;
+
+            skipRequiredChar('\n');
+            YAMLSubBlock value = parseYAMLSubBlock(indentLevel + 2);
+            block[key] = std::move(value);
         }
+        else
+        {
+            std::cout << "parsing value for key: " << key << std::endl;
 
-        YAMLCore value = parseYAMLCoreValue();
-
-        parsedList[key] = std::move(value);
-
-        skipRequiredChar('\n'); // Skip newline.
+            YAMLValue value = parseYAMLValue();
+            block[key] = std::move(value);
+            skipRequiredChar('\n');
+        }
     }
 
-    if (parsedList.size() < 1)
-    {
-        throw std::runtime_error("failed to parse any key:values");
-    }
-
-    return parsedList;
+    return block;
 }
