@@ -9,7 +9,6 @@
 #define Camera_h
 
 #include "engine/Ray.h"
-#include "utility/Utility.h"
 #include "utility/Vector3.h"
 #include <stdlib.h>
 

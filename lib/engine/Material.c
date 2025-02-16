@@ -6,6 +6,7 @@
 //
 
 #include "engine/Material.h"
+#include "utility/Utility.h"
 
 static inline Material *makeEmptyMaterial(void);
 
@@ -89,7 +90,10 @@ Material *makeLambertian(Texture *albedo)
 }
 
 
-Material *makeLambertianWithColor(Color3 color) { return makeLambertian(makeSolidTexture(color)); }
+Material *makeLambertianWithColor(Color3 color)
+{
+    return makeLambertian(makeSolidTexture(color));
+}
 
 
 Material *makeDielectric(double indexOfRefraction)
@@ -134,7 +138,10 @@ static inline void decrementRefCounter(Material *material)
 }
 
 
-static inline bool absorbRay(Ray *incidentRay, HitRec *hit, Ray *scatteredRay, Color3 *attenuation) { return false; }
+static inline bool absorbRay(Ray *incidentRay, HitRec *hit, Ray *scatteredRay, Color3 *attenuation)
+{
+    return false;
+}
 
 
 static inline bool scatterRay(Ray *incidentRay, HitRec *hit, Ray *scatteredRay, Color3 *attenuation)
