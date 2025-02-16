@@ -1,16 +1,22 @@
 #include "SceneGenerator.hpp"
-#include "YAMLParser.hpp"
+#include <cstdio>
 
-extern "C"
+static void printUsage(const char *programName);
+
+int main(int argc, const char *argv[])
 {
-#include "engine/Primitive.h"
-#include "engine/RayTracer.h"
-#include "engine/RenderSettings.h"
-#include "utility/PPMWriter.h"
+    if (argc != 2 || (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0))
+    {
+        printUsage(argv[0]);
+        return 0;
+    }
+
+    YAMLSceneRenderer::doRender(argv[1]);
+    return 0;
 }
 
-int main(void)
+// Prints usage for the program.
+static void printUsage(const char *programName)
 {
-    YAMLSceneRenderer::doRender("TestFile.yaml");
-    return 0;
+    fprintf(stdout, "usage: %s [YAML ray-tracer input file]\n", programName);
 }

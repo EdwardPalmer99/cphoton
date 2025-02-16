@@ -24,6 +24,12 @@ static constexpr bool isNumber(char c)
     return (c >= '0' && c <= '9');
 }
 
+YAMLFile YAMLParser::parse(const std::string &path)
+{
+    YAMLParser instance;
+    return instance.parseYAMLFile(path);
+}
+
 YAMLFile YAMLParser::parseYAMLFile(const std::string &path)
 {
     fp = fopen(path.c_str(), "r");

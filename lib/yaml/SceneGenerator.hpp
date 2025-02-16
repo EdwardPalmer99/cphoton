@@ -35,15 +35,13 @@ protected:
     Scene *buildScene();
     Camera buildCamera();
 
-
+private:
     void buildTextureMap();
     void buildMaterialMap();
 
     void buildSolidTexture(const YAMLList &textureBlock);
     void buildLambertianMaterial(const YAMLList &materialBlock);
 
-private:
-    // std::unordered_map<std::string, Primitive *> primitiveMap;
     std::unordered_map<std::string, Texture *> textureMap;
     std::unordered_map<std::string, Material *> materialMap;
 

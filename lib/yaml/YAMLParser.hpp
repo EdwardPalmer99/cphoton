@@ -28,16 +28,12 @@ using YAMLFile = std::unordered_map<std::string, std::vector<YAMLList>>;
 class YAMLParser
 {
 public:
-    ~YAMLParser();
-    YAMLParser() = default;
-
-    static YAMLFile parse(const std::string &path)
-    {
-        YAMLParser instance;
-        return instance.parseYAMLFile(path);
-    }
+    static YAMLFile parse(const std::string &path);
 
 protected:
+    YAMLParser() = default;
+    ~YAMLParser();
+
     enum CoreType
     {
         Invalid,
