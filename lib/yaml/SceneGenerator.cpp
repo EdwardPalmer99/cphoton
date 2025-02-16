@@ -13,45 +13,67 @@
 
 extern "C"
 {
+#include "engine/RayTracer.h"
 #include "engine/RenderSettings.h"
 #include "logger/Logger.h"
+#include "utility/PPMWriter.h"
 }
 
-SceneGenerator::SceneGenerator(const std::string pathToYAML_)
+YAMLSceneRenderer::YAMLSceneRenderer(const std::string pathToYAML_)
     : pathToYAML(std::move(pathToYAML_)), dataFromYAML(YAMLParser::parse(pathToYAML))
 {
 }
 
-Scene *SceneGenerator::buildScene()
+void YAMLSceneRenderer::doRender(const std::string pathToYAML)
 {
-    buildTextureMap();
-    buildMaterialMap();
+    YAMLSceneRenderer yamlRenderer(std::move(pathToYAML));
+
+    yamlRenderer.configRenderer();
+
+    Camera camera = yamlRenderer.buildCamera();
+
+    Scene *scene = yamlRenderer.buildScene();
+
+    PPMImage *outputImage = renderScene(scene, &camera);
+
+    writeBinary16BitPPMImage(outputImage, gRenderSettings.outputPath);
+
+    // Cleanup.
+    scene->destructor(scene);
+    freePPMImage(outputImage);
+}
+
+Scene *YAMLSceneRenderer::buildScene()
+{
+    // Build material map since required for primitive definitions:
+    if (materialMap.empty())
+    {
+        buildMaterialMap();
+    }
 
     Scene *scene = makeScene();
 
     // Create the primitives here.
-    for (auto &[name, subblock] : dataFromYAML.at("primitives"))
+    for (auto &list : dataFromYAML.at("primitives"))
     {
-        const YAMLSubBlock &primitiveBlock = std::get<YAMLSubBlock>(subblock);
+        const std::string &type = std::get<std::string>(list.at("type"));
 
-        const std::string &primitiveType = std::get<std::string>(primitiveBlock.at("type"));
-
-        Logger(LoggerDebug, "adding primitive: name: %s; type: %s", name.c_str(), primitiveType.c_str());
+        Logger(LoggerDebug, "building primitive of type: %s", type.c_str());
 
         Primitive *primitive{nullptr};
 
-        if (primitiveType == "plane")
+        if (type == "plane")
         {
-            Double3 p0 = std::get<Double3>(primitiveBlock.at("pNought"));
-            Double3 normal = std::get<Double3>(primitiveBlock.at("normal"));
-            std::string materialName = std::get<std::string>(primitiveBlock.at("material"));
+            Point3 p0 = std::get<Point3>(list.at("pNought"));
+            Point3 normal = std::get<Point3>(list.at("normal"));
 
-            primitive =
-                makePlane(convertDouble3ToPoint3(p0), convertDouble3ToPoint3(normal), materialMap.at(materialName));
+            auto &materialName = std::get<std::string>(list.at("material"));
+
+            primitive = makePlane(p0, normal, materialMap.at(materialName));
         }
         else
         {
-            throw std::runtime_error("unsupported primitive type: " + primitiveType);
+            throw std::runtime_error("unsupported primitive type: " + type);
         }
 
         if (primitive != nullptr)
@@ -67,125 +89,107 @@ Scene *SceneGenerator::buildScene()
 }
 
 
-void SceneGenerator::configRenderer()
+void YAMLSceneRenderer::configRenderer()
 {
     Logger(LoggerDebug, "configuring renderer from YAML parameters");
 
-    gRenderSettings.pixelsWide = getBlockValue<long>("output", "width");
-    gRenderSettings.pixelsHigh = getBlockValue<long>("output", "height");
+    const YAMLList &outputList = dataFromYAML.at("output").front();
 
-    // TODO: - need to copy.
-    gRenderSettings.outputPath = strdup(getBlockValue<std::string>("output", "name").data());
+    gRenderSettings.pixelsWide = std::get<long>(outputList.at("width"));
+    gRenderSettings.pixelsHigh = std::get<long>(outputList.at("height"));
+    gRenderSettings.outputPath = strdup(std::get<std::string>(outputList.at("name")).data());
 
-    gRenderSettings.samplesPerPixel = getBlockValue<long>("config", "samplesPerPixel");
-    gRenderSettings.maxDepth = getBlockValue<long>("config", "maxDepth");
-    gRenderSettings.nthreads = getBlockValue<long>("config", "nthreads");
+    const YAMLList &configList = dataFromYAML.at("config").front();
+
+    gRenderSettings.samplesPerPixel = std::get<long>(configList.at("samplesPerPixel"));
+    gRenderSettings.maxDepth = std::get<long>(configList.at("maxDepth"));
+    gRenderSettings.nthreads = std::get<long>(configList.at("nthreads"));
 }
 
-Camera SceneGenerator::buildCamera()
+Camera YAMLSceneRenderer::buildCamera()
 {
     Logger(LoggerDebug, "building camera from YAML parameters");
 
-    double verticalFOV = getBlockValue<double>("camera", "verticalFOV");
-    double aspectRatio = getBlockValue<double>("camera", "aspectRatio");
-    double focalLength = getBlockValue<double>("camera", "focalLength");
-    double aperture = getBlockValue<double>("camera", "aperture");
-    Double3 origin = getBlockValue<Double3>("camera", "origin");
-    Double3 target = getBlockValue<Double3>("camera", "target");
+    const YAMLList &cameraList = dataFromYAML.at("camera").front();
 
-    Point3 originC = point3(origin[0], origin[1], origin[2]);
-    Point3 targetC = point3(target[0], target[1], target[2]);
+    double verticalFOV = std::get<double>(cameraList.at("verticalFOV"));
+    double aspectRatio = std::get<double>(cameraList.at("aspectRatio"));
+    double focalLength = std::get<double>(cameraList.at("focalLength"));
+    double aperture = std::get<double>(cameraList.at("aperture"));
 
-    return makeCamera(verticalFOV, aspectRatio, focalLength, aperture, originC, targetC);
+    Point3 origin = std::get<Point3>(cameraList.at("origin"));
+    Point3 target = std::get<Point3>(cameraList.at("target"));
+
+    return makeCamera(verticalFOV, aspectRatio, focalLength, aperture, origin, target);
 }
 
 
-Point3 SceneGenerator::convertDouble3ToPoint3(const Double3 &theValue)
+void YAMLSceneRenderer::buildSolidTexture(const YAMLList &list)
 {
-    return point3(theValue.at(0), theValue.at(1), theValue.at(2));
+    std::string name = std::get<std::string>(list.at("name"));
+    Color3 textureColor = std::get<Color3>(list.at("color"));
+
+    textureMap[name] = makeSolidTexture(textureColor);
 }
 
 
-Texture *SceneGenerator::buildSolidTexture(const YAMLSubBlock &textureBlock)
+void YAMLSceneRenderer::buildLambertianMaterial(const YAMLList &list)
 {
-    Color3 textureColor = convertDouble3ToPoint3(std::get<Double3>(textureBlock.at("color")));
-
-    return makeSolidTexture(std::move(textureColor));
-}
-
-
-Material *SceneGenerator::buildLambertianMaterial(const YAMLSubBlock &materialBlock)
-{
-    const std::string &albedoTextureName = std::get<std::string>(materialBlock.at("texture"));
+    std::string name = std::get<std::string>(list.at("name"));
+    const std::string &textureName = std::get<std::string>(list.at("texture"));
 
     // Lookup texture.
-    Texture *albedoTexture = textureMap.at(albedoTextureName);
+    Texture *albedoTexture = textureMap.at(textureName);
 
-    return makeLambertian(albedoTexture);
+    materialMap[name] = makeLambertian(albedoTexture);
 }
 
 
-void SceneGenerator::buildTextureMap()
+void YAMLSceneRenderer::buildTextureMap()
 {
     Logger(LoggerDebug, "building texture map");
 
-    for (auto &[name, subblock] : dataFromYAML.at("textures"))
+    for (auto &textureList : dataFromYAML.at("textures"))
     {
-        const YAMLSubBlock &textureBlock = std::get<YAMLSubBlock>(subblock);
-        const std::string &textureType = std::get<std::string>(textureBlock.at("type"));
+        auto &textureType = std::get<std::string>(textureList.at("type"));
 
-        Logger(LoggerDebug, "adding texture: name: %s; type: %s", name.c_str(), textureType.c_str());
-
-        Texture *theTexture{nullptr};
+        Logger(LoggerDebug, "building texture of type: %s", textureType.c_str());
 
         if (textureType == "solid")
         {
-            theTexture = buildSolidTexture(textureBlock);
+            buildSolidTexture(textureList);
         }
         else
         {
             throw std::runtime_error("unsupported texture type " + textureType);
         }
-
-        textureMap[name] = theTexture;
     }
 }
 
 
-void SceneGenerator::buildMaterialMap()
+void YAMLSceneRenderer::buildMaterialMap()
 {
     Logger(LoggerDebug, "building material map");
 
-    // NB: require textures to already have been run.
-
-    for (auto &[name, subblock] : dataFromYAML.at("materials"))
+    // Run the texture map if not already run since required for materials:
+    if (textureMap.empty())
     {
-        const YAMLSubBlock &materialBlock = std::get<YAMLSubBlock>(subblock);
-        const std::string &materialType = std::get<std::string>(materialBlock.at("type"));
+        buildTextureMap();
+    }
 
-        Logger(LoggerDebug, "adding material: name: %s; type: %s", name.c_str(), materialType.c_str());
+    for (auto &materialList : dataFromYAML.at("materials"))
+    {
+        auto &materialType = std::get<std::string>(materialList.at("type"));
 
-        Material *theMaterial{nullptr};
+        Logger(LoggerDebug, "building material of type: %s", materialType.c_str());
 
         if (materialType == "lambertian")
         {
-            theMaterial = buildLambertianMaterial(materialBlock);
+            buildLambertianMaterial(materialList);
         }
         else
         {
             throw std::runtime_error("unsupported material type " + materialType);
         }
-
-        materialMap[name] = theMaterial;
     }
-}
-
-
-template <typename T> T SceneGenerator::getBlockValue(std::string blockName, std::string paramName) const
-{
-    const YAMLBlock &block = dataFromYAML.at(blockName);
-
-    const YAMLValue &value = std::get<YAMLValue>(block.at(paramName));
-
-    return std::get<T>(value);
 }

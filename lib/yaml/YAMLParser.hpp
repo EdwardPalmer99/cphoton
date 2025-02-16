@@ -14,15 +14,16 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <variant>
+#include <vector>
 
-using Double3 = std::array<double, 3>;
+extern "C"
+{
+#include "utility/Vector3.h"
+}
 
-using YAMLValue = std::variant<long, double, std::string, std::array<double, 3>>;
-using YAMLSubBlock = std::unordered_map<std::string, YAMLValue>;
-using YAMLBlock = std::unordered_map<std::string, std::variant<YAMLValue, YAMLSubBlock>>;
-
-using YAMLBlocks = std::unordered_map<std::string, YAMLBlock>;
-
+using YAMLValue = std::variant<long, double, std::string, Point3>;
+using YAMLList = std::unordered_map<std::string, YAMLValue>;
+using YAMLFile = std::unordered_map<std::string, std::vector<YAMLList>>;
 
 class YAMLParser
 {
@@ -30,33 +31,10 @@ public:
     ~YAMLParser();
     YAMLParser() = default;
 
-    static YAMLBlocks parse(const std::string &path)
+    static YAMLFile parse(const std::string &path)
     {
         YAMLParser instance;
         return instance.parseYAMLFile(path);
-    }
-
-    YAMLBlocks parseYAMLFile(const std::string &path);
-
-    static YAMLBlock &getBlock(YAMLBlocks &data, std::string blockName)
-    {
-        return data[blockName];
-    }
-
-    static YAMLSubBlock &getSubBlock(YAMLBlocks &data, std::string blockName, std::string subBlockName)
-    {
-        return std::get<YAMLSubBlock>(getBlock(data, blockName)[subBlockName]);
-    }
-
-    template <typename T> static T &getBlockValue(YAMLBlocks &data, std::string blockName, std::string paramName)
-    {
-        return std::get<T>(getBlock(data, blockName)[paramName]);
-    }
-
-    template <typename T>
-    static T &getSubBlockValue(YAMLBlocks &data, std::string blockName, std::string subBlockName, std::string paramName)
-    {
-        return std::get<T>(getSubBlock(data, blockName, subBlockName)[paramName]);
     }
 
 protected:
@@ -69,6 +47,8 @@ protected:
         Double3 // i.e. list of 3 doubles.
     };
 
+    YAMLFile parseYAMLFile(const std::string &path);
+
     int countIndent();
 
     CoreType classifyCoreType(const char *buffer) const;
@@ -79,9 +59,7 @@ protected:
     void skipLine();
     void skipOptionalCommentLine();
 
-    std::array<double, 3> parseDouble3(const char *buffer);
-
-    // TODO: - skip comments.
+    Point3 parseDouble3(const char *buffer);
 
     char peek();
 
@@ -90,9 +68,12 @@ protected:
     std::string parseKey();
 
     YAMLValue parseYAMLValue();
-    YAMLSubBlock parseYAMLSubBlock(int indentLevel);
 
-    YAMLBlock parseYAMLBlock(int indentLevel);
+    // Parse a YAML list (started by '-' character).
+    YAMLList parseYAMLList();
+
+    // Parse one or more YAML lists of key, values.
+    std::vector<YAMLList> parseYAMLLists();
 
 private:
     FILE *fp{nullptr};

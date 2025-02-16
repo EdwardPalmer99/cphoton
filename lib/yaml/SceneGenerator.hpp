@@ -1,5 +1,5 @@
 /**
- * @file SceneGenerator.hpp
+ * @file YAMLSceneRenderer.hpp
  * @author Edward Palmer
  * @date 2025-02-11
  *
@@ -21,35 +21,32 @@ extern "C"
 #include <unordered_map>
 
 
-class SceneGenerator
+class YAMLSceneRenderer
 {
 public:
-    SceneGenerator() = delete;
-    SceneGenerator(const std::string pathToYAML_);
+    YAMLSceneRenderer() = delete;
 
-    Scene *buildScene();
-
-    Camera buildCamera();
-
-    void configRenderer();
+    static void doRender(const std::string pathToYAML);
 
 protected:
+    YAMLSceneRenderer(const std::string pathToYAML_);
+
+    void configRenderer();
+    Scene *buildScene();
+    Camera buildCamera();
+
+
     void buildTextureMap();
     void buildMaterialMap();
 
-    static Point3 convertDouble3ToPoint3(const Double3 &theValue);
-
-    Texture *buildSolidTexture(const YAMLSubBlock &textureBlock);
-    Material *buildLambertianMaterial(const YAMLSubBlock &materialBlock);
-    // TODO: - implement primitive building methods for different primitive types.
+    void buildSolidTexture(const YAMLList &textureBlock);
+    void buildLambertianMaterial(const YAMLList &materialBlock);
 
 private:
-    template <typename T> T getBlockValue(std::string blockName, std::string paramName) const;
-
     // std::unordered_map<std::string, Primitive *> primitiveMap;
     std::unordered_map<std::string, Texture *> textureMap;
     std::unordered_map<std::string, Material *> materialMap;
 
     const std::string pathToYAML;
-    const YAMLBlocks dataFromYAML;
+    const YAMLFile dataFromYAML;
 };

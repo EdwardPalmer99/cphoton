@@ -24,18 +24,16 @@ static constexpr bool isNumber(char c)
     return (c >= '0' && c <= '9');
 }
 
-YAMLBlocks YAMLParser::parseYAMLFile(const std::string &path)
+YAMLFile YAMLParser::parseYAMLFile(const std::string &path)
 {
     fp = fopen(path.c_str(), "r");
     if (!fp) throw std::runtime_error("failed to open file: " + path);
 
-    YAMLBlocks parsedYAMLFile;
+    YAMLFile parsedYAMLFile;
 
     // Skip top of file.
     skipRequiredChar('-', 3);
     skipOptionalChar('\n'); // Skip optional newlines.
-
-    int indentLevel = 2;
 
     while (!isEOF())
     {
@@ -46,16 +44,13 @@ YAMLBlocks YAMLParser::parseYAMLFile(const std::string &path)
             continue; // Back to top.
         }
 
-        // Read name of subBlock group:
+        // Read name of lists group:
         std::string key = parseKey();
         skipRequiredChar(':');
         skipRequiredChar('\n');
 
-        Logger(LoggerDebug, "parsing block for key: %s", key.c_str());
-
-        YAMLBlock yamlBlock = parseYAMLBlock(indentLevel);
-
-        parsedYAMLFile[key] = std::move(yamlBlock);
+        Logger(LoggerDebug, "parsing lists for key: %s", key.c_str());
+        parsedYAMLFile[key] = parseYAMLLists();
     }
 
     // Cleanup:
@@ -90,14 +85,14 @@ void YAMLParser::skipOptionalCommentLine()
     }
 }
 
-std::array<double, 3> YAMLParser::parseDouble3(const char *buffer)
+Point3 YAMLParser::parseDouble3(const char *buffer)
 {
     char numBuffer[50];
     int iBuffer = 0;
     bool hasDot = false;
 
     int iDouble = 0;
-    std::array<double, 3> values;
+    double values[3];
 
     if (buffer[0] != '[')
     {
@@ -138,7 +133,7 @@ std::array<double, 3> YAMLParser::parseDouble3(const char *buffer)
         throw std::runtime_error("failed to read all double3 values");
     }
 
-    return values;
+    return point3(values[0], values[1], values[2]);
 }
 
 YAMLParser::CoreType YAMLParser::classifyCoreType(const char *buffer) const
@@ -228,28 +223,42 @@ YAMLValue YAMLParser::parseYAMLValue()
     }
 }
 
-YAMLSubBlock YAMLParser::parseYAMLSubBlock(int indentLevel)
+YAMLList YAMLParser::parseYAMLList()
 {
-    YAMLSubBlock subBlock;
+    const int kIndentLevel = 4; // Sublist indented by 4.
 
-    while (!isEOF() && countIndent() == indentLevel)
+    bool isFirstCall = true;
+
+    YAMLList subList;
+
+    while (!isEOF() && (isFirstCall || (!isFirstCall && (countIndent() == kIndentLevel))))
     {
-        skipRequiredChar(' ', indentLevel);
+        if (isFirstCall)
+        {
+            // Skip "- " characters at start of sublist:
+            isFirstCall = false;
+            skipRequiredChar('-');
+            skipRequiredChar(' ');
+        }
+        else
+        {
+            skipRequiredChar(' ', kIndentLevel);
+        }
 
         std::string key = parseKey();
-        Logger(LoggerDebug, "parsing subblock with key: %s", key.c_str());
+        Logger(LoggerDebug, "parsing list key: %s", key.c_str());
 
         skipRequiredChar(':');
         skipOptionalChar(' ');
 
         YAMLValue value = parseYAMLValue();
 
-        subBlock[key] = std::move(value);
+        subList[key] = std::move(value);
 
-        skipRequiredChar('\n'); // Skip newline.
+        skipRequiredChar('\n');
     }
 
-    return subBlock;
+    return subList;
 }
 
 bool YAMLParser::isEOF()
@@ -333,35 +342,53 @@ int YAMLParser::countIndent()
     return indent;
 }
 
-YAMLBlock YAMLParser::parseYAMLBlock(int indentLevel)
+
+std::vector<YAMLList> YAMLParser::parseYAMLLists()
 {
-    YAMLBlock block;
+    const int kIndentLevel = 2;
 
-    while (!isEOF() && countIndent() == indentLevel)
+    std::vector<YAMLList> lists;
+
+    bool hasSublists = false;
+    bool isFirstCall = true;
+
+    while (!isEOF() && countIndent() == kIndentLevel)
     {
-        skipRequiredChar(' ', indentLevel);
+        skipRequiredChar(' ', kIndentLevel);
 
-        std::string key = parseKey();
-        skipRequiredChar(':');
-        skipOptionalChar(' ');
-
-        if (peek() == '\n') // Further nesting!
+        if (isFirstCall)
         {
-            Logger(LoggerDebug, "parsing subblock for key: %s", key.c_str());
+            isFirstCall = false;
+            hasSublists = (peek() == '-');
 
-            skipRequiredChar('\n');
-            YAMLSubBlock value = parseYAMLSubBlock(indentLevel + 2);
-            block[key] = std::move(value);
+            // Expect there to be no sublists: just a single list of key-values.
+            if (!hasSublists)
+            {
+                lists.push_back(YAMLList()); // Push-back empty list.
+            }
+        }
+
+
+        if (hasSublists)
+        {
+            Logger(LoggerDebug, "parsing sublist");
+            lists.push_back(parseYAMLList());
         }
         else
         {
-            Logger(LoggerDebug, "parsing value for key: %s", key.c_str());
+            std::string key = parseKey();
+            Logger(LoggerDebug, "parsing key: %s", key.c_str());
+
+            skipRequiredChar(':');
+            skipOptionalChar(' ');
 
             YAMLValue value = parseYAMLValue();
-            block[key] = std::move(value);
+
+            lists[0][key] = std::move(value);
+
             skipRequiredChar('\n');
         }
     }
 
-    return block;
+    return lists;
 }
