@@ -21,10 +21,10 @@ typedef enum
     LoggerCritical
 } LogLevel;
 
-// Writes log message to stdout in format: "YYYY-MM-DD HH:MM:SS logLevel [func] [file:line] message"
-void PrintLogMessage(LogLevel level, const char *func, const char *file, unsigned int line, const char *format, ...);
+// Writes log message to stdout in format: "YYYY-MM-DD HH:MM:SS.000000 [logLevel] [file:line] message"
+void PrintLogMessage(LogLevel level, const char *file, unsigned int line, const char *format, ...);
 
 #define Logger(logLevel, ...)                                                                                          \
     {                                                                                                                  \
-        PrintLogMessage((logLevel), __func__, __FILE__, __LINE__, __VA_ARGS__);                                        \
+        PrintLogMessage((logLevel), __FILE__, __LINE__, __VA_ARGS__);                                                  \
     }

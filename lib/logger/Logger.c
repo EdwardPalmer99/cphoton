@@ -15,17 +15,17 @@
 #include <time.h>
 
 
-void PrintLogMessage(LogLevel level, const char *func, const char *file, unsigned int line, const char *format, ...)
+void PrintLogMessage(LogLevel level, const char *file, unsigned int line, const char *format, ...)
 {
-    if (!func || !file || (level < LoggerDebug || level > LoggerCritical))
+    if (!file || (level < LoggerDebug || level > LoggerCritical))
     {
         fprintf(stderr, "error: invalid arguments passed to %s\n", __func__);
         fflush(stdout);
         abort();
     }
 
-    static char *nameForLevel[] = {"\033[37mdebug\033[0m", "\033[32minfo\033[0m", "\033[33mwarn\033[0m",
-                                   "\033[31merror\033[0m", "\033[35mcritical\033[0m"};
+    static char *nameForLevel[] = {"\033[37mDEBUG\033[0m", "\033[32mINFO\033[0m", "\033[33mWARN\033[0m",
+                                   "\033[31mERROR\033[0m", "\033[35mCRITICAL\033[0m"};
 
     const int kBufferSize = 256;
 
@@ -51,5 +51,5 @@ void PrintLogMessage(LogLevel level, const char *func, const char *file, unsigne
     char timeBuffer[20];
     strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M:%S", gmtNow);
 
-    fprintf(stdout, "%s %s [%s] [%s:%u] %s\n", timeBuffer, nameForLevel[level], func, file, line, buffer);
+    fprintf(stdout, "%s %s [%s:%u] %s\n", timeBuffer, nameForLevel[level], file, line, buffer);
 }

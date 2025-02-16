@@ -9,12 +9,12 @@
 
 #include "SceneGenerator.hpp"
 #include <cstring>
-#include <iostream>
 #include <stdexcept>
 
 extern "C"
 {
 #include "engine/RenderSettings.h"
+#include "logger/Logger.h"
 }
 
 SceneGenerator::SceneGenerator(const std::string pathToYAML_)
@@ -25,21 +25,18 @@ SceneGenerator::SceneGenerator(const std::string pathToYAML_)
 Scene *SceneGenerator::buildScene()
 {
     buildTextureMap();
-    std::cout << "done texture map" << std::endl;
-
     buildMaterialMap();
-    std::cout << "done material map" << std::endl;
 
     Scene *scene = makeScene();
 
     // Create the primitives here.
     for (auto &[name, subblock] : dataFromYAML.at("primitives"))
     {
-        std::cout << "building primitive named: " << name << std::endl;
-
         const YAMLSubBlock &primitiveBlock = std::get<YAMLSubBlock>(subblock);
 
         const std::string &primitiveType = std::get<std::string>(primitiveBlock.at("type"));
+
+        Logger(LoggerDebug, "adding primitive: name: %s; type: %s", name.c_str(), primitiveType.c_str());
 
         Primitive *primitive{nullptr};
 
@@ -72,8 +69,9 @@ Scene *SceneGenerator::buildScene()
 
 void SceneGenerator::configRenderer()
 {
+    Logger(LoggerDebug, "configuring renderer from YAML parameters");
+
     gRenderSettings.pixelsWide = getBlockValue<long>("output", "width");
-    std::cout << "got pixels wide" << std::endl;
     gRenderSettings.pixelsHigh = getBlockValue<long>("output", "height");
 
     // TODO: - need to copy.
@@ -86,6 +84,8 @@ void SceneGenerator::configRenderer()
 
 Camera SceneGenerator::buildCamera()
 {
+    Logger(LoggerDebug, "building camera from YAML parameters");
+
     double verticalFOV = getBlockValue<double>("camera", "verticalFOV");
     double aspectRatio = getBlockValue<double>("camera", "aspectRatio");
     double focalLength = getBlockValue<double>("camera", "focalLength");
@@ -117,11 +117,9 @@ Texture *SceneGenerator::buildSolidTexture(const YAMLSubBlock &textureBlock)
 Material *SceneGenerator::buildLambertianMaterial(const YAMLSubBlock &materialBlock)
 {
     const std::string &albedoTextureName = std::get<std::string>(materialBlock.at("texture"));
-    std::cout << "got texture name " << albedoTextureName << std::endl;
 
     // Lookup texture.
     Texture *albedoTexture = textureMap.at(albedoTextureName);
-    std::cout << "got texture from textureMap" << std::endl;
 
     return makeLambertian(albedoTexture);
 }
@@ -129,11 +127,14 @@ Material *SceneGenerator::buildLambertianMaterial(const YAMLSubBlock &materialBl
 
 void SceneGenerator::buildTextureMap()
 {
+    Logger(LoggerDebug, "building texture map");
+
     for (auto &[name, subblock] : dataFromYAML.at("textures"))
     {
         const YAMLSubBlock &textureBlock = std::get<YAMLSubBlock>(subblock);
-
         const std::string &textureType = std::get<std::string>(textureBlock.at("type"));
+
+        Logger(LoggerDebug, "adding texture: name: %s; type: %s", name.c_str(), textureType.c_str());
 
         Texture *theTexture{nullptr};
 
@@ -153,16 +154,16 @@ void SceneGenerator::buildTextureMap()
 
 void SceneGenerator::buildMaterialMap()
 {
+    Logger(LoggerDebug, "building material map");
+
     // NB: require textures to already have been run.
 
     for (auto &[name, subblock] : dataFromYAML.at("materials"))
     {
-        std::cout << "got material subblock with name " << name << std::endl;
-
         const YAMLSubBlock &materialBlock = std::get<YAMLSubBlock>(subblock);
-
         const std::string &materialType = std::get<std::string>(materialBlock.at("type"));
-        std::cout << "got material type " << materialType << std::endl;
+
+        Logger(LoggerDebug, "adding material: name: %s; type: %s", name.c_str(), materialType.c_str());
 
         Material *theMaterial{nullptr};
 

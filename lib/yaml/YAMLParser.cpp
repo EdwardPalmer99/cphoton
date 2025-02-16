@@ -10,10 +10,14 @@
 #include "YAMLParser.hpp"
 #include <cstdio>
 #include <cstdlib>
-#include <iostream>
 #include <stack>
 #include <stdexcept>
 #include <unordered_map>
+
+extern "C"
+{
+#include "logger/Logger.h"
+}
 
 static constexpr bool isNumber(char c)
 {
@@ -47,7 +51,7 @@ YAMLBlocks YAMLParser::parseYAMLFile(const std::string &path)
         skipRequiredChar(':');
         skipRequiredChar('\n');
 
-        std::cout << "parsing block for key: " << key << std::endl;
+        Logger(LoggerDebug, "parsing block for key: %s", key.c_str());
 
         YAMLBlock yamlBlock = parseYAMLBlock(indentLevel);
 
@@ -206,19 +210,17 @@ YAMLValue YAMLParser::parseYAMLValue()
 
     buffer[iBuffer] = '\0';
 
+    Logger(LoggerDebug, "parsing YAML value: %s", buffer);
+
     switch (classifyCoreType(buffer))
     {
         case String:
-            std::cout << "parsed string: " << std::string(buffer) << std::endl;
             return YAMLValue(std::string(buffer));
         case Integer:
-            std::cout << "parsed integer: " << (long)atoi(buffer) << std::endl;
             return YAMLValue((long)atoi(buffer));
         case Double:
-            std::cout << "parsed float: " << (double)atof(buffer) << std::endl;
             return YAMLValue((double)atof(buffer));
         case Double3:
-            std::cout << "parsed Double3" << std::endl;
             return YAMLValue(parseDouble3(buffer));
         case Invalid:
         default:
@@ -235,7 +237,8 @@ YAMLSubBlock YAMLParser::parseYAMLSubBlock(int indentLevel)
         skipRequiredChar(' ', indentLevel);
 
         std::string key = parseKey();
-        std::cout << "parsing subblock key: " << key << std::endl;
+        Logger(LoggerDebug, "parsing subblock with key: %s", key.c_str());
+
         skipRequiredChar(':');
         skipOptionalChar(' ');
 
@@ -344,7 +347,7 @@ YAMLBlock YAMLParser::parseYAMLBlock(int indentLevel)
 
         if (peek() == '\n') // Further nesting!
         {
-            std::cout << "parsing subblock for key: " << key << std::endl;
+            Logger(LoggerDebug, "parsing subblock for key: %s", key.c_str());
 
             skipRequiredChar('\n');
             YAMLSubBlock value = parseYAMLSubBlock(indentLevel + 2);
@@ -352,7 +355,7 @@ YAMLBlock YAMLParser::parseYAMLBlock(int indentLevel)
         }
         else
         {
-            std::cout << "parsing value for key: " << key << std::endl;
+            Logger(LoggerDebug, "parsing value for key: %s", key.c_str());
 
             YAMLValue value = parseYAMLValue();
             block[key] = std::move(value);
