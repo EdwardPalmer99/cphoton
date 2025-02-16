@@ -19,19 +19,17 @@ camera:
   target:       [0.2, 0.6, 1.0]
 
 textures:
-  gray:
+  - name: gray
     type: solid
     color: [0.20, 0.26, 0.35]
 
 materials:
-  metalSolid:
+  - name: metalSolid
     type: lambertian
     texture: gray
 
-# TODO: - define all primitive types here and then we can reuse them in a scene.
 primitives:
-  firstPrimitive:
-    type: plane
+  - type: plane
     pNought: [0, 0, 0]
     normal: [0, 1, 0]
     material: metalSolid

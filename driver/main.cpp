@@ -1,8 +1,11 @@
-#include "SceneGenerator.hpp"
+#include "yaml/SceneGenerator.hpp"
 #include <cstdio>
 
 static void printUsage(const char *programName);
 
+/*
+ * Entry-point parsing YAML files with file format information:
+ */
 int main(int argc, const char *argv[])
 {
     if (argc != 2 || (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0))

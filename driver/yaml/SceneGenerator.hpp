@@ -13,10 +13,10 @@ extern "C"
 #include "engine/Scene.h"
 }
 
-#include "YAMLParser.hpp"
 #include "engine/Material.h"
 #include "engine/Primitive.h"
 #include "engine/Texture.h"
+#include "yaml/YAMLParser.hpp"
 #include <string>
 #include <unordered_map>
 

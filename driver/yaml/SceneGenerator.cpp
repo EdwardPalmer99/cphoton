@@ -7,7 +7,7 @@
  *
  */
 
-#include "SceneGenerator.hpp"
+#include "yaml/SceneGenerator.hpp"
 #include <cstring>
 #include <stdexcept>
 
