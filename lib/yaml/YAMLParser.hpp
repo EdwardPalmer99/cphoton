@@ -28,6 +28,13 @@ class YAMLParser
 {
 public:
     ~YAMLParser();
+    YAMLParser() = default;
+
+    static YAMLBlocks parse(const std::string &path)
+    {
+        YAMLParser instance;
+        return instance.parseYAMLFile(path);
+    }
 
     YAMLBlocks parseYAMLFile(const std::string &path);
 

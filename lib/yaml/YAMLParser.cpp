@@ -209,12 +209,16 @@ YAMLValue YAMLParser::parseYAMLValue()
     switch (classifyCoreType(buffer))
     {
         case String:
+            std::cout << "parsed string: " << std::string(buffer) << std::endl;
             return YAMLValue(std::string(buffer));
         case Integer:
+            std::cout << "parsed integer: " << (long)atoi(buffer) << std::endl;
             return YAMLValue((long)atoi(buffer));
         case Double:
-            return YAMLValue((long)atof(buffer));
+            std::cout << "parsed float: " << (double)atof(buffer) << std::endl;
+            return YAMLValue((double)atof(buffer));
         case Double3:
+            std::cout << "parsed Double3" << std::endl;
             return YAMLValue(parseDouble3(buffer));
         case Invalid:
         default:
