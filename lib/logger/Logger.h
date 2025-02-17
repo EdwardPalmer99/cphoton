@@ -14,17 +14,21 @@
 
 typedef enum
 {
-    LoggerDebug = 0,
-    LoggerInfo,
-    LoggerWarn,
-    LoggerError,
-    LoggerCritical
+    LogLevelDebug = 0,
+    LogLevelInfo,
+    LogLevelWarning,
+    LogLevelError,
+    LogLevelFailed
 } LogLevel;
 
-// Writes log message to stdout in format: "YYYY-MM-DD HH:MM:SS.000000 [logLevel] [file:line] message"
-void PrintLogMessage(LogLevel level, const char *file, unsigned int line, const char *format, ...);
 
-#define Logger(logLevel, ...)                                                                                          \
-    {                                                                                                                  \
-        PrintLogMessage((logLevel), __FILE__, __LINE__, __VA_ARGS__);                                                  \
-    }
+void SetThresholdLogLevel(LogLevel level);
+
+// Writes log message to stdout in format: "[logLevel]: message"
+void Logger(LogLevel level, const char *format, ...);
+
+#define LogDebug(...) Logger(LogLevelDebug, __VA_ARGS__)
+#define LogInfo(...) Logger(LogLevelInfo, __VA_ARGS__)
+#define LogWarning(...) Logger(LogLevelWarning __VA_ARGS__)
+#define LogError(...) Logger(LogLevelError, __VA_ARGS__)
+#define LogFailed(...) Logger(LogLevelFailed __VA_ARGS__)

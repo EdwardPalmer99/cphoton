@@ -19,11 +19,6 @@ extern "C"
 #include "logger/Logger.h"
 }
 
-static constexpr bool isNumber(char c)
-{
-    return (c >= '0' && c <= '9');
-}
-
 YAMLFile YAMLParser::parse(const std::string &path)
 {
     YAMLParser instance;
@@ -55,7 +50,6 @@ YAMLFile YAMLParser::parseYAMLFile(const std::string &path)
         skipRequiredChar(':');
         skipRequiredChar('\n');
 
-        Logger(LoggerDebug, "parsing lists for key: %s", key.c_str());
         parsedYAMLFile[key] = parseYAMLLists();
     }
 
@@ -93,52 +87,69 @@ void YAMLParser::skipOptionalCommentLine()
 
 Point3 YAMLParser::parseDouble3(const char *buffer)
 {
-    char numBuffer[50];
-    int iBuffer = 0;
-    bool hasDot = false;
-
-    int iDouble = 0;
-    double values[3];
-
-    if (buffer[0] != '[')
+    if (!buffer)
     {
-        throw std::runtime_error("expected '[' for double3 type");
+        LogError("Empty buffer for Point.");
+        return point3(0, 0, 0);
     }
 
-    for (char *c = (char *)buffer + 1; *c; ++c)
-    {
-        if (isNumber(*c) || (!hasDot && *c == '.'))
-        {
-            if (*c == '.') hasDot = true;
-            numBuffer[iBuffer++] = *c;
-        }
-        else if (*c == ' ')
-        {
-            continue;
-        }
-        else if (*c == ',' && iDouble < 3 && iBuffer != 0)
-        {
-            numBuffer[iBuffer] = '\0';
-            values[iDouble++] = atof(numBuffer);
+    char numBuffer[50];
 
-            iBuffer = 0; // Reset.
+    int iBuffer = 0;
+    int iDouble = 0;
+
+    double values[] = {0.0, 0.0, 0.0};
+
+    bool hasOpeningClosingBrackets = (buffer[0] == '[' && buffer[strlen(buffer) - 1] == ']');
+    if (!hasOpeningClosingBrackets)
+    {
+        LogError("Invalid format for point type: missing opening/closing brackets.");
+        return point3(0, 0, 0); // Empty point.
+    }
+
+    bool hasDot = false;
+
+    for (char *c = (char *)buffer + 1; *c; ++c) // Skip opening bracket.
+    {
+        bool isDigit = (*c >= '0' && *c <= '9');
+        bool isDot = (*c == '.');
+        bool isMinus = (*c == '-');
+
+        if (iBuffer == 0)
+        {
             hasDot = false;
         }
-        else if (*c == ']')
+
+        if (isDigit || (!hasDot && isDot) || (iBuffer == 0 && isMinus))
         {
-            break;
+            if (isDot) hasDot = true;
+
+            numBuffer[iBuffer++] = *c;
+        }
+        else if (*c == ',' || *c == ']') // Separator.
+        {
+            numBuffer[iBuffer] = '\0';
+
+            values[iDouble++] = atof(numBuffer);
+
+            if (iDouble > 2) break;
+
+            // Do reset.
+            iBuffer = 0;
         }
         else
         {
-            throw std::runtime_error("unexpected character when parsing double3 type");
+            LogError("Unexpected number character: '%c'.", *c);
+            break;
         }
     }
 
-    if (iDouble != 2)
+    if (iDouble != 3)
     {
-        throw std::runtime_error("failed to read all double3 values");
+        LogError("LogLevelFailed to parse all point values.");
     }
 
+    LogDebug("Parsed point: (%.2lf, %.2lf, %.2lf)", values[0], values[1], values[2]);
     return point3(values[0], values[1], values[2]);
 }
 
@@ -182,18 +193,24 @@ std::string YAMLParser::parseKey()
     {
         char c = getc(fp);
 
-        if (!isalpha(c))
+        if (isalnum(c) || c == '_' || c == '-' || c == '.')
         {
-            throw std::runtime_error("encountered non-alpha character while parsing key: " + std::to_string(c));
+            buffer[iBuffer++] = c;
         }
-
-        buffer[iBuffer++] = c;
+        else
+        {
+            throw std::runtime_error("encounted invalid character while parsing key");
+        }
     }
 
     buffer[iBuffer] = '\0';
 
-    if (iBuffer < 1) throw std::runtime_error("empty key");
+    if (iBuffer < 1)
+    {
+        throw std::invalid_argument("empty key");
+    }
 
+    LogDebug("Parsed key: '%s'.", buffer);
     return std::string(buffer);
 }
 
@@ -206,21 +223,34 @@ YAMLValue YAMLParser::parseYAMLValue()
 
     while (!isEOF() && peek() != '\n')
     {
-        buffer[iBuffer++] = getc(fp);
+        char c = getc(fp);
+
+        if (isspace(c)) // Skip spaces.
+        {
+            continue;
+        }
+
+        buffer[iBuffer++] = c;
+    }
+
+    if (iBuffer < 1)
+    {
+        throw std::runtime_error("empty value");
     }
 
     buffer[iBuffer] = '\0';
 
-    Logger(LoggerDebug, "parsing YAML value: %s", buffer);
-
     switch (classifyCoreType(buffer))
     {
         case String:
+            LogDebug("Parsed string value: %s", buffer);
             return YAMLValue(std::string(buffer));
         case Integer:
+            LogDebug("Parsed integer value: %d", atoi(buffer));
             return YAMLValue((long)atoi(buffer));
         case Double:
-            return YAMLValue((double)atof(buffer));
+            LogDebug("Parsed float value: %.2lf", atof(buffer));
+            return YAMLValue(atof(buffer));
         case Double3:
             return YAMLValue(parseDouble3(buffer));
         case Invalid:
@@ -252,7 +282,6 @@ YAMLList YAMLParser::parseYAMLList()
         }
 
         std::string key = parseKey();
-        Logger(LoggerDebug, "parsing list key: %s", key.c_str());
 
         skipRequiredChar(':');
         skipOptionalChar(' ');
@@ -377,13 +406,11 @@ std::vector<YAMLList> YAMLParser::parseYAMLLists()
 
         if (hasSublists)
         {
-            Logger(LoggerDebug, "parsing sublist");
             lists.push_back(parseYAMLList());
         }
         else
         {
             std::string key = parseKey();
-            Logger(LoggerDebug, "parsing key: %s", key.c_str());
 
             skipRequiredChar(':');
             skipOptionalChar(' ');

@@ -38,9 +38,7 @@ PPMImage *renderScene(Scene *scene, Camera *camera)
 
     RenderPixelArgs args = {.row = 0, .col = 0, .camera = camera, .objects = scene->sceneNode, .image = image};
 
-    Logger(LoggerInfo, "Render settings: width=%u, height=%u, samplesPerPixel=%u, maxDepth=%u",
-           gRenderSettings.pixelsWide, gRenderSettings.pixelsHigh, gRenderSettings.samplesPerPixel,
-           gRenderSettings.maxDepth);
+    LogInfo("Rendering...");
 
     for (int iRow = 0; iRow < image->height; ++iRow)
     {
@@ -54,7 +52,7 @@ PPMImage *renderScene(Scene *scene, Camera *camera)
     }
 
     executeTasks(threadPool);
-    Logger(LoggerInfo, "Render completed");
+    LogInfo("Render completed.");
 
     deallocThreadPool(threadPool);
     return image;

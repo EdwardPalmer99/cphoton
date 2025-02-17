@@ -94,7 +94,7 @@ void executeTasks(ThreadPool *threadPool)
 {
     if (!threadPool || !threadPool->base || threadPool->nthreads < 1)
     {
-        Logger(LoggerCritical, "Invalid arguments");
+        Logger(LogLevelFailed, "Invalid arguments");
         abort();
     }
 
@@ -105,8 +105,6 @@ void executeTasks(ThreadPool *threadPool)
 
     pthread_mutex_t mutex;
     pthread_mutex_init(&mutex, NULL);
-
-    Logger(LoggerInfo, "Entering thread pool (%u threads)", threadPool->nthreads);
 
     for (int ithread = 0; ithread < threadPool->nthreads; ++ithread)
     {
@@ -122,8 +120,6 @@ void executeTasks(ThreadPool *threadPool)
     {
         pthread_join(threadPool->threads[ithread], NULL);
     }
-
-    Logger(LoggerInfo, "Leaving thread pool");
 
     pthread_mutex_destroy(&mutex);
 
