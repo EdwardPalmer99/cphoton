@@ -39,14 +39,15 @@ private:
     void buildPlanePrimitive(const YAMLList &list, Primitive *&primitive);
     void buildSpherePrimitive(const YAMLList &list, Primitive *&primitive);
     void buildCubePrimitive(const YAMLList &list, Primitive *&primitive);
-    // void buildDiscPrimitive(const YAMLList &list, Primitive *&primitive);
-    // void buildConePrimitive(const YAMLList &list, Primitive *&primitive);
-    // void buildTrianglePrimitive(const YAMLList &list, Primitive *&primitive);
-    // void buildCylinderPrimitive(const YAMLList &list, Primitive *&primitive);
+    void buildDiscPrimitive(const YAMLList &list, Primitive *&primitive);
+    void buildConePrimitive(const YAMLList &list, Primitive *&primitive);
+    void buildTrianglePrimitive(const YAMLList &list, Primitive *&primitive);
+    void buildCylinderPrimitive(const YAMLList &list, Primitive *&primitive);
 
     void buildTextureMap();
     void buildMaterialMap();
 
+    // TODO: - add image texture.
     // TODO: - extract texture map stuff into separate class.
     void buildSolidTexture(const YAMLList &textureBlock);
     void buildCheckerTexture(const YAMLList &textureBlock);
@@ -54,8 +55,8 @@ private:
     // TODO: - extract material stuff into separate class.
     void buildMetalMaterial(const YAMLList &materialBlock);
     void buildLambertianMaterial(const YAMLList &materialBlock);
-    // void buildDielectricMaterial(const YAMLList &materialBlock);
-    // void buildEmitterMaterial(const YAMLList &materialBlock);
+    void buildDielectricMaterial(const YAMLList &materialBlock);
+    void buildEmitterMaterial(const YAMLList &materialBlock);
 
     std::unordered_map<std::string, Texture *> textureMap;
     std::unordered_map<std::string, Material *> materialMap;

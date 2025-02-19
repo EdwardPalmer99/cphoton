@@ -73,22 +73,22 @@ Scene *YAMLSceneRenderer::buildScene()
         {
             buildCubePrimitive(list, primitive);
         }
-        // else if (type == "disc")
-        // {
-        //     buildDiscPrimitive(list, primitive);
-        // }
-        // else if (type == "cylinder")
-        // {
-        //     buildCylinderPrimitive(list, primitive);
-        // }
-        // else if (type == "cone")
-        // {
-        //     buildConePrimitive(list, primitive);
-        // }
-        // else if (type == triangle)
-        // {
-        //     buildTrianglePrimitive(list, primitive);
-        // }
+        else if (type == "disc")
+        {
+            buildDiscPrimitive(list, primitive);
+        }
+        else if (type == "cylinder")
+        {
+            buildCylinderPrimitive(list, primitive);
+        }
+        else if (type == "cone")
+        {
+            buildConePrimitive(list, primitive);
+        }
+        else if (type == "triangle")
+        {
+            buildTrianglePrimitive(list, primitive);
+        }
         else
         {
             throw std::runtime_error("unsupported primitive type: " + type);
@@ -149,6 +149,54 @@ void YAMLSceneRenderer::buildCubePrimitive(const YAMLList &list, Primitive *&pri
     primitive = makeCube(center, rotation, length, materialMap.at(materialName));
 }
 
+
+void YAMLSceneRenderer::buildDiscPrimitive(const YAMLList &list, Primitive *&primitive)
+{
+    auto center = std::get<Point3>(list.at("center"));
+    auto normal = std::get<Vector3>(list.at("normal"));
+    auto radius = std::get<double>(list.at("radius"));
+
+    auto &materialName = std::get<std::string>(list.at("material"));
+
+    primitive = makeDisc(center, normal, radius, materialMap.at(materialName));
+}
+
+
+void YAMLSceneRenderer::buildCylinderPrimitive(const YAMLList &list, Primitive *&primitive)
+{
+    auto center = std::get<Point3>(list.at("center"));
+    auto rotationAngle = std::get<Vector3>(list.at("rotation"));
+    auto radius = std::get<double>(list.at("radius"));
+    auto height = std::get<double>(list.at("height"));
+
+    auto &materialName = std::get<std::string>(list.at("material"));
+
+    primitive = makeCylinder(center, rotationAngle, radius, height, materialMap.at(materialName));
+}
+
+
+void YAMLSceneRenderer::buildConePrimitive(const YAMLList &list, Primitive *&primitive)
+{
+    auto center = std::get<Point3>(list.at("center"));
+    auto rotationAngle = std::get<Vector3>(list.at("rotationAngle"));
+    auto height = std::get<double>(list.at("height"));
+
+    auto &materialName = std::get<std::string>(list.at("material"));
+
+    primitive = makeCone(center, rotationAngle, height, materialMap.at(materialName));
+}
+
+
+void YAMLSceneRenderer::buildTrianglePrimitive(const YAMLList &list, Primitive *&primitive)
+{
+    auto p0 = std::get<Point3>(list.at("p0"));
+    auto p1 = std::get<Point3>(list.at("p1"));
+    auto p2 = std::get<Point3>(list.at("p2"));
+
+    auto &materialName = std::get<std::string>(list.at("material"));
+
+    primitive = makeTriangle(p0, p1, p2, materialMap.at(materialName));
+}
 
 void YAMLSceneRenderer::configRenderer()
 {
@@ -222,6 +270,24 @@ void YAMLSceneRenderer::buildCheckerTexture(const YAMLList &list)
 }
 
 
+void YAMLSceneRenderer::buildDielectricMaterial(const YAMLList &list)
+{
+    std::string name = std::get<std::string>(list.at("name"));
+    double indexOfRefraction = std::get<double>(list.at("indexOfRefraction"));
+
+    materialMap[name] = makeDielectric(indexOfRefraction);
+}
+
+
+void YAMLSceneRenderer::buildEmitterMaterial(const YAMLList &list)
+{
+    std::string name = std::get<std::string>(list.at("name"));
+    Color3 color = std::get<Color3>(list.at("color"));
+
+    materialMap[name] = makeEmitter(color);
+}
+
+
 void YAMLSceneRenderer::buildLambertianMaterial(const YAMLList &list)
 {
     std::string name = std::get<std::string>(list.at("name"));
@@ -284,11 +350,19 @@ void YAMLSceneRenderer::buildMaterialMap()
 
         if (materialType == "lambertian")
         {
-            buildLambertianMaterial(materialList);
+            buildLambertianMaterial(materialList); // TODO: - create map of names to function pointers with std::bind.
         }
         else if (materialType == "metal")
         {
             buildMetalMaterial(materialList);
+        }
+        else if (materialType == "dielectric")
+        {
+            buildDielectricMaterial(materialList);
+        }
+        else if (materialType == "emitter")
+        {
+            buildEmitterMaterial(materialList);
         }
         else
         {

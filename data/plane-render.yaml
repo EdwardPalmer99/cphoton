@@ -2,8 +2,8 @@
 
 output:
   name: simple-render.ppm
-  width: 800
-  height: 800
+  width: 200
+  height: 200
 
 config:
   samplesPerPixel: 100
@@ -31,9 +31,14 @@ materials:
     albedo: bright
     fuzziness: 0.0
   - name: graySurface
-    type: metal
-    albedo: dark
-    fuzziness: 0.0
+    type: lambertian
+    texture: dark
+  - name: emitter
+    type: emitter
+    color: [0.1, 0.3, 0.2]
+  - name: glass
+    type: dielectric
+    indexOfRefraction: 1.52
 
 primitives:
   - type: sphere
@@ -52,11 +57,12 @@ primitives:
     center: [1.5, 0.5, 1.5]
     radius: 0.5
     material: brightMaterial
-  - type: cube
+  - type: cylinder
     center: [0, 0.5, 0]
     rotation: [0, 0, 0]
-    length: 1.0
-    material: brightMaterial
+    radius: 0.5
+    height: 1.0
+    material: glass
   - type: plane 
     p0: [0, 0, 0]
     normal: [0, 1, 0]
