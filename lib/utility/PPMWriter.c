@@ -7,6 +7,7 @@
 
 #include "utility/PPMWriter.h"
 #include "logger/Logger.h"
+#include "utility/Utility.h"
 #include <stdint.h>
 
 #define MAX_BYTE 255
@@ -188,7 +189,7 @@ bool writeBinary16BitPPMImage(PPMImage *image, const char *fpath)
     FILE *fp = fopen(fpath, "wb");
     if (!fp)
     {
-        Logger(LoggerError, "Could not write to file '%s'", fpath);
+        Logger(LogLevelError, "Could not write to file '%s'", fpath);
         return false;
     }
 

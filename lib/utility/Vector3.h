@@ -8,7 +8,6 @@
 #ifndef Vector3_h
 #define Vector3_h
 
-#include "utility/Utility.h"
 #include <math.h>
 #include <stdbool.h>
 

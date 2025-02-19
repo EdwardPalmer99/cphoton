@@ -6,6 +6,7 @@
 //
 
 #include "engine/Texture.h"
+#include "utility/Utility.h"
 
 static inline Texture *makeEmptyTexture(void);
 

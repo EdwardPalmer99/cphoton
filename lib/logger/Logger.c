@@ -14,18 +14,19 @@
 #include <stdlib.h>
 #include <time.h>
 
+static LogLevel gThresholdLogLevel = LogLevelInfo;
 
-void PrintLogMessage(LogLevel level, const char *func, const char *file, unsigned int line, const char *format, ...)
+void SetThresholdLogLevel(LogLevel newThresholdLevel)
 {
-    if (!func || !file || (level < LoggerDebug || level > LoggerCritical))
-    {
-        fprintf(stderr, "error: invalid arguments passed to %s\n", __func__);
-        fflush(stdout);
-        abort();
-    }
+    gThresholdLogLevel = newThresholdLevel;
+}
 
-    static char *nameForLevel[] = {"\033[37mdebug\033[0m", "\033[32minfo\033[0m", "\033[33mwarn\033[0m",
-                                   "\033[31merror\033[0m", "\033[35mcritical\033[0m"};
+void Logger(LogLevel level, const char *format, ...)
+{
+    if (level < gThresholdLogLevel) return;
+
+    static char *nameForLevel[] = {"\033[33mDEBUG:\033[0m", "\033[32mINFO:\033[0m", "\033[35mWARNING:\033[0m",
+                                   "\033[31mERROR:\033[0m", "\033[31mFAILED:\033[0m"};
 
     const int kBufferSize = 256;
 
@@ -44,12 +45,5 @@ void PrintLogMessage(LogLevel level, const char *func, const char *file, unsigne
         abort();
     }
 
-    // Get current time:
-    time_t now = time(NULL);
-    struct tm *gmtNow = gmtime(&now);
-
-    char timeBuffer[20];
-    strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M:%S", gmtNow);
-
-    fprintf(stdout, "%s %s [%s] [%s:%u] %s\n", timeBuffer, nameForLevel[level], func, file, line, buffer);
+    fprintf(stdout, "%s %s\n", nameForLevel[level], buffer);
 }

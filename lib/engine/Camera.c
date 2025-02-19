@@ -6,6 +6,7 @@
 //
 
 #include "engine/Camera.h"
+#include "utility/Utility.h"
 
 Camera makeCamera(double verticalFOV, double aspectRatio, double focalLength, double aperture, Point3 origin,
                   Point3 target)

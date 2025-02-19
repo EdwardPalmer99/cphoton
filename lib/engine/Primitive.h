@@ -12,7 +12,6 @@
 #include "engine/Material.h"
 #include "engine/Ray.h"
 #include "models/Fractals3D.h"
-#include "utility/Matrix3.h"
 #include "utility/Vector3.h"
 #include <math.h>
 #include <stdbool.h>

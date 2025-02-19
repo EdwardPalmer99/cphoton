@@ -140,7 +140,7 @@ static void pushCube(CubeStack *stack, MengerCube *cube)
         }
         else
         {
-            fprintf(stderr, "Error: could not add cube to stack.\n");
+            fprintf(stderr, "LogLevelError: could not add cube to stack.\n");
         }
     }
 
@@ -148,7 +148,10 @@ static void pushCube(CubeStack *stack, MengerCube *cube)
 }
 
 
-static MengerCube popCube(CubeStack *stack) { return stack->cubes[--stack->ncubes]; }
+static MengerCube popCube(CubeStack *stack)
+{
+    return stack->cubes[--stack->ncubes];
+}
 
 
 /// Subdivides a parent cube into 20 children cubes. These are stored in a

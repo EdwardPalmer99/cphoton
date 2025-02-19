@@ -6,6 +6,7 @@
 //
 
 #include "models/Fractals3D.h"
+#include "utility/Utility.h"
 
 #define kEpsilon 0.0001
 #define kMaxIteration 128
@@ -60,13 +61,22 @@ static inline Quaternion qMultiply(Quaternion q1, Quaternion q2)
 }
 
 
-static inline double qLength2(Quaternion q1) { return (q1.a * q1.a + q1.b * q1.b + q1.c * q1.c + q1.d * q1.d); }
+static inline double qLength2(Quaternion q1)
+{
+    return (q1.a * q1.a + q1.b * q1.b + q1.c * q1.c + q1.d * q1.d);
+}
 
 
-static inline Quaternion qSquare(Quaternion q1) { return qMultiply(q1, q1); }
+static inline Quaternion qSquare(Quaternion q1)
+{
+    return qMultiply(q1, q1);
+}
 
 
-static inline Quaternion qCube(Quaternion q1) { return qMultiply(q1, qSquare(q1)); }
+static inline Quaternion qCube(Quaternion q1)
+{
+    return qMultiply(q1, qSquare(q1));
+}
 
 
 static inline bool fractalBoundingBox(Primitive *primitive, AABB *outputBox)
