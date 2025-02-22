@@ -3,7 +3,7 @@ CPhoton
 
 [![C Build](https://github.com/EdwardPalmer99/cphoton/actions/workflows/c-build.yml/badge.svg)](https://github.com/EdwardPalmer99/cphoton/actions/workflows/c-build.yml)
 
-CPhoton is a multithreaded ray-tracer written in plain C with no external libraries. It has been tested on MacOS and Linux.
+CPhoton is a multithreaded ray-tracer written in a mixture of C and C++. It has been tested on MacOS and Linux.
 
 <p align="center">
 <img src="https://github.com/user-attachments/assets/de0dcf6c-167c-4255-b5b7-ce74d5bcdd05" width="400" title="Demo Scene">
@@ -13,6 +13,6 @@ CPhoton is a multithreaded ray-tracer written in plain C with no external librar
 Build Steps
 =======
 
-To build on macOS, Linux and UNIX systems, execute: `make all`
+To build on macOS, Linux and UNIX systems, execute: `bazel build ...`
 
 

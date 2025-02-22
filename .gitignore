@@ -1,4 +1,7 @@
-*.build
-*bin/
 *.vscode
 *.ppm
+bazel-bin
+bazel-cphoton
+bazel-out
+bazel-testlogs
+MODULE.bazel.lock

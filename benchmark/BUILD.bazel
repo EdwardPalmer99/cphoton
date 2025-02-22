@@ -1,0 +1,11 @@
+cc_test(
+    name = "benchmark",
+    srcs = glob(["*.cpp"]),
+    deps = [
+        "@google_benchmark//:benchmark",
+        "@google_benchmark//:benchmark_main",
+        "//lib:cphoton",
+    ],
+    size = "small",
+    visibility = ["//visibility:private"]
+)

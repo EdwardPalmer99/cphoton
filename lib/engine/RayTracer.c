@@ -10,6 +10,7 @@
 #include "logger/Logger.h"
 #include "threadpool/ThreadPool.h"
 #include "threadpool/ThreadUtils.h"
+#include "utility/Randomizer.h"
 #include <stdint.h>
 
 #define kMinHitTime 0.001 // Positive tmin fixes shadow acne.
