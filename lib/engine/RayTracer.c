@@ -39,8 +39,6 @@ PPMImage *renderScene(Scene *scene, Camera *camera)
 
     RenderPixelArgs args = {.row = 0, .col = 0, .camera = camera, .objects = scene->sceneNode, .image = image};
 
-    LogInfo("Rendering...");
-
     for (int iRow = 0; iRow < image->height; ++iRow)
     {
         args.row = iRow;
@@ -53,7 +51,6 @@ PPMImage *renderScene(Scene *scene, Camera *camera)
     }
 
     executeTasks(threadPool);
-    LogInfo("Render completed.");
 
     deallocThreadPool(threadPool);
     return image;

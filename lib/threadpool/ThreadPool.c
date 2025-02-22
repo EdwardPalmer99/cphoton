@@ -23,17 +23,21 @@ void execute(void *args)
     while (true)
     {
         pthread_mutex_lock(mutex);
-        // fprintf(stdout, "thread %d: executing task\n", threadInfo->threadID);
 
         if (!threadPool->task)
         {
-            // fprintf(stdout, "thread %d: no tasks remaining. Exiting!\n", threadInfo->threadID);
             pthread_mutex_unlock(mutex);
             return;
         }
 
         Task *task = threadPool->task;
         threadPool->task = threadPool->task->next;
+
+        if (threadPool->nTasksCompleted++ % 1000 == 0)
+        {
+            const double percentage = 100.0 * (double)threadPool->nTasksCompleted / (double)threadPool->nTasks;
+            LogInfo("Progress: %.1lf %%", percentage);
+        }
 
         pthread_mutex_unlock(mutex);
 
@@ -47,6 +51,9 @@ void execute(void *args)
 ThreadPool *allocThreadPool(unsigned int nthreads)
 {
     ThreadPool *threadPool = malloc(sizeof(ThreadPool));
+
+    threadPool->nTasks = 0;
+    threadPool->nTasksCompleted = 0;
 
     threadPool->nthreads = nthreads;
     threadPool->threads = malloc(sizeof(pthread_t *) * nthreads);
@@ -78,6 +85,8 @@ void deallocThreadPool(ThreadPool *threadPool)
 
 void addTask(ThreadPool *threadPool, TaskFunc func, TaskArgs args, size_t argsSize)
 {
+    threadPool->nTasks++;
+
     if (!threadPool->base)
     {
         threadPool->base = allocTask(func, args, argsSize);
@@ -98,8 +107,14 @@ void executeTasks(ThreadPool *threadPool)
         abort();
     }
 
+    // Reset number of tasks.
+    threadPool->nTasksCompleted = 0;
+
     // Set thread pool pointer to base.
     threadPool->task = threadPool->base;
+
+    // Set single-line logging mode.
+    SetSingleLineLogMode(true);
 
     ThreadInfo threadInfo[threadPool->nthreads];
 
@@ -122,6 +137,9 @@ void executeTasks(ThreadPool *threadPool)
     }
 
     pthread_mutex_destroy(&mutex);
+
+    // Disable single-line logging mode.
+    SetSingleLineLogMode(false);
 
     // Tasks executed and deallocted.
     threadPool->task = threadPool->base = NULL;

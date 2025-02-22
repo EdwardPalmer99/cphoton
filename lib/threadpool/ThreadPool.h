@@ -14,6 +14,9 @@
 // TODO: - use linked list.
 typedef struct threadPool_t
 {
+    unsigned int nTasks;
+    unsigned int nTasksCompleted;
+
     unsigned int nthreads;
     pthread_t *threads;
 

@@ -8,6 +8,7 @@
  */
 
 #pragma once
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -23,6 +24,7 @@ typedef enum
 
 
 void SetThresholdLogLevel(LogLevel level);
+void SetSingleLineLogMode(bool singleLineMode);
 
 // Writes log message to stdout in format: "[logLevel]: message"
 void Logger(LogLevel level, const char *format, ...);

@@ -15,10 +15,16 @@
 #include <time.h>
 
 static LogLevel gThresholdLogLevel = LogLevelInfo;
+static bool gSingleLineMode = false;
 
 void SetThresholdLogLevel(LogLevel newThresholdLevel)
 {
     gThresholdLogLevel = newThresholdLevel;
+}
+
+void SetSingleLineLogMode(bool singleLineMode)
+{
+    gSingleLineMode = singleLineMode;
 }
 
 void Logger(LogLevel level, const char *format, ...)
@@ -45,5 +51,13 @@ void Logger(LogLevel level, const char *format, ...)
         abort();
     }
 
-    fprintf(stdout, "%s %s\n", nameForLevel[level], buffer);
+    if (gSingleLineMode)
+    {
+        fprintf(stdout, "\r%s %s", nameForLevel[level], buffer);
+        fflush(stdout);
+    }
+    else
+    {
+        fprintf(stdout, "%s %s\n", nameForLevel[level], buffer);
+    }
 }
