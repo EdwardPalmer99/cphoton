@@ -12,11 +12,8 @@
 
 typedef struct renderSettings_t
 {
-    uint16_t nthreads;
     uint16_t pixelsWide;
     uint16_t pixelsHigh;
-    uint16_t samplesPerPixel;
-    uint16_t maxDepth;
     char *outputPath;
 } RenderSettings;
 

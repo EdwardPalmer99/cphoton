@@ -14,11 +14,8 @@
 #include <string.h>
 
 // clang-format off
-RenderSettings gRenderSettings = {.nthreads = 8,
-                                  .pixelsWide = 2560,
+RenderSettings gRenderSettings = {.pixelsWide = 2560,
                                   .pixelsHigh = 1600,
-                                  .samplesPerPixel = 100,
-                                  .maxDepth = 50,
                                   .outputPath = NULL};
 // clang-format on
 
@@ -85,16 +82,10 @@ void parseCLIOptions(int argc, const char *argv[])
 
             uint16_t unsignedValue = (uint16_t)outputValue;
 
-            if (strcmp(name, "--nthreads") == 0)
-                gRenderSettings.nthreads = unsignedValue;
-            else if (strcmp(name, "--width") == 0)
+            if (strcmp(name, "--width") == 0)
                 gRenderSettings.pixelsWide = unsignedValue;
             else if (strcmp(name, "--height") == 0)
                 gRenderSettings.pixelsHigh = unsignedValue;
-            else if (strcmp(name, "--samples-per-pixel") == 0)
-                gRenderSettings.samplesPerPixel = unsignedValue;
-            else if (strcmp(name, "--max-depth") == 0)
-                gRenderSettings.maxDepth = unsignedValue;
         }
     }
 
@@ -114,11 +105,7 @@ void printCLIOptions(const char *programName)
             " The options are:\n"
             "  --path              path for output render\n"
             "  --help              print this message and exit\n"
-            "  --nthreads          number of threads to use in a render (default: %u)\n"
             "  --width             image output width in pixels (default: %u)\n"
-            "  --height            image output height in pixels (default: %u)\n"
-            "  --samples-per-pixel number of rays averaged over for a pixel (default: %u)\n"
-            "  --max-depth         maximum number of bounces of a ray (default: %u)\n",
-            programName, gRenderSettings.nthreads, gRenderSettings.pixelsWide, gRenderSettings.pixelsHigh,
-            gRenderSettings.samplesPerPixel, gRenderSettings.maxDepth);
+            "  --height            image output height in pixels (default: %u)\n",
+            programName, gRenderSettings.pixelsWide, gRenderSettings.pixelsHigh);
 }
