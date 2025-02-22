@@ -16,3 +16,13 @@ cc_binary(
     ],
     visibility = ["//visibility:private"]
 )
+
+
+cc_binary(
+    name = "spheres",
+    srcs = ["Spheres.c"],
+    deps = [
+        "//lib:cphoton"
+    ],
+    visibility = ["//visibility:private"]
+)
