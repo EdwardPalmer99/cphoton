@@ -1,0 +1,9 @@
+cc_binary(
+    name = "cphoton",
+    srcs = glob(["*.cpp", "**/*.cpp", "**/*.hpp"]),
+    includes = ['.'], 
+    deps = [
+        "//lib:cphoton",
+    ],
+    visibility = ["//visibility:public"]
+)

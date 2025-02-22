@@ -1,0 +1,18 @@
+cc_binary(
+    name = "batcave",
+    srcs = ["BatCave.c"],
+    deps = [
+        "//lib:cphoton"
+    ],
+    visibility = ["//visibility:private"]
+)
+
+
+cc_binary(
+    name = "menger-cube",
+    srcs = ["MengerCube.c"],
+    deps = [
+        "//lib:cphoton"
+    ],
+    visibility = ["//visibility:private"]
+)
