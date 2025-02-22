@@ -6,6 +6,7 @@
 //
 
 #include "engine/Material.h"
+#include "utility/Randomizer.h"
 #include "utility/Utility.h"
 
 static inline Material *makeEmptyMaterial(void);

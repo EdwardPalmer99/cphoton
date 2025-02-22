@@ -1,9 +1,11 @@
 cc_test(
-    name = "demo",
+    name = "unit",
     size = "small",
-    srcs = ["demo.cpp"],
+    srcs = glob(["*.cpp"]),
     deps = [
         "@googletest//:gtest",
-        "@googletest//:gtest_main"
-    ]
+        "@googletest//:gtest_main",
+        "//lib:cphoton",
+    ],
+    visibility = ["//visibility:private"]
 )

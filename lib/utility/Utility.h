@@ -26,7 +26,4 @@
 #define acosd(x) (acos((x)) * kRadiansToDegrees)
 #define atand(x) (atan((x)) * kRadiansToDegrees)
 
-double randomDouble(void);
-double randomDoubleRange(double min, double max);
-
 #endif /* Utility_h */
