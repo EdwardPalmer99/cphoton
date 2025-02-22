@@ -1,5 +1,3 @@
-*.build
-*bin/
 *.vscode
 *.ppm
 bazel-bin
