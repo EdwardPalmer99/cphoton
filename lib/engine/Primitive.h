@@ -42,7 +42,7 @@ struct primitive_t
         Plane *plane;
         Cone *cone;
         Fractal *fractal;
-        CSGPrimitive *csgPrimitive;
+        CSGPrimitive *csg;
     };
 
     Material *material;

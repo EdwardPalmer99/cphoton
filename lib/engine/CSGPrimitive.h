@@ -45,9 +45,6 @@ typedef struct CSGPrimitive_t
 } CSGPrimitive;
 
 
-// Returns a CSG primitive consisting of two overlapping spheres. The difference operation is applied.
-struct primitive_t *allocDemoCSGPrimitive(void);
-
 /**
  * Constructs a new CSGPrimitive for performing CSG operations.
  *

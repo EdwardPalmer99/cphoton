@@ -12,12 +12,17 @@
 #include "engine/Material.h"
 #include "engine/Primitive.h"
 #include "engine/Texture.h"
+#include "logger/Logger.h"
 #include "utility/Utility.h"
 
 // TODO: - move bounding boxes into separate file.
-
 static AABB combineBoundingBoxes(const AABB *first, const AABB *second);
+
+// Methods
+//
 static bool CSGBoundingBoxTopLevel(Primitive *primitive, AABB *outputBox);
+static void CSGDestructor(Primitive *primitive);
+
 
 struct primitive_t *makeCSG(struct primitive_t *left, struct primitive_t *right, CSGOperation operation, bool isLeaf)
 {
@@ -28,47 +33,37 @@ struct primitive_t *makeCSG(struct primitive_t *left, struct primitive_t *right,
     node->isLeaf = isLeaf;
 
     // Create our generic structure:
-    Primitive *genericPrimitive = malloc(sizeof(Primitive));
-    genericPrimitive->csgPrimitive = node;
-
-    // NB: no material used.
-    genericPrimitive->material = NULL;
+    Primitive *primitive = malloc(sizeof(Primitive));
+    primitive->csg = node;
 
     // Hookup methods.
-    genericPrimitive->boundingBox = CSGBoundingBoxTopLevel;
-    genericPrimitive->destructor = NULL; // NOT IMPLEMENTED.
-    genericPrimitive->hit = NULL;
-
-    return genericPrimitive;
-}
-
-
-Primitive *allocDemoCSGPrimitive(void)
-{
-    CSGPrimitive *demo = malloc(sizeof(CSGPrimitive));
-
-    demo->operation = CSGDifference;
-
-    Material *material1 = makeMetal(makeSolidTexture(color3(0, 1, 0)), 0);
-    Material *material2 = makeMetal(makeSolidTexture(color3(1, 0, 0)), 0);
-
-    demo->left = makeSphere(point3(0.5, 1, 0), 1, material1);
-    demo->right = makeSphere(point3(-0.5, 1, 0), 1, material2);
-    demo->isLeaf = true;
-
-    // Hookup to a primitive.
-    Primitive *primitive = malloc(sizeof(Primitive));
-
-    primitive->csgPrimitive = demo;
+    primitive->destructor = CSGDestructor;
+    primitive->hit = NULL; // TODO: - not hookedup yet.
     primitive->boundingBox = CSGBoundingBoxTopLevel;
 
-    primitive->destructor = NULL;
-    primitive->hit = NULL;
-
-    // No material for CSG primitive.
+    // NB: no material used.
     primitive->material = NULL;
 
     return primitive;
+}
+
+/**
+ * Destroys allocated memory for CSG and for any other primitives/CSG primitives in tree.
+ */
+static void CSGDestructor(Primitive *primitive)
+{
+    if (!primitive) return;
+
+    CSGPrimitive *CSG = primitive->csg;
+    if (CSG)
+    {
+        if (CSG->left) CSG->left->destructor(CSG->left);
+        if (CSG->right) CSG->right->destructor(CSG->right);
+
+        free(CSG);
+    }
+
+    free(primitive);
 }
 
 
@@ -81,7 +76,7 @@ Primitive *allocDemoCSGPrimitive(void)
  */
 static bool CSGBoundingBoxTopLevel(Primitive *primitive, AABB *outputBox)
 {
-    CSGPrimitive *theCSGPrimitive = (CSGPrimitive *)primitive;
+    CSGPrimitive *theCSGPrimitive = primitive->csg;
 
     AABB leftBox, rightBox;
 
