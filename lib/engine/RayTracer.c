@@ -119,7 +119,7 @@ static void renderPixel(void *args)
      */
 
     static const int kMaxDepth = 50;
-    static const int kMinSample = 30; // Need sufficient number to approximate Normal distribution.
+    static const int kMinSample = 200; // Need sufficient number to approximate Normal distribution.
     static const int kMaxSample = 10000;
     static const int kSampleBatch = 10;
 
