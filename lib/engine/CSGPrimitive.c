@@ -24,13 +24,12 @@ static bool CSGBoundingBoxTopLevel(Primitive *primitive, AABB *outputBox);
 static void CSGDestructor(Primitive *primitive);
 
 
-struct primitive_t *makeCSG(struct primitive_t *left, struct primitive_t *right, CSGOperation operation, bool isLeaf)
+struct primitive_t *makeCSG(struct primitive_t *left, struct primitive_t *right, CSGOperation operation)
 {
     CSGPrimitive *node = malloc(sizeof(CSGPrimitive));
     node->left = left;
     node->right = right;
     node->operation = operation;
-    node->isLeaf = isLeaf;
 
     // Create our generic structure:
     Primitive *primitive = malloc(sizeof(Primitive));
@@ -80,19 +79,9 @@ static bool CSGBoundingBoxTopLevel(Primitive *primitive, AABB *outputBox)
 
     AABB leftBox, rightBox;
 
-    // Case 1: the top-level box is NOT a leaf node:
-    if (!theCSGPrimitive->isLeaf)
-    {
-        // Ascent from bottom upwards, updating the AABB as we go along:
-        (void)CSGBoundingBoxTopLevel(theCSGPrimitive->left, &leftBox);
-        (void)CSGBoundingBoxTopLevel(theCSGPrimitive->right, &rightBox);
-    }
-    else // Case 2: the top-level box is NOT a leaf node:
-    {
-        // Create from the primitive's methods:
-        theCSGPrimitive->left->boundingBox(theCSGPrimitive->left, &leftBox);
-        theCSGPrimitive->right->boundingBox(theCSGPrimitive->right, &rightBox);
-    }
+    // Create from the primitive or CSG primitive's methods:
+    theCSGPrimitive->left->boundingBox(theCSGPrimitive->left, &leftBox);
+    theCSGPrimitive->right->boundingBox(theCSGPrimitive->right, &rightBox);
 
     // Combine to generate large bounding box encompassing everything in the tree. This can be made more efficient!
     *outputBox = combineBoundingBoxes(&leftBox, &rightBox);

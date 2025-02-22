@@ -36,9 +36,7 @@ typedef struct CSGPrimitive_t
 {
     CSGOperation operation;
 
-    bool isLeaf;
-
-    // These are standard primitives if "isLeaf" == true; else these are CSGPrimitives.
+    // These can be further CSGPrimitives or other Primitives.
     struct primitive_t *left;
     struct primitive_t *right;
 
@@ -48,10 +46,9 @@ typedef struct CSGPrimitive_t
 /**
  * Constructs a new CSGPrimitive for performing CSG operations.
  *
- * @param left      The CSGPrimitive/Primitive to operate on on LHS of tree.
- * @param right     The CSGPrimitive/Primitive to operate on on RHS of tree.
+ * @param left      The CSGPrimitive/Primitive to operate on LHS of tree.
+ * @param right     The CSGPrimitive/Primitive to operate on RHS of tree.
  * @param operation The CSG operation to perform.
- * @param isLeaf    If true, then left, right are Primitives else they are CSGPrimitives.
  * @return A new CSG primitive
  */
-struct primitive_t *makeCSG(struct primitive_t *left, struct primitive_t *right, CSGOperation operation, bool isLeaf);
+struct primitive_t *makeCSG(struct primitive_t *left, struct primitive_t *right, CSGOperation operation);

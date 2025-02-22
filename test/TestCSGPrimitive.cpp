@@ -22,7 +22,7 @@ TEST(CSGPrimitive, TestBoundingBoxWithLeafCSG)
 {
     // Create two spheres with overlap:
     Primitive *theCSG = BuildLeafCSGFromSpherePair(point3(0.5, 1, 0), point3(-0.5, 1, 0), 1.0);
-    ASSERT_TRUE(theCSG != nullptr && theCSG->csg->isLeaf);
+    ASSERT_TRUE(theCSG != nullptr);
 
     // The bounding box should be a box that encompasses both spheres.
     AABB boundingBox;
@@ -45,8 +45,8 @@ TEST(CSGPrimitive, TestBoundingBoxWithNonLeafCSG)
     Primitive *leafCSG1 = BuildLeafCSGFromSpherePair(point3(0.5, 1, 0), point3(-0.5, 1, 0), 1.0);
     Primitive *leafCSG2 = BuildLeafCSGFromSpherePair(point3(0.5, 3, 0), point3(-0.5, 3, 0), 1.0);
 
-    Primitive *theCSG = makeCSG(leafCSG1, leafCSG2, CSGAddition, false);
-    ASSERT_TRUE(theCSG != nullptr && !theCSG->csg->isLeaf);
+    Primitive *theCSG = makeCSG(leafCSG1, leafCSG2, CSGAddition);
+    ASSERT_TRUE(theCSG != nullptr);
 
     // The bounding box should be include both bounding boxes.
     AABB boundingBox;
@@ -73,5 +73,5 @@ static Primitive *BuildLeafCSGFromSpherePair(Point3 pt1, Point3 pt2, double radi
     Primitive *sphere1 = makeSphere(pt1, radius, material1);
     Primitive *sphere2 = makeSphere(pt2, radius, material2);
 
-    return makeCSG(sphere1, sphere2, CSGAddition, true);
+    return makeCSG(sphere1, sphere2, CSGAddition);
 }
