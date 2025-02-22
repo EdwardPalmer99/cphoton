@@ -8,6 +8,7 @@
 #ifndef Primitive_h
 #define Primitive_h
 
+#include "engine/CSGPrimitive.h"
 #include "engine/HitRec.h"
 #include "engine/Material.h"
 #include "engine/Ray.h"
@@ -27,9 +28,10 @@ typedef struct primitive_t Primitive;
 typedef struct triangle_t Triangle;
 typedef struct fractal_t Fractal;
 
+
 struct primitive_t
 {
-    union
+    union // TODO: - this is actually irrelevant. Can cast as (void *)
     {
         BVHNode *node;
         Triangle *triangle;
@@ -40,10 +42,12 @@ struct primitive_t
         Plane *plane;
         Cone *cone;
         Fractal *fractal;
+        CSGPrimitive *csgPrimitive;
     };
 
     Material *material;
 
+    // TODO: - all we need to do is hookup these functions.
     bool (*hit)(Primitive *, Ray *, double, double, HitRec *);
     bool (*boundingBox)(Primitive *, AABB *);
     void (*destructor)(Primitive *);
