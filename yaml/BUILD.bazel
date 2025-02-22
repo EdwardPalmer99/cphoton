@@ -1,0 +1,18 @@
+cc_library(
+    name = "yaml",
+    srcs = glob(["SceneGenerator.cpp", "YAMLParser.cpp", "*.hpp"]),
+    deps = [
+        "//lib:cphoton",
+    ],
+    visibility = ["//visibility:public"]
+)
+
+cc_binary(
+    name = "cphoton-yaml",
+    srcs = ["main.cpp"],
+    deps = [
+        ":yaml",
+        "//lib:cphoton",
+    ],
+    visibility = ["//visibility:public"]
+)
