@@ -4,3 +4,4 @@ bazel-bin
 bazel-cphoton
 bazel-out
 bazel-testlogs
+MODULE.bazel.lock
