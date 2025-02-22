@@ -9,6 +9,7 @@
 #include "engine/RenderSettings.h"
 #include "logger/Logger.h"
 #include "threadpool/ThreadPool.h"
+#include "threadpool/ThreadUtils.h"
 #include <stdint.h>
 
 #define kMinHitTime 0.001 // Positive tmin fixes shadow acne.
@@ -34,11 +35,9 @@ PPMImage *renderScene(Scene *scene, Camera *camera)
     PPMImage *image = makePPMImage(gRenderSettings.pixelsWide, gRenderSettings.pixelsHigh);
     if (!image) return NULL;
 
-    ThreadPool *threadPool = allocThreadPool(gRenderSettings.nthreads);
+    ThreadPool *threadPool = allocThreadPool(computeNumWorkers());
 
     RenderPixelArgs args = {.row = 0, .col = 0, .camera = camera, .objects = scene->sceneNode, .image = image};
-
-    LogInfo("Rendering...");
 
     for (int iRow = 0; iRow < image->height; ++iRow)
     {
@@ -52,7 +51,6 @@ PPMImage *renderScene(Scene *scene, Camera *camera)
     }
 
     executeTasks(threadPool);
-    LogInfo("Render completed.");
 
     deallocThreadPool(threadPool);
     return image;
@@ -97,14 +95,45 @@ static inline Color3 rayColor(Ray *ray, Primitive *objectsBVH, int depth)
 
 static void renderPixel(void *args)
 {
-    RenderPixelArgs *pArgs = (RenderPixelArgs *)args;
+    /**
+     * References:
+     * - https://cs184.eecs.berkeley.edu/sp24/docs/hw3-1-part-5
+     * - https://en.wikipedia.org/wiki/Z-test
+     *
+     * Z-test @ 95% confidence interval --> Z = 1.96.
+     *
+     * Z = 1.96 = |X_bar - mu_0| / s where s^2 = sigma^2/N, X_bar is sample mean, mu_0 is population mean
+     *
+     * Let delta = |X_bar - mu_0| (the absolute value between our sample mean and population mean @ 95% confidence
+     *
+     * We would like delta < 5% * mu_0
+     *
+     * Define s1 = sum(X)
+     * Define s2 = sum(X^2)
+     *
+     * Approximate mu_0 ≈ X_bar for large N, X_bar=s1/N
+     *
+     * --> delta = 1.96*s = 1.96*sigma/sqrt(N) < 5%*(s1/N)
+     *
+     * sigma^2 = 1/N * (s2 - s1^2/N)
+     */
 
-    const double invSamplesPerPivel = 1.0 / (double)gRenderSettings.samplesPerPixel;
+    static const int kMaxDepth = 50;
+    static const int kMinSample = 200; // Need sufficient number to approximate Normal distribution.
+    static const int kMaxSample = 10000;
+    static const int kSampleBatch = 10;
+
+    RenderPixelArgs *pArgs = (RenderPixelArgs *)args;
 
     Color3 pixelColor = color3(0, 0, 0);
 
+    double s1 = 0.0; // Sum of values.
+    double s2 = 0.0; // Sum of squares of values.
+
+    int numSamples = 1;
+
     // Sampling:
-    for (int iSample = 0; iSample < gRenderSettings.samplesPerPixel; iSample++)
+    for (; numSamples <= kMaxSample; ++numSamples)
     {
         const double u = (pArgs->col + randomDouble()) / (double)(gRenderSettings.pixelsWide - 1);
         const double v = (pArgs->row + randomDouble()) / (double)(gRenderSettings.pixelsHigh - 1);
@@ -112,9 +141,37 @@ static void renderPixel(void *args)
         // Generate a new camera ray:
         Ray ray = getRay(pArgs->camera, u, v);
 
-        pixelColor = addVectors(pixelColor, rayColor(&ray, pArgs->objects, gRenderSettings.maxDepth));
+        Color3 color = rayColor(&ray, pArgs->objects, kMaxDepth);
+
+        // Compute the luminance:
+        // https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
+        {
+            double luminance = 0.21 * color.r + 0.72 * color.g + 0.07 * color.b;
+
+            s1 += luminance;
+            s2 += (luminance * luminance);
+        }
+
+        pixelColor = addVectors(pixelColor, color);
+
+        // Recalculate the metric periodically to see if we need additional samples.
+        // NB: ensure we have sufficient samples first to have a good figure.
+        if (numSamples >= kMinSample && (numSamples % kSampleBatch == 0))
+        {
+            double invNumSamples = 1.0 / (double)numSamples;
+
+            double sigmaSquared = invNumSamples * (s2 - (s1 * s1) * invNumSamples);
+            double deltaSquared = (1.96 * 1.96) * sigmaSquared * invNumSamples;
+
+            double thresholdSquared = pow(0.05 * s1 * invNumSamples, 2.0);
+
+            if (deltaSquared < thresholdSquared)
+            {
+                break;
+            }
+        }
     }
 
     // Set the image's pixel to the average value:
-    pArgs->image->pixelValue[pArgs->row][pArgs->col] = scaleVector(pixelColor, invSamplesPerPivel);
+    pArgs->image->pixelValue[pArgs->row][pArgs->col] = scaleVector(pixelColor, 1.0 / (double)numSamples);
 }

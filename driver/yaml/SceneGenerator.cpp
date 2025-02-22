@@ -10,6 +10,7 @@
 #include "yaml/SceneGenerator.hpp"
 #include <cstring>
 #include <stdexcept>
+#include <thread>
 
 extern "C"
 {
@@ -205,18 +206,6 @@ void YAMLSceneRenderer::configRenderer()
     gRenderSettings.pixelsWide = std::get<long>(outputList.at("width"));
     gRenderSettings.pixelsHigh = std::get<long>(outputList.at("height"));
     gRenderSettings.outputPath = strdup(std::get<std::string>(outputList.at("name")).data());
-
-    LogDebug("pixelsWide: %ld, pixelsHigh: %ld, outputPath: %s", gRenderSettings.pixelsWide, gRenderSettings.pixelsHigh,
-             gRenderSettings.outputPath);
-
-    const YAMLList &configList = dataFromYAML.at("config").front();
-
-    gRenderSettings.samplesPerPixel = std::get<long>(configList.at("samplesPerPixel"));
-    gRenderSettings.maxDepth = std::get<long>(configList.at("maxDepth"));
-    gRenderSettings.nthreads = std::get<long>(configList.at("nthreads"));
-
-    LogDebug("samplesPerPixel: %ld; maxDepth: %ld; nthreads: %ld", gRenderSettings.samplesPerPixel,
-             gRenderSettings.maxDepth, gRenderSettings.nthreads);
 }
 
 Camera YAMLSceneRenderer::buildCamera()

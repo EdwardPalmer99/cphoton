@@ -1,14 +1,9 @@
 ---
 
 output:
-  name: simple-render.ppm
-  width: 200
-  height: 200
-
-config:
-  samplesPerPixel: 100
-  maxDepth: 50
-  nthreads: 8
+  name: demo1.ppm
+  width: 800
+  height: 800
 
 camera:
   verticalFOV:  45.0
@@ -30,40 +25,36 @@ materials:
     type: metal
     albedo: bright
     fuzziness: 0.0
-  - name: graySurface
-    type: lambertian
-    texture: dark
-  - name: emitter
-    type: emitter
-    color: [0.1, 0.3, 0.2]
+  - name: metalSurface
+    type: metal 
+    albedo: dark
+    fuzziness: 0.01
   - name: glass
     type: dielectric
     indexOfRefraction: 1.52
 
 primitives:
   - type: sphere
-    center: [-1.5, 0.5, -1.5]
+    center: [-1.25, 0.5, -1.25]
     radius: 0.5
     material: brightMaterial
   - type: sphere
-    center: [1.5, 0.5, -1.5]
+    center: [1.25, 0.5, -1.25]
     radius: 0.5
     material: brightMaterial
   - type: sphere
-    center: [-1.5, 0.5, 1.5]
+    center: [-1.25, 0.5, 1.25]
     radius: 0.5
     material: brightMaterial
   - type: sphere
-    center: [1.5, 0.5, 1.5]
+    center: [1.25, 0.5, 1.25]
     radius: 0.5
     material: brightMaterial
-  - type: cylinder
-    center: [0, 0.5, 0]
-    rotation: [0, 0, 0]
-    radius: 0.5
-    height: 1.0
+  - type: sphere
+    center: [0, 1.0, 0]
+    radius: 1.0
     material: glass
   - type: plane 
     p0: [0, 0, 0]
     normal: [0, 1, 0]
-    material: graySurface
+    material: metalSurface
