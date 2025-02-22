@@ -5,13 +5,9 @@
 //  Created by Edward on 29/01/2023.
 //
 
-#ifndef Texture_h
-#define Texture_h
-
+#pragma once
 #include "utility/Vector3.h"
-#include <math.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 typedef struct texture_t Texture;
@@ -40,5 +36,3 @@ Texture *makeSolidTexture(Color3 color);
 Texture *makeCheckerTexture(Texture *even, Texture *odd);
 Texture *makeImageTexture(uint8_t *bytes, size_t pixelsWide, size_t pixelsHigh, size_t bytesPerPixel);
 Texture *makeCheckerTextureWithColors(Color3 color1, Color3 color2);
-
-#endif /* Texture_h */

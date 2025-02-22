@@ -10,7 +10,6 @@
 
 #include "utility/Vector3.h"
 #include <stdbool.h>
-#include <stdlib.h>
 
 struct material_t;
 

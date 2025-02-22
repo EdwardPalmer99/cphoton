@@ -7,7 +7,6 @@
 
 #include "engine/Ray.h"
 
-
 Ray makeRay(Point3 origin, Vector3 direction)
 {
     Ray ray = {.origin = origin, .direction = direction};

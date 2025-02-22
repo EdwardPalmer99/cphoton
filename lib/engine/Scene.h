@@ -5,9 +5,7 @@
 //  Created by Edward on 28/01/2023.
 //
 
-#ifndef Scene_h
-#define Scene_h
-
+#pragma once
 #include "engine/Primitive.h"
 
 typedef struct scene_t Scene;
@@ -26,5 +24,3 @@ struct scene_t
     void (*destructor)(Scene *scene);
     void (*markAsFinished)(Scene *scene);
 };
-
-#endif /* Scene_h */

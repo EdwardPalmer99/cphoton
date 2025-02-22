@@ -13,9 +13,7 @@
 #include "engine/Ray.h"
 #include "models/Fractals3D.h"
 #include "utility/Vector3.h"
-#include <math.h>
 #include <stdbool.h>
-#include <stdio.h>
 
 typedef struct bvhNode_t BVHNode;
 typedef struct cube_t Cube;

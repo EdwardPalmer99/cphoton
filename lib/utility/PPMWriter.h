@@ -9,11 +9,7 @@
 #define PPMWriter_h
 
 #include "utility/Vector3.h"
-#include <math.h>
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 #define NUM_PIXELS(image) (image)->width *(image)->height
 

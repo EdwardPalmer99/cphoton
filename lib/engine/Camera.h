@@ -5,12 +5,9 @@
 //  Created by Edward on 19/01/2023.
 //
 
-#ifndef Camera_h
-#define Camera_h
-
-#include "engine/Ray.h"
+#pragma once
 #include "utility/Vector3.h"
-#include <stdlib.h>
+#include "engine/Ray.h"
 
 typedef struct
 {
@@ -26,5 +23,3 @@ typedef struct
 Camera makeCamera(double verticalFOV, double aspectRatio, double focalLength, double aperture, Point3 origin,
                   Point3 target);
 Ray getRay(Camera *camera, double s, double t);
-
-#endif /* Camera_h */

@@ -5,6 +5,7 @@
 //  Created by Edward on 19/01/2023.
 //
 
+#include <stdlib.h>
 #include "engine/Camera.h"
 #include "utility/Utility.h"
 

@@ -6,6 +6,11 @@
 //
 
 #include "engine/RayTracer.h"
+#include "utility/Utility.h"
+#include "utility/Vector3.h"
+#include "engine/HitRec.h"
+#include "engine/Primitive.h"
+#include "engine/Ray.h"
 #include "engine/RenderSettings.h"
 #include "logger/Logger.h"
 #include "threadpool/ThreadPool.h"

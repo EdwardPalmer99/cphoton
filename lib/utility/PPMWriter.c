@@ -9,6 +9,9 @@
 #include "logger/Logger.h"
 #include "utility/Utility.h"
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define MAX_BYTE 255
 #define MAX_2BYTES 65535
