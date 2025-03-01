@@ -8,6 +8,7 @@
  */
 
 #pragma once
+#include "engine/CSGPrimitive.h"
 #include "engine/Camera.h"
 #include "engine/HitRec.h"
 #include "engine/Material.h"
