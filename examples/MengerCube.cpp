@@ -7,7 +7,12 @@
  *
  */
 
+extern "C"
+{
 #include "CPhoton.h"
+}
+
+#include "engine/RayTracer.hpp"
 
 int main(int argc, const char *argv[])
 {
@@ -47,7 +52,9 @@ int main(int argc, const char *argv[])
     scene->markAsFinished(scene);
 
     // Render:
-    PPMImage *outputImage = renderScene(scene, &camera);
+    PhotonEngine engine(gRenderSettings.pixelsWide, gRenderSettings.pixelsHigh);
+
+    PPMImage *outputImage = engine.render(scene, &camera);
     writeBinary16BitPPMImage(outputImage, gRenderSettings.outputPath);
 
     // Cleanup:

@@ -7,7 +7,13 @@
  *
  */
 
+extern "C"
+{
 #include "CPhoton.h"
+}
+
+#include "engine/RayTracer.hpp"
+#include <cstdlib>
 
 Primitive *makeDarkKnightRoom(double length, double width, double height);
 
@@ -39,7 +45,9 @@ int main(int argc, const char *argv[])
 
     scene->markAsFinished(scene);
 
-    PPMImage *outputImage = renderScene(scene, &camera);
+    PhotonEngine engine(gRenderSettings.pixelsWide, gRenderSettings.pixelsHigh);
+
+    PPMImage *outputImage = engine.render(scene, &camera);
 
     writeBinary16BitPPMImage(outputImage, gRenderSettings.outputPath);
 
@@ -61,7 +69,7 @@ Primitive *makeDarkKnightRoom(double length, double width, double height)
     int numObjects = 0;
     int objectCapacity = 100;
 
-    Primitive **objects = malloc(sizeof(Primitive *) * objectCapacity);
+    Primitive **objects = (Primitive **)malloc(sizeof(Primitive *) * objectCapacity);
     if (!objects) return NULL;
 
     objects[numObjects++] = makePlane(point3(halfRoomW, 0, 0), vector3(-1, 0, 0), wallMaterial);
@@ -89,7 +97,7 @@ Primitive *makeDarkKnightRoom(double length, double width, double height)
                     return NULL;
                 }
 
-                objects = reallocPtr;
+                objects = (Primitive **)reallocPtr;
                 objectCapacity *= 2;
             }
 

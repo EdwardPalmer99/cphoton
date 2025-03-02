@@ -13,7 +13,6 @@
 #include "engine/Material.h"
 #include "engine/Primitive.h"
 #include "engine/Ray.h"
-#include "engine/RayTracer.h"
 #include "engine/RenderSettings.h"
 #include "engine/Scene.h"
 #include "engine/Texture.h"

@@ -1,75 +1,27 @@
-//
-//  RayTracer.m
-//  CPhoton
-//
-//  Created by Edward on 19/01/2023.
-//
+/**
+ * @file PhotonEngineImpl.cpp
+ * @author Edward Palmer
+ * @date 2025-03-02
+ *
+ * @copyright Copyright (c) 2025
+ *
+ */
 
-#include "engine/RayTracer.h"
-#include "utility/Utility.h"
-#include "utility/Vector3.h"
+#include "engine/PhotonEngineImpl.h"
 #include "engine/HitRec.h"
-#include "engine/Primitive.h"
-#include "engine/Ray.h"
-#include "engine/RenderSettings.h"
-#include "logger/Logger.h"
-#include "threadpool/ThreadPool.h"
-#include "threadpool/ThreadUtils.h"
 #include "utility/Randomizer.h"
-#include <stdint.h>
 
-#define kMinHitTime 0.001 // Positive tmin fixes shadow acne.
-
-typedef struct renderPixelArgs_t
-{
-    uint16_t row;
-    uint16_t col;
-    Camera *camera;
-    Primitive *objects;
-    PPMImage *image;
-} RenderPixelArgs;
+static const double kMinHitTime = 0.002; // Positive tmin fixes shadow acne.
+static const double kMaxHitTime = INFINITY;
 
 
-static inline Color3 rayColor(Ray *ray, Primitive *objectsBVH, int depth);
-static void renderPixel(void *args);
-
-
-PPMImage *renderScene(Scene *scene, Camera *camera)
-{
-    if (!scene || !scene->sceneNode || !camera) return NULL;
-
-    PPMImage *image = makePPMImage(gRenderSettings.pixelsWide, gRenderSettings.pixelsHigh);
-    if (!image) return NULL;
-
-    ThreadPool *threadPool = allocThreadPool(computeNumWorkers());
-
-    RenderPixelArgs args = {.row = 0, .col = 0, .camera = camera, .objects = scene->sceneNode, .image = image};
-
-    for (int iRow = 0; iRow < image->height; ++iRow)
-    {
-        args.row = iRow;
-
-        for (int iCol = 0; iCol < image->width; ++iCol)
-        {
-            args.col = iCol;
-            addTask(threadPool, renderPixel, &args, sizeof(RenderPixelArgs));
-        }
-    }
-
-    executeTasks(threadPool);
-
-    deallocThreadPool(threadPool);
-    return image;
-}
-
-
-static inline Color3 rayColor(Ray *ray, Primitive *objectsBVH, int depth)
+Color3 rayColor(Ray *ray, Primitive *objectsBVH, int depth)
 {
     HitRec hit;
 
     if (depth <= 0) return color3(0, 0, 0); // Exceeded ray bounce limit.
 
-    if (objectsBVH->hit(objectsBVH, ray, kMinHitTime, INFINITY, &hit))
+    if (objectsBVH->hit(objectsBVH, ray, kMinHitTime, kMaxHitTime, &hit))
     {
         Ray scatteredRay;
         Color3 attenuation;
@@ -99,7 +51,7 @@ static inline Color3 rayColor(Ray *ray, Primitive *objectsBVH, int depth)
 }
 
 
-static void renderPixel(void *args)
+void renderPixel(void *args)
 {
     /**
      * References:
@@ -141,8 +93,8 @@ static void renderPixel(void *args)
     // Sampling:
     for (; numSamples <= kMaxSample; ++numSamples)
     {
-        const double u = (pArgs->col + randomDouble()) / (double)(gRenderSettings.pixelsWide - 1);
-        const double v = (pArgs->row + randomDouble()) / (double)(gRenderSettings.pixelsHigh - 1);
+        const double u = (pArgs->col + randomDouble()) / (double)(pArgs->image->width - 1);
+        const double v = (pArgs->row + randomDouble()) / (double)(pArgs->image->height - 1);
 
         // Generate a new camera ray:
         Ray ray = getRay(pArgs->camera, u, v);
