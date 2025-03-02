@@ -1,4 +1,21 @@
-#include "models/MengerCube.h"
+/**
+ * @file MengerCube.cpp
+ * @author Edward Palmer
+ * @date 2025-03-02
+ *
+ * @copyright Copyright (c) 2025
+ *
+ */
+
+#include "models/MengerCube.hpp"
+#include "engine/primitives/Cube.hpp"
+#include <cstdlib>
+#include <cstring>
+
+extern "C"
+{
+#include "logger/Logger.h"
+}
 
 #define kInitialCubeStackCapacity 8
 
@@ -6,20 +23,20 @@
  Reference: https://en.wikipedia.org/wiki/Menger_sponge
 *******************************************************************************/
 
-typedef struct
+struct MengerCube
 {
     int8_t iteration;
     double sideLen;
     Point3 center;
-} MengerCube;
+};
 
 
-typedef struct
+struct CubeStack
 {
     int ncubes;
     int capacity;
     MengerCube *cubes;
-} CubeStack;
+};
 
 
 static CubeStack *makeCubeStack(void);
@@ -39,7 +56,7 @@ Primitive *makeMengerSponge(int8_t n, Point3 center, double sideLength, Material
     CubeStack *inputStack = makeCubeStack();
     if (!inputStack) return NULL;
 
-    Primitive **objects = malloc(sizeof(Primitive *) * numOutputCubes);
+    Primitive **objects = (Primitive **)malloc(sizeof(Primitive *) * numOutputCubes);
     if (!objects)
     {
         freeCubeStack(inputStack);
@@ -63,7 +80,7 @@ Primitive *makeMengerSponge(int8_t n, Point3 center, double sideLength, Material
         if (poppedCube.iteration == n)
         {
             Point3 objectCenter = addVectors(poppedCube.center, center);
-            objects[numObjectsAdded++] = makeCube(objectCenter, noRotation, poppedCube.sideLen, material);
+            objects[numObjectsAdded++] = new Cube(objectCenter, noRotation, poppedCube.sideLen, material);
             continue;
         }
 
@@ -79,7 +96,7 @@ Primitive *makeMengerSponge(int8_t n, Point3 center, double sideLength, Material
     }
 
     // Create BVHNode from primitives:
-    Primitive *node = makeBVHNode(objects, 0, numObjectsAdded);
+    Primitive *node = new BVHNode(objects, 0, numObjectsAdded);
 
     // Cleanup:
     freeCubeStack(inputStack);
@@ -99,13 +116,13 @@ static MengerCube makeMengerCube(short int iter, double len, double x, double y,
 
 static CubeStack *makeCubeStack(void)
 {
-    CubeStack *stack = malloc(sizeof(CubeStack));
+    CubeStack *stack = (CubeStack *)malloc(sizeof(CubeStack));
     if (!stack) return NULL;
 
     stack->ncubes = 0;
     stack->capacity = kInitialCubeStackCapacity;
 
-    stack->cubes = malloc(sizeof(MengerCube) * kInitialCubeStackCapacity);
+    stack->cubes = (MengerCube *)malloc(sizeof(MengerCube) * kInitialCubeStackCapacity);
     if (!stack->cubes)
     {
         free(stack);
@@ -136,11 +153,11 @@ static void pushCube(CubeStack *stack, MengerCube *cube)
         if (newBlock)
         {
             stack->capacity *= 2;
-            stack->cubes = newBlock;
+            stack->cubes = (MengerCube *)newBlock;
         }
         else
         {
-            fprintf(stderr, "LogLevelError: could not add cube to stack.\n");
+            LogError("Could not add cube to stack.");
         }
     }
 
@@ -168,18 +185,18 @@ static bool subdivideCube(MengerCube *subCubes, MengerCube *parent)
     double sideLen = parent->sideLen / 3.0;
 
     // Clockwise:
-    typedef enum
+    enum
     {
         kTopCubes = 0,
         kMiddleCubes = 1,
         kBottomCubes = 2
-    } CubeGeneration;
+    };
 
     int nsubCubes = 0; // Should be 20!
 
     double cubeCenterY;
 
-    for (CubeGeneration mode = kTopCubes; mode <= kBottomCubes; mode++)
+    for (int mode = kTopCubes; mode <= kBottomCubes; mode++)
     {
         if (mode == kTopCubes)
             cubeCenterY = center.y + sideLen;
