@@ -12,7 +12,7 @@ extern "C"
 #include "CPhoton.h"
 }
 
-#include "engine/RayTracer.hpp"
+#include "engine/PhotonEngine.hpp"
 #include <cstdlib>
 
 Primitive *makeDarkKnightRoom(double length, double width, double height);

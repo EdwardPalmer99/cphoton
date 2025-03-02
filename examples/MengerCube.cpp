@@ -12,7 +12,7 @@ extern "C"
 #include "CPhoton.h"
 }
 
-#include "engine/RayTracer.hpp"
+#include "engine/PhotonEngine.hpp"
 
 int main(int argc, const char *argv[])
 {

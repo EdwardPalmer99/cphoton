@@ -1,5 +1,5 @@
 /**
- * @file RayTracer.hpp
+ * @file PhotonEngine.hpp
  * @author Edward Palmer
  * @date 2025-03-02
  *

@@ -1,5 +1,5 @@
 /**
- * @file RayTracer.cpp
+ * @file PhotonEngine.cpp
  * @author Edward Palmer
  * @date 2025-03-02
  *
@@ -7,7 +7,7 @@
  *
  */
 
-#include "engine/RayTracer.hpp"
+#include "engine/PhotonEngine.hpp"
 #include <stdint.h>
 
 extern "C"
