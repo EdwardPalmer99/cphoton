@@ -1,5 +1,5 @@
 /**
- * @file CSGIntersection.h
+ * @file SpanList.h
  * @author Edward Palmer
  * @date 2025-02-23
  *
@@ -8,20 +8,20 @@
  */
 
 #pragma once
-#include "CSGInterval.h"
+#include "engine/Span.h"
 #include <stdbool.h>
 
 /**
  * Stores all intersections.
  */
-typedef struct CSGIntervalList_t
+typedef struct SpanList_t
 {
     int n;
-    CSGInterval intervals[20];
-} CSGIntervalList;
+    SpanRec intervals[20];
+} SpanList;
 
 /**
  * @brief Computes the list of intervals after subtracting a list from an original list. Returns false if there are no
  * intervals after the subtraction.
  */
-bool subtractIntervalLists(const CSGIntervalList *original, const CSGIntervalList *subtractor, CSGIntervalList *result);
+bool subtractSpanLists(const SpanList *original, const SpanList *subtractor, SpanList *result);

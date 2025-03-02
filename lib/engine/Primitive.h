@@ -12,6 +12,8 @@
 #include "engine/HitRec.h"
 #include "engine/Material.h"
 #include "engine/Ray.h"
+#include "engine/Span.h"
+#include "engine/SpanList.h"
 #include "models/Fractals3D.h"
 #include "utility/Vector3.h"
 #include <stdbool.h>
@@ -51,6 +53,9 @@ struct primitive_t
     bool (*hit)(Primitive *, Ray *, double, double, HitRec *);
     bool (*boundingBox)(Primitive *, AABB *);
     void (*destructor)(Primitive *);
+
+    // TODO: - need to implement this.
+    bool (*intersectionTimes)(Primitive *, Ray *, SpanList *);
 };
 
 

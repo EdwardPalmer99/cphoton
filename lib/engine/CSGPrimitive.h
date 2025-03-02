@@ -16,7 +16,7 @@ struct primitive_t;
 
 typedef enum
 {
-    CSGIntersection,
+    //   CSGIntersection,
     CSGUnion,
     CSGAddition,
     CSGSubtraction,

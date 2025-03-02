@@ -23,6 +23,14 @@
         (val2) = temp;                                                                                                 \
     })
 
+
+// Positive minimum hit time fixes shadow acne.
+static const double kMinHitTime = 0.001;
+static const double kMaxHitTime = INFINITY;
+
+static bool computeSphereIntersectionTimes(Primitive *primitive, Ray *ray, SpanList *result);
+// TODO: - move all primitives into separate files.
+
 static inline bool isValidIntersectionTime(double hitTime, double tmin, double tmax);
 static inline bool intersectionWithPlane(Point3 p0, Vector3 n, Ray *ray, double *hitTime);
 static inline bool isSphereHit(Primitive *primitive, Ray *ray, double tmin, double tmax, HitRec *hit);
@@ -644,6 +652,10 @@ Primitive *makeSphere(Point3 center, double radius, Material *material)
     sphere->radius = radius;
 
     primitive->sphere = sphere;
+
+    // TODO: - hookup new test method.
+    primitive->intersectionTimes = computeSphereIntersectionTimes;
+
     primitive->hit = isSphereHit;
     primitive->boundingBox = sphereBoundingBox;
     primitive->destructor = destructSphere;
@@ -992,6 +1004,93 @@ static inline bool isTriangleHit(Primitive *primitive, Ray *ray, double tmin, do
     }
 
     return false;
+}
+
+
+static bool computeSphereIntersectionTimes(Primitive *primitive, Ray *ray, SpanList *result)
+{
+    Sphere *sphere = primitive->sphere;
+    const double r = sphere->radius;
+
+    // ray origin 	 = O
+    // ray direction = d
+    // sphere center = C
+    // sphere radius = r
+    //
+    // ray = O + t * d
+    //
+    // Solve:
+    // (ray - C)^2 = r^2
+    //
+    // t^2*(d.d) + 2t*d.(O - C) + (O - C).(O - C) - r^2 = 0
+    //
+    // Quadratic formula:
+    // t = [-B +/- sqrt(B^2 - 4 * AC)] / 2A
+    //
+    // A = d.d
+    // B = 2d.(O - C)
+    // C = (O - C).(O - C) - r^2
+
+    Vector3 rayOriginMinusCenter = subtractVectors(ray->origin, sphere->center);
+
+    const double quadA = dot(ray->direction, ray->direction);
+    const double quadB = 2.0 * dot(ray->direction, rayOriginMinusCenter);
+    const double quadC = dot(rayOriginMinusCenter, rayOriginMinusCenter) - r * r;
+
+    double t1, t2; // t1 < t2
+
+    // Case: no intersections.
+    if (!solveQuadratic(quadA, quadB, quadC, &t1, &t2))
+    {
+        return false;
+    }
+
+    bool t1Valid = isValidIntersectionTime(t1, kMinHitTime, kMaxHitTime);
+    bool t2Valid = isValidIntersectionTime(t2, kMinHitTime, kMaxHitTime);
+
+    // Case: t1, t2 negative --> intersected behind the camera (IGNORE).
+    if (!t1Valid && !t2Valid)
+    {
+        return false;
+    }
+
+    // TODO: - Only need material, t1, t2, normals.
+
+    /* Compute intersection t1 (if t1 < 0 --> camera inside object) */
+    {
+        Point3 hitPoint = pointAtTime(ray, t1);
+
+        Vector3 outwardNormal = scaleVector(subtractVectors(hitPoint, sphere->center), 1.0 / r);
+
+        // Are we hitting the outside surface or are we hitting the inside?
+        const bool frontFace = (dot(ray->direction, outwardNormal) < 0.0);
+
+        result->n = 1;
+        result->intervals[0].entry.frontFace = frontFace;
+        result->intervals[0].entry.t = t1;
+        result->intervals[0].entry.hitPt = hitPoint;
+        result->intervals[0].entry.normal = frontFace ? outwardNormal : flipVector(outwardNormal);
+        result->intervals[0].entry.material = primitive->material;
+    }
+
+    /* Compute intersection t2 */
+    {
+        Point3 hitPoint = pointAtTime(ray, t2);
+
+        Vector3 outwardNormal = scaleVector(subtractVectors(hitPoint, sphere->center), 1.0 / r);
+
+        // Are we hitting the outside surface or are we hitting the inside?
+        const bool frontFace = (dot(ray->direction, outwardNormal) < 0.0);
+
+        result->n = 1;
+        result->intervals[0].exit.frontFace = frontFace;
+        result->intervals[0].exit.t = t2;
+        result->intervals[0].exit.hitPt = hitPoint;
+        result->intervals[0].exit.normal = frontFace ? outwardNormal : flipVector(outwardNormal);
+        result->intervals[0].exit.material = primitive->material;
+    }
+
+    return true;
 }
 
 

@@ -1,23 +1,24 @@
 /**
- * @file CSGInterval.h
+ * @file Span.h
  * @author Edward Palmer
- * @date 2025-02-27
+ * @date 2025-03-01
  *
  * @copyright Copyright (c) 2025
  *
  */
 
 #pragma once
+#include "engine/HitRec.h"
 #include <stdbool.h>
 
 /**
- * Store the enter and exit times of a ray with a primitive.
+ * Stores the hit on entry and exit of a primitive.
  */
-typedef struct CSGInterval_t
+typedef struct SpanRec_t
 {
-    double tEnter;
-    double tExit;
-} CSGInterval;
+    HitRec entry;
+    HitRec exit;
+} SpanRec;
 
 
 /**
@@ -26,7 +27,7 @@ typedef struct CSGInterval_t
  * @param t The time to check.
  * @return Returns true if inside interval.
  */
-bool insideInterval(const CSGInterval *interval, double t);
+bool insideInterval(const SpanRec *interval, double t);
 
 
 /**
@@ -34,13 +35,13 @@ bool insideInterval(const CSGInterval *interval, double t);
  * @param interval1
  * @param interval2
  */
-bool intervalsOverlap(const CSGInterval *interval1, const CSGInterval *interval2);
+bool intervalsOverlap(const SpanRec *interval1, const SpanRec *interval2);
 
 
 /**
  * @brief Returns true if subinterval completely contained inside the interval.
  */
-bool isSubInterval(const CSGInterval *interval, const CSGInterval *subinterval);
+bool isSubInterval(const SpanRec *interval, const SpanRec *subinterval);
 
 
 /**
@@ -48,6 +49,9 @@ bool isSubInterval(const CSGInterval *interval, const CSGInterval *subinterval);
  * @param interval1
  * @param interval2
  * @param result An array containing the output interval(s).
- * @returns Returns the number of output intervals (0, 1 or 2).
+ * @returns Returns the number of output intervals (-1, 0, 1 or 2).
+ *
+ * -1 --> intervals do not overlap
+ * 0, 1, 2 --> number of intervals after subtraction.
  */
-int subtractIntervals(const CSGInterval *interval1, const CSGInterval *interval2, CSGInterval result[2]);
+int subtractIntervals(const SpanRec *interval1, const SpanRec *interval2, SpanRec result[2]);
