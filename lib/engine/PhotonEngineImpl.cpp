@@ -7,9 +7,13 @@
  *
  */
 
-#include "engine/PhotonEngineImpl.h"
+#include "engine/PhotonEngineImpl.hpp"
+
+extern "C"
+{
 #include "engine/HitRec.h"
 #include "utility/Randomizer.h"
+}
 
 static const double kMinHitTime = 0.002; // Positive tmin fixes shadow acne.
 static const double kMaxHitTime = INFINITY;
@@ -97,7 +101,7 @@ void renderPixel(void *args)
         const double v = (pArgs->row + randomDouble()) / (double)(pArgs->image->height - 1);
 
         // Generate a new camera ray:
-        Ray ray = getRay(pArgs->camera, u, v);
+        Ray ray = pArgs->camera->getRay(u, v);
 
         Color3 color = rayColor(&ray, pArgs->objects, kMaxDepth);
 

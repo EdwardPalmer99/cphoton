@@ -23,7 +23,7 @@ int main(int argc, const char *argv[])
 
     // Create the camera:
     const double aspectRatio = ((double)gRenderSettings.pixelsWide / (double)gRenderSettings.pixelsHigh);
-    Camera camera = makeCamera(45.0, aspectRatio, 1, 0, point3(-2.5, 2, 10), point3(0, 2, 0));
+    Camera camera(45.0, aspectRatio, 1, 0, point3(-2.5, 2, 10), point3(0, 2, 0));
 
     Primitive *room = makeDarkKnightRoom(20, 16.0, 5);
 

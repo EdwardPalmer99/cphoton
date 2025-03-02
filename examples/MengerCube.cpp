@@ -23,7 +23,7 @@ int main(int argc, const char *argv[])
     // Create the camera:
     const double aspectRatio = ((double)gRenderSettings.pixelsWide / (double)gRenderSettings.pixelsHigh);
 
-    Camera camera = makeCamera(45.0, aspectRatio, 4, 0.0, point3(2, 5, 5), point3(0.2, 0.6, 1.0));
+    Camera camera(45.0, aspectRatio, 4, 0.0, point3(2, 5, 5), point3(0.2, 0.6, 1.0));
 
     // Create the textures:
     Texture *greyColor = makeSolidTexture(color3(0.20, 0.26, 0.35));

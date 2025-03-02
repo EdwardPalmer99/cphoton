@@ -8,11 +8,11 @@
  */
 
 #include "engine/PhotonEngine.hpp"
+#include "engine/PhotonEngineImpl.hpp"
 #include <stdint.h>
 
 extern "C"
 {
-#include "engine/PhotonEngineImpl.h"
 #include "engine/Primitive.h"
 #include "threadpool/ThreadPool.h"
 #include "threadpool/ThreadUtils.h"

@@ -8,11 +8,16 @@
  */
 
 #pragma once
-#include "engine/Camera.h"
+#include "engine/Camera.hpp"
+
+extern "C"
+{
 #include "engine/Primitive.h"
 #include "engine/Ray.h"
 #include "utility/PPMWriter.h"
 #include "utility/Vector3.h"
+}
+
 #include <stdint.h>
 
 /** Struct passed to renderPixel function */

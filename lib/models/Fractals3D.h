@@ -8,7 +8,6 @@
 #ifndef Fractals3D_h
 #define Fractals3D_h
 
-#include "engine/Camera.h"
 #include "engine/HitRec.h"
 #include "engine/Material.h"
 #include "engine/Primitive.h"

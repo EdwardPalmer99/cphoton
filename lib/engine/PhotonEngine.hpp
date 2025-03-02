@@ -9,9 +9,10 @@
 
 #pragma once
 
+#include "engine/Camera.hpp"
+
 extern "C"
 {
-#include "engine/Camera.h"
 #include "engine/Scene.h"
 #include "utility/PPMWriter.h"
 }
