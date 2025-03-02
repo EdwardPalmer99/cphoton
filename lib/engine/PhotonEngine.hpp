@@ -10,10 +10,10 @@
 #pragma once
 
 #include "engine/Camera.hpp"
+#include "engine/Scene.hpp"
 
 extern "C"
 {
-#include "engine/Scene.h"
 #include "utility/PPMWriter.h"
 }
 

@@ -9,11 +9,12 @@
 
 #include "engine/PhotonEngine.hpp"
 #include "engine/PhotonEngineImpl.hpp"
+#include "engine/primitives/BVHNode.hpp"
+
 #include <stdint.h>
 
 extern "C"
 {
-#include "engine/Primitive.h"
 #include "threadpool/ThreadPool.h"
 #include "threadpool/ThreadUtils.h"
 }
@@ -25,7 +26,7 @@ PhotonEngine::PhotonEngine(unsigned int pixelsWide_, unsigned int pixelsHigh_)
 
 PPMImage *PhotonEngine::render(Scene *scene, Camera *camera) const
 {
-    if (!scene || !scene->sceneNode || !camera)
+    if (!scene || !scene->BVH() || !camera)
     {
         return NULL;
     }
@@ -35,7 +36,7 @@ PPMImage *PhotonEngine::render(Scene *scene, Camera *camera) const
 
     ThreadPool *threadPool = allocThreadPool(computeNumWorkers());
 
-    RenderPixelArgs args = {.row = 0, .col = 0, .camera = camera, .objects = scene->sceneNode, .image = image};
+    RenderPixelArgs args = {.row = 0, .col = 0, .camera = camera, .objects = scene->BVH(), .image = image};
 
     for (int iRow = 0; iRow < image->height; ++iRow)
     {

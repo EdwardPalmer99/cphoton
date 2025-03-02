@@ -25,7 +25,7 @@ Color3 rayColor(Ray *ray, Primitive *objectsBVH, int depth)
 
     if (depth <= 0) return color3(0, 0, 0); // Exceeded ray bounce limit.
 
-    if (objectsBVH->hit(objectsBVH, ray, kMinHitTime, kMaxHitTime, &hit))
+    if (objectsBVH->hit(ray, kMinHitTime, kMaxHitTime, &hit))
     {
         Ray scatteredRay;
         Color3 attenuation;

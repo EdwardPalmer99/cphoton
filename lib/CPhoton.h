@@ -10,10 +10,8 @@
 #pragma once
 #include "engine/HitRec.h"
 #include "engine/Material.h"
-#include "engine/Primitive.h"
 #include "engine/Ray.h"
 #include "engine/RenderSettings.h"
-#include "engine/Scene.h"
 #include "engine/Texture.h"
 #include "logger/Logger.h"
 #include "models/Fractals3D.h"
