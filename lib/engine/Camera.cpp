@@ -42,8 +42,7 @@ Camera::Camera(double verticalFOV_, double aspectRatio_, double focalLength_, do
 }
 
 
-/// Get a camera ray for a particular pixel. s, t are in range [0, 1).
-Ray Camera::getRay(double s, double t)
+Ray Camera::fireRay(double s, double t)
 {
     // Calculate offset due to non-zero aperature (defocus blur):
     Vector3 randomInDisk = scaleVector(randomInUnitDisk(), lensRadius);

@@ -20,7 +20,10 @@ public:
     Camera(double verticalFOV_, double aspectRatio_, double focalLength_, double aperture_, Point3 origin_,
            Point3 target_);
 
-    Ray getRay(double s, double t);
+    /*
+     * @brief Get a camera ray for a particular pixel. s, t are in range [0, 1).
+     */
+    Ray fireRay(double s, double t);
 
 protected:
     Point3 origin;
