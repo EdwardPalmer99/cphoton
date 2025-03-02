@@ -9,10 +9,17 @@
 
 extern "C"
 {
-#include "CPhoton.h"
+#include "engine/RenderSettings.h"
+#include "utility/PPMWriter.h"
 }
 
 #include "engine/PhotonEngine.hpp"
+#include "engine/Scene.hpp"
+#include "engine/primitives/BVHNode.hpp"
+#include "engine/primitives/Cube.hpp"
+#include "engine/primitives/Plane.hpp"
+#include "engine/primitives/Primitive.hpp"
+#include "models/MengerCube.hpp"
 
 int main(int argc, const char *argv[])
 {
@@ -34,32 +41,29 @@ int main(int argc, const char *argv[])
     Material *goldLambertian = makeLambertian(goldColor);
 
     // Create the scene:
-    Scene *scene = makeScene();
+    Scene scene;
 
     Primitive *mengerSponge0 = makeMengerSponge(0, point3(-1.5, 0.5, -1.5), 1.0, goldLambertian);
     Primitive *mengerSponge1 = makeMengerSponge(1, point3(1.5, 0.5, -1.5), 1.0, goldLambertian);
     Primitive *mengerSponge3 = makeMengerSponge(3, point3(-1.5, 0.5, 1.5), 1.0, goldLambertian);
     Primitive *mengerSponge2 = makeMengerSponge(2, point3(1.5, 0.5, 1.5), 1.0, goldLambertian);
     Primitive *mengerSponge4 = makeMengerSponge(4, point3(0, 0.5, 0), 1.0, goldLambertian);
-    Primitive *plane = makePlane(point3(0, 0, 0), vector3(0, 1, 0), greyMetal);
+    Primitive *plane = new Plane(point3(0, 0, 0), vector3(0, 1, 0), greyMetal);
 
-    scene->addObject(scene, mengerSponge0);
-    scene->addObject(scene, mengerSponge1);
-    scene->addObject(scene, mengerSponge2);
-    scene->addObject(scene, mengerSponge3);
-    scene->addObject(scene, mengerSponge4);
-    scene->addObject(scene, plane);
-    scene->markAsFinished(scene);
+    scene.addObject(mengerSponge0);
+    scene.addObject(mengerSponge1);
+    scene.addObject(mengerSponge2);
+    scene.addObject(mengerSponge3);
+    scene.addObject(mengerSponge4);
+    scene.addObject(plane);
 
     // Render:
     PhotonEngine engine(gRenderSettings.pixelsWide, gRenderSettings.pixelsHigh);
 
-    PPMImage *outputImage = engine.render(scene, &camera);
+    PPMImage *outputImage = engine.render(&scene, &camera);
     writeBinary16BitPPMImage(outputImage, gRenderSettings.outputPath);
 
     // Cleanup:
     freePPMImage(outputImage);
-    scene->destructor(scene);
-
     return 0;
 }
