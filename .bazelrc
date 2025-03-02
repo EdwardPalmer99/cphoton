@@ -3,7 +3,7 @@
 test -c opt --verbose_failures --test_output=all
 
 build -c opt --verbose_failures
-build --copt='-Wall' --copt='-Wno-missing-braces' --copt='-O2'
+build --copt='-Wall' --copt='-Wno-missing-braces' --copt='-O2' --copt='-g'
 build --conlyopt='-std=gnu11'
 build --cxxopt='-std=c++17'
 build --color=yes

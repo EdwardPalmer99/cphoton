@@ -1,6 +1,6 @@
 cc_binary(
     name = "batcave",
-    srcs = ["BatCave.c"],
+    srcs = ["BatCave.cpp"],
     deps = [
         "//lib:cphoton"
     ],
@@ -10,7 +10,7 @@ cc_binary(
 
 cc_binary(
     name = "menger-cube",
-    srcs = ["MengerCube.c"],
+    srcs = ["MengerCube.cpp"],
     deps = [
         "//lib:cphoton"
     ],

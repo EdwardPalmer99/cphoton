@@ -7,7 +7,19 @@
  *
  */
 
-#include "CPhoton.h"
+extern "C"
+{
+#include "engine/RenderSettings.h"
+#include "utility/PPMWriter.h"
+}
+
+#include "engine/PhotonEngine.hpp"
+#include "engine/Scene.hpp"
+#include "engine/primitives/BVHNode.hpp"
+#include "engine/primitives/Cube.hpp"
+#include "engine/primitives/Plane.hpp"
+#include "engine/primitives/Primitive.hpp"
+#include "models/MengerCube.hpp"
 
 int main(int argc, const char *argv[])
 {
@@ -18,7 +30,7 @@ int main(int argc, const char *argv[])
     // Create the camera:
     const double aspectRatio = ((double)gRenderSettings.pixelsWide / (double)gRenderSettings.pixelsHigh);
 
-    Camera camera = makeCamera(45.0, aspectRatio, 4, 0.0, point3(2, 5, 5), point3(0.2, 0.6, 1.0));
+    Camera camera(45.0, aspectRatio, 4, 0.0, point3(2, 5, 5), point3(0.2, 0.6, 1.0));
 
     // Create the textures:
     Texture *greyColor = makeSolidTexture(color3(0.20, 0.26, 0.35));
@@ -29,30 +41,29 @@ int main(int argc, const char *argv[])
     Material *goldLambertian = makeLambertian(goldColor);
 
     // Create the scene:
-    Scene *scene = makeScene();
+    Scene scene;
 
     Primitive *mengerSponge0 = makeMengerSponge(0, point3(-1.5, 0.5, -1.5), 1.0, goldLambertian);
     Primitive *mengerSponge1 = makeMengerSponge(1, point3(1.5, 0.5, -1.5), 1.0, goldLambertian);
     Primitive *mengerSponge3 = makeMengerSponge(3, point3(-1.5, 0.5, 1.5), 1.0, goldLambertian);
     Primitive *mengerSponge2 = makeMengerSponge(2, point3(1.5, 0.5, 1.5), 1.0, goldLambertian);
     Primitive *mengerSponge4 = makeMengerSponge(4, point3(0, 0.5, 0), 1.0, goldLambertian);
-    Primitive *plane = makePlane(point3(0, 0, 0), vector3(0, 1, 0), greyMetal);
+    Primitive *plane = new Plane(point3(0, 0, 0), vector3(0, 1, 0), greyMetal);
 
-    scene->addObject(scene, mengerSponge0);
-    scene->addObject(scene, mengerSponge1);
-    scene->addObject(scene, mengerSponge2);
-    scene->addObject(scene, mengerSponge3);
-    scene->addObject(scene, mengerSponge4);
-    scene->addObject(scene, plane);
-    scene->markAsFinished(scene);
+    scene.addObject(mengerSponge0);
+    scene.addObject(mengerSponge1);
+    scene.addObject(mengerSponge2);
+    scene.addObject(mengerSponge3);
+    scene.addObject(mengerSponge4);
+    scene.addObject(plane);
 
     // Render:
-    PPMImage *outputImage = renderScene(scene, &camera);
+    PhotonEngine engine(gRenderSettings.pixelsWide, gRenderSettings.pixelsHigh);
+
+    PPMImage *outputImage = engine.render(&scene, &camera);
     writeBinary16BitPPMImage(outputImage, gRenderSettings.outputPath);
 
     // Cleanup:
     freePPMImage(outputImage);
-    scene->destructor(scene);
-
     return 0;
 }
