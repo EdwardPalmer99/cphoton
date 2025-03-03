@@ -18,10 +18,6 @@ extern "C"
 }
 
 
-// TODO: - move bounding boxes into separate file.
-static AABB combineBoundingBoxes(const AABB *first, const AABB *second);
-
-
 CSGNode::CSGNode(Primitive *left_, Primitive *right_, CSGOperation operationType_)
     : Primitive(nullptr), left(left_), right(right_), operationType(operationType_)
 {
@@ -52,7 +48,7 @@ bool CSGNode::boundingBox(AABB *outputBox)
     (void)right->boundingBox(&rightBox);
 
     // Combine to generate large bounding box encompassing everything in the tree. This can be made more efficient!
-    *outputBox = combineBoundingBoxes(&leftBox, &rightBox);
+    *outputBox = (leftBox + rightBox);
     return true;
 }
 
@@ -127,21 +123,4 @@ bool CSGNode::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
     }
 
     return false;
-}
-
-
-// Returns a new bounding box which combines the first and second.
-static AABB combineBoundingBoxes(const AABB *first, const AABB *second)
-{
-    AABB result;
-
-    result.min.x = min(first->min.x, second->min.x);
-    result.min.y = min(first->min.y, second->min.y);
-    result.min.z = min(first->min.z, second->min.z);
-
-    result.max.x = max(first->max.x, second->max.x);
-    result.max.y = max(first->max.y, second->max.y);
-    result.max.z = max(first->max.z, second->max.z);
-
-    return result;
 }

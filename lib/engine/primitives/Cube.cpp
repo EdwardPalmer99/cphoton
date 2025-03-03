@@ -129,12 +129,12 @@ bool Cube::boundingBox(AABB *outputBox)
 
     if (!rotationMatrix)
     {
-        outputBox->min = point3(center.x - halfL, center.y - halfL, center.z - halfL);
-        outputBox->max = point3(center.x + halfL, center.y + halfL, center.z + halfL);
+        outputBox->minPt() = point3(center.x - halfL, center.y - halfL, center.z - halfL);
+        outputBox->maxPt() = point3(center.x + halfL, center.y + halfL, center.z + halfL);
     }
     else
     {
-        resetBoundingBox(outputBox);
+        outputBox->reset();
 
         for (int i = 0; i < 2; i++)
         {
@@ -151,7 +151,7 @@ bool Cube::boundingBox(AABB *outputBox)
                     // Rotated and then translated vertex.
                     Point3 vertexPrime = addVectors(rotation(vertex, rotationMatrix), center);
 
-                    addPointToBoundingBox(vertexPrime, outputBox);
+                    outputBox->addPoint(vertexPrime);
                 }
             }
         }

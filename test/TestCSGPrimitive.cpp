@@ -25,13 +25,13 @@ TEST(CSGPrimitive, TestBoundingBoxWithLeafCSG)
     AABB boundingBox;
     ASSERT_TRUE(theCSG->boundingBox(&boundingBox));
 
-    EXPECT_DOUBLE_EQ(boundingBox.min.x, -1.5);
-    EXPECT_DOUBLE_EQ(boundingBox.min.y, 0.0);
-    EXPECT_DOUBLE_EQ(boundingBox.min.z, -1.0);
+    EXPECT_DOUBLE_EQ(boundingBox.minPt().x, -1.5);
+    EXPECT_DOUBLE_EQ(boundingBox.minPt().y, 0.0);
+    EXPECT_DOUBLE_EQ(boundingBox.minPt().z, -1.0);
 
-    EXPECT_DOUBLE_EQ(boundingBox.max.x, 1.5);
-    EXPECT_DOUBLE_EQ(boundingBox.max.y, 2.0);
-    EXPECT_DOUBLE_EQ(boundingBox.max.z, 1.0);
+    EXPECT_DOUBLE_EQ(boundingBox.maxPt().x, 1.5);
+    EXPECT_DOUBLE_EQ(boundingBox.maxPt().y, 2.0);
+    EXPECT_DOUBLE_EQ(boundingBox.maxPt().z, 1.0);
 
     delete theCSG;
 }
@@ -49,13 +49,13 @@ TEST(CSGPrimitive, TestBoundingBoxWithNonLeafCSG)
     AABB boundingBox;
     ASSERT_TRUE(theCSG->boundingBox(&boundingBox));
 
-    EXPECT_DOUBLE_EQ(boundingBox.min.x, -1.5);
-    EXPECT_DOUBLE_EQ(boundingBox.min.y, 0.0);
-    EXPECT_DOUBLE_EQ(boundingBox.min.z, -1.0);
+    EXPECT_DOUBLE_EQ(boundingBox.minPt().x, -1.5);
+    EXPECT_DOUBLE_EQ(boundingBox.minPt().y, 0.0);
+    EXPECT_DOUBLE_EQ(boundingBox.minPt().z, -1.0);
 
-    EXPECT_DOUBLE_EQ(boundingBox.max.x, 1.5);
-    EXPECT_DOUBLE_EQ(boundingBox.max.y, 4.0);
-    EXPECT_DOUBLE_EQ(boundingBox.max.z, 1.0);
+    EXPECT_DOUBLE_EQ(boundingBox.maxPt().x, 1.5);
+    EXPECT_DOUBLE_EQ(boundingBox.maxPt().y, 4.0);
+    EXPECT_DOUBLE_EQ(boundingBox.maxPt().z, 1.0);
 
     delete theCSG;
 }

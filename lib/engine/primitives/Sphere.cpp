@@ -77,9 +77,9 @@ bool Sphere::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
 
 bool Sphere::boundingBox(AABB *boundingBox)
 {
-    boundingBox->max = point3(center.x + radius, center.y + radius, center.z + radius);
-    boundingBox->min = point3(center.x - radius, center.y - radius, center.z - radius);
-
+    Point3 min = point3(center.x - radius, center.y - radius, center.z - radius);
+    Point3 max = point3(center.x + radius, center.y + radius, center.z + radius);
+    *boundingBox = AABB(min, max);
     return true;
 }
 

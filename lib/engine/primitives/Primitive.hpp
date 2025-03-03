@@ -19,11 +19,7 @@ extern "C"
 }
 
 #include "CSGNodeInterface.hpp"
-
-struct AABB // Axis-aligned Bounding box.
-{
-    Point3 min, max;
-};
+#include "engine/AABB.hpp"
 
 /** Base object class. */
 class Primitive : public CSGNodeInterface
@@ -47,10 +43,6 @@ protected:
     /** Object material. */
     Material *material{nullptr};
 };
-
-
-void resetBoundingBox(AABB *outputBox);
-void addPointToBoundingBox(Point3 pt, AABB *outputBox);
 
 bool isValidIntersectionTime(double hitTime, double tmin, double tmax);
 bool intersectionWithPlane(Point3 p0, Vector3 n, Ray *ray, double *hitTime);
