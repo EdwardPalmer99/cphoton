@@ -14,7 +14,7 @@
 /**
  * Stores the hit on entry and exit of a primitive.
  */
-typedef struct SpanRec_t
+typedef struct
 {
     HitRec entry;
     HitRec exit;

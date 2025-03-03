@@ -8,6 +8,7 @@
  */
 
 #include "Primitive.hpp"
+#include <stdexcept>
 
 Primitive::Primitive(Material *material_) : material(material_)
 {
@@ -24,6 +25,12 @@ Primitive::~Primitive()
     {
         material->decrementRefCounter(material);
     }
+}
+
+
+bool Primitive::computeIntersections(Ray *ray, double tmin, double tmax, SpanList *result)
+{
+    throw std::logic_error("Not implemented");
 }
 
 
