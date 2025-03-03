@@ -102,12 +102,12 @@ bool Cone::boundingBox(AABB *outputBox)
 {
     if (!rotationMatrix)
     {
-        outputBox->min = point3(center.x - height, center.y, center.z - height);
-        outputBox->max = point3(center.x + height, center.y + height, center.z + height);
+        outputBox->minPt() = point3(center.x - height, center.y, center.z - height);
+        outputBox->maxPt() = point3(center.x + height, center.y + height, center.z + height);
     }
     else
     {
-        resetBoundingBox(outputBox);
+        outputBox->reset();
 
         for (int i = 0; i < 2; i++)
         {
@@ -124,7 +124,7 @@ bool Cone::boundingBox(AABB *outputBox)
                     // Rotated and then translated vertex.
                     Point3 vertexPrime = addVectors(rotation(vertex, rotationMatrix), center);
 
-                    addPointToBoundingBox(vertexPrime, outputBox);
+                    outputBox->addPoint(vertexPrime);
                 }
             }
         }

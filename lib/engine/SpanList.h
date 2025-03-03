@@ -1,0 +1,27 @@
+/**
+ * @file SpanList.h
+ * @author Edward Palmer
+ * @date 2025-02-23
+ *
+ * @copyright Copyright (c) 2025
+ *
+ */
+
+#pragma once
+#include "engine/Span.h"
+#include <stdbool.h>
+
+/**
+ * Stores all intersections.
+ */
+typedef struct SpanList_t
+{
+    int n;
+    SpanRec intervals[20];
+} SpanList;
+
+/**
+ * @brief Computes the list of intervals after subtracting a list from an original list. Returns false if there are no
+ * intervals after the subtraction.
+ */
+bool subtractSpanLists(const SpanList *original, const SpanList *subtractor, SpanList *result);

@@ -198,7 +198,9 @@ static inline bool refractRay(Ray *incidentRay, HitRec *hit, Ray *scatteredRay, 
     // If it's the front face, we're going into the object otherwise we're leaving
     // and exiting into the air.
     const double ir = hit->material->indexOfRefraction;
-    const double refractionRatio = hit->frontFace ? (1.0 / ir) : ir;
+    const double refractionRatio =
+        hit->frontFace ? (1.0 / ir) : ir; // TODO: - we can calculate based on incident ray and normal whether this was
+                                          // inside or outside object. Don't need this.
 
     // Total internal reflection:
     bool cannotRefract = (refractionRatio * sinTheta > 1.0);

@@ -1,0 +1,8 @@
+cc_binary(
+    name = "hemisphere",
+    srcs = ["Hemisphere.cpp"],
+    deps = [
+        "//lib:cphoton"
+    ],
+    visibility = ["//visibility:private"]
+)

@@ -57,23 +57,23 @@ bool Disc::boundingBox(AABB *outputBox)
 
     if (fabs(normal.x) == 1.0)
     {
-        outputBox->min = point3(p0.x - deltaR, p0.y - radius, p0.z - radius);
-        outputBox->max = point3(p0.x + deltaR, p0.y + radius, p0.z + radius);
+        outputBox->minPt() = point3(p0.x - deltaR, p0.y - radius, p0.z - radius);
+        outputBox->maxPt() = point3(p0.x + deltaR, p0.y + radius, p0.z + radius);
     }
     else if (fabs(normal.y) == 1.0)
     {
-        outputBox->min = point3(p0.x - radius, p0.y - deltaR, p0.z - radius);
-        outputBox->max = point3(p0.x + radius, p0.y + deltaR, p0.z + radius);
+        outputBox->minPt() = point3(p0.x - radius, p0.y - deltaR, p0.z - radius);
+        outputBox->maxPt() = point3(p0.x + radius, p0.y + deltaR, p0.z + radius);
     }
     else if (fabs(normal.z) == 1.0)
     {
-        outputBox->min = point3(p0.x - radius, p0.y - radius, p0.z - deltaR);
-        outputBox->max = point3(p0.x + radius, p0.y + radius, p0.z + deltaR);
+        outputBox->minPt() = point3(p0.x - radius, p0.y - radius, p0.z - deltaR);
+        outputBox->maxPt() = point3(p0.x + radius, p0.y + radius, p0.z + deltaR);
     }
     else
     {
-        outputBox->min = point3(p0.x - radius, p0.y - radius, p0.z - radius);
-        outputBox->max = point3(p0.x + radius, p0.y + radius, p0.z + radius);
+        outputBox->minPt() = point3(p0.x - radius, p0.y - radius, p0.z - radius);
+        outputBox->maxPt() = point3(p0.x + radius, p0.y + radius, p0.z + radius);
     }
 
     return true;

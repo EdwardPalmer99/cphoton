@@ -15,19 +15,10 @@ extern "C"
 #include "utility/Utility.h"
 }
 
-#define swap(val1, val2)                                                                                               \
-    ({                                                                                                                 \
-        double temp = (val1);                                                                                          \
-        (val1) = (val2);                                                                                               \
-        (val2) = temp;                                                                                                 \
-    })
-
-AABB addBoundingBoxes(AABB box0, AABB box1);
 int compareBoundingBoxes(AABB *boxA, AABB *boxB, int axis);
 int boxComparatorX(const void *ptr1, const void *ptr2);
 int boxComparatorY(const void *ptr1, const void *ptr2);
 int boxComparatorZ(const void *ptr1, const void *ptr2);
-bool isAABBHit(AABB *aabb, Ray *ray, double tmin, double tmax);
 
 
 BVHNode::BVHNode(Primitive **objects, int start, int end) : Primitive(nullptr)
@@ -85,7 +76,7 @@ BVHNode::BVHNode(Primitive **objects, int start, int end) : Primitive(nullptr)
         throw std::runtime_error("unable to add bounding boxes");
     }
 
-    box = addBoundingBoxes(boxLeft, boxRight);
+    box = boxLeft + boxRight;
 }
 
 
@@ -98,7 +89,7 @@ BVHNode::~BVHNode()
 
 bool BVHNode::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
 {
-    if (!isAABBHit(&box, ray, tmin, tmax)) return false;
+    if (!box.hit(ray, tmin, tmax)) return false;
 
     bool hitLeft = left && left->hit(ray, tmin, tmax, hit);
     bool hitRight = right && right->hit(ray, tmin, (hitLeft ? hit->t : tmax), hit);
@@ -113,81 +104,24 @@ bool BVHNode::boundingBox(AABB *outputBox)
     return true;
 }
 
-
-bool isAABBHit(AABB *aabb, Ray *ray, double tmin, double tmax)
-{
-    Vector3 minAABB = aabb->min;
-    Vector3 maxAABB = aabb->max;
-    Point3 origin = ray->origin;
-
-    // Now test against x-direction.
-    double invD = 1.0 / ray->direction.x;
-    double t0 = (minAABB.x - origin.x) * invD;
-    double t1 = (maxAABB.x - origin.x) * invD;
-
-    if (invD < 0.0) swap(t0, t1);
-
-    tmin = max(t0, tmin);
-    tmax = min(t1, tmax);
-
-    if (tmax <= tmin) return false;
-
-    // Now test against y-direction.
-    invD = 1.0 / ray->direction.y;
-    t0 = (minAABB.y - origin.y) * invD;
-    t1 = (maxAABB.y - origin.y) * invD;
-
-    if (invD < 0.0) swap(t0, t1);
-
-    tmin = max(t0, tmin);
-    tmax = min(t1, tmax);
-
-    if (tmax <= tmin) return false;
-
-    // Now test against z-direction:
-    invD = 1.0 / ray->direction.z;
-    t0 = (minAABB.z - origin.z) * invD;
-    t1 = (maxAABB.z - origin.z) * invD;
-
-    if (invD < 0.0) swap(t0, t1);
-
-    tmin = max(t0, tmin);
-    tmax = min(t1, tmax);
-
-    if (tmax <= tmin) return false;
-
-    return true;
-}
-
-
-AABB addBoundingBoxes(AABB box0, AABB box1)
-{
-    Point3 newMin = point3(min(box0.min.x, box1.min.x), min(box0.min.y, box1.min.y), min(box0.min.z, box1.min.z));
-    Point3 newMax = point3(max(box0.max.x, box1.max.x), max(box0.max.y, box1.max.y), max(box0.max.z, box1.max.z));
-
-    AABB newBoundingBox = {.min = newMin, .max = newMax};
-
-    return newBoundingBox;
-}
-
 int compareBoundingBoxes(AABB *boxA, AABB *boxB, int axis)
 {
     double minA, minB;
 
     if (axis == 0)
     {
-        minA = boxA->min.x;
-        minB = boxB->min.x;
+        minA = boxA->minPt().x;
+        minB = boxB->minPt().x;
     }
     else if (axis == 1)
     {
-        minA = boxA->min.y;
-        minB = boxB->min.y;
+        minA = boxA->minPt().y;
+        minB = boxB->minPt().y;
     }
     else
     {
-        minA = boxA->min.z;
-        minB = boxB->min.z;
+        minA = boxA->minPt().z;
+        minB = boxB->minPt().z;
     }
 
     if (minA < minB)

@@ -116,12 +116,12 @@ bool Cylinder::boundingBox(AABB *outputBox)
 
     if (!rotationMatrix)
     {
-        outputBox->min = point3(center.x - radius, center.y - halfHeight, center.z - radius);
-        outputBox->max = point3(center.x + radius, center.y + halfHeight, center.z + radius);
+        outputBox->minPt() = point3(center.x - radius, center.y - halfHeight, center.z - radius);
+        outputBox->maxPt() = point3(center.x + radius, center.y + halfHeight, center.z + radius);
     }
     else
     {
-        resetBoundingBox(outputBox);
+        outputBox->reset();
 
         for (int i = 0; i < 2; i++)
         {
@@ -138,7 +138,7 @@ bool Cylinder::boundingBox(AABB *outputBox)
                     // Rotated and then translated vertex.
                     Point3 vertexPrime = addVectors(rotation(vertex, rotationMatrix), center);
 
-                    addPointToBoundingBox(vertexPrime, outputBox);
+                    outputBox->addPoint(vertexPrime);
                 }
             }
         }

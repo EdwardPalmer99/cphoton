@@ -28,6 +28,6 @@ void Logger(LogLevel level, const char *format, ...);
 
 #define LogDebug(...) Logger(LogLevelDebug, __VA_ARGS__)
 #define LogInfo(...) Logger(LogLevelInfo, __VA_ARGS__)
-#define LogWarning(...) Logger(LogLevelWarning __VA_ARGS__)
+#define LogWarning(...) Logger(LogLevelWarning, __VA_ARGS__)
 #define LogError(...) Logger(LogLevelError, __VA_ARGS__)
-#define LogFailed(...) Logger(LogLevelFailed __VA_ARGS__)
+#define LogFailed(...) Logger(LogLevelFailed, __VA_ARGS__)
