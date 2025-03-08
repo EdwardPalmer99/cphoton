@@ -35,7 +35,7 @@ public:
     bool boundingBox(AABB *boundingBox) override;
 
     /** TODO: - this method should be combined with the hit method. */
-    bool computeIntersections(Ray *ray, double tmin, double tmax, SpanList &result) override;
+    bool computeIntersections(Ray *ray, double tmin, double tmax, SpanRec::SpanList &result) override;
 
 protected:
     Primitive *left;

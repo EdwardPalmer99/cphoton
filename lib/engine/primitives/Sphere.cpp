@@ -84,7 +84,7 @@ bool Sphere::boundingBox(AABB *boundingBox)
 }
 
 
-bool Sphere::computeIntersections(Ray *ray, double tmin, double tmax, SpanList &result)
+bool Sphere::computeIntersections(Ray *ray, double tmin, double tmax, SpanRec::SpanList &result)
 {
     result.clear();
 

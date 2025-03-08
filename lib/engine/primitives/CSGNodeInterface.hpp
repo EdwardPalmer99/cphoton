@@ -8,7 +8,7 @@
  */
 
 #pragma once
-#include "engine/SpanList.hpp"
+#include "engine/Span.hpp"
 
 extern "C"
 {
@@ -24,7 +24,7 @@ public:
     /**
      * @brief Populates the SpanList structure with all intersections between a ray and an object.
      */
-    virtual bool computeIntersections(Ray *ray, double tmin, double tmax, SpanList &result) = 0;
+    virtual bool computeIntersections(Ray *ray, double tmin, double tmax, SpanRec::SpanList &result) = 0;
     virtual ~CSGNodeInterface() = default;
 
 protected:

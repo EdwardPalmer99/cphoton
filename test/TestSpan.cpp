@@ -7,12 +7,8 @@
  *
  */
 
+#include "engine/Span.hpp"
 #include <gtest/gtest.h>
-
-extern "C"
-{
-#include "engine/Span.h"
-}
 
 // TEST(Span, TestInsideInterval)
 // {

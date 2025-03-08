@@ -7,7 +7,7 @@
  *
  */
 
-#include "engine/SpanList.hpp"
+#include "engine/Span.hpp"
 #include <gtest/gtest.h>
 
 
