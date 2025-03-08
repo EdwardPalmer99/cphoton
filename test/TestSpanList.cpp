@@ -7,12 +7,9 @@
  *
  */
 
+#include "engine/SpanList.hpp"
 #include <gtest/gtest.h>
 
-extern "C"
-{
-#include "engine/SpanList.h"
-}
 
 /* Result: two intervals */
 // TEST(SpanList, TestSimpleSubsetSubtraction)

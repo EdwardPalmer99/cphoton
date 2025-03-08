@@ -8,11 +8,11 @@
  */
 
 #pragma once
+#include "engine/SpanList.hpp"
 
 extern "C"
 {
 #include "engine/Ray.h"
-#include "engine/SpanList.h"
 }
 
 /**

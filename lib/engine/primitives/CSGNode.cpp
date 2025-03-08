@@ -8,11 +8,11 @@
  */
 
 #include "CSGNode.hpp"
+#include "engine/SpanList.hpp"
 
 extern "C"
 {
 #include "engine/HitRec.h"
-#include "engine/SpanList.h"
 #include "logger/Logger.h"
 #include "utility/Utility.h"
 }

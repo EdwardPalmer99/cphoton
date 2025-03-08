@@ -8,8 +8,12 @@
  */
 
 
-#include "engine/SpanList.h"
+extern "C"
+{
 #include "logger/Logger.h"
+}
+
+#include "engine/SpanList.hpp"
 #include <stdlib.h>
 #include <string.h>
 

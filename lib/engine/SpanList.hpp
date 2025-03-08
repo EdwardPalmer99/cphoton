@@ -8,8 +8,11 @@
  */
 
 #pragma once
+
+extern "C"
+{
 #include "engine/Span.h"
-#include <stdbool.h>
+}
 
 /**
  * Stores all intersections.
