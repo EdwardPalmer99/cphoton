@@ -17,19 +17,6 @@ extern "C"
 #include <stdlib.h>
 #include <string.h>
 
-int spanComparator(const void *ptr1, const void *ptr2)
-{
-    SpanRec *span1 = (SpanRec *)ptr1;
-    SpanRec *span2 = (SpanRec *)ptr2;
-
-    if (span1->entry.t < span2->entry.t)
-        return (1);
-    else if (span1->entry.t > span2->entry.t)
-        return (-1);
-    else
-        return 0;
-}
-
 /**
  * Returns the intersection times list after subtracting original from subtractor.
  */
@@ -105,11 +92,6 @@ bool subtractSpanLists(const SpanList *original, const SpanList *subtractor, Spa
     }
 
     result->n = iResult;
-
-    // if (result->n)
-    // {
-    //     qsort(result->intervals, result->n, sizeof(SpanRec), spanComparator);
-    // }
 
     return (result->n > 0);
 }
