@@ -8,6 +8,14 @@
  */
 
 #include "Span.hpp"
+#include <iostream>
+
+Span::Span(double tentry, double texit)
+{
+    entry.t = tentry;
+    exit.t = texit;
+}
+
 
 bool Span::insideInterval(double t) const
 {
@@ -65,12 +73,12 @@ int Span::subtractIntervals(const Span &other, std::array<Span, 2> &result) cons
     {
         if (fabs(exit.t - other.entry.t) < kDelta)
         {
-            return 0; // Avoid precision problems if very close.
+            return (-1); // Avoid precision problems if very close.
         }
 
         if (other.entry.t <= 0.0)
         {
-            return 0; // New span is all before camera so ignore.
+            return (-1); // New span is all before camera so ignore.
         }
 
         result[0].entry = entry;
@@ -82,7 +90,7 @@ int Span::subtractIntervals(const Span &other, std::array<Span, 2> &result) cons
     {
         if (fabs(entry.t - other.exit.t) < kDelta)
         {
-            return 0; // Avoid precision problems if very close.
+            return (-1); // Avoid precision problems if very close.
         }
 
         result[0].entry = other.exit;
@@ -91,7 +99,7 @@ int Span::subtractIntervals(const Span &other, std::array<Span, 2> &result) cons
         return 1;
     }
 
-    return 0;
+    return (-1);
 }
 
 
@@ -117,15 +125,13 @@ int Span::subtractSpanLists(const SpanList &origList, const SpanList &otherList,
     // Keep looping over until we have no more splits.
     for (int i = 0; i < stack.size(); ++i)
     {
-        Span &span = stack[i];
-
         std::array<Span, 2> output;
         bool isStale{false};
 
         // Iterate over subtractor to find sub-stacks.
-        for (auto &subtractSpan : otherList)
+        for (auto &otherSpan : otherList)
         {
-            int n = span.subtractIntervals(subtractSpan, output);
+            int n = stack[i].subtractIntervals(otherSpan, output);
 
             if (n == (-1)) // No overlap.
             {
@@ -150,7 +156,7 @@ int Span::subtractSpanLists(const SpanList &origList, const SpanList &otherList,
 
         if (!isStale)
         {
-            result.push_back(span);
+            result.push_back(stack[i]);
         }
     }
 

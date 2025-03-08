@@ -20,6 +20,10 @@ struct Span
     HitRec entry;
     HitRec exit;
 
+    // Construct a span in range [tentry, texit]. Useful for testing
+    Span() = default;
+    Span(double tentry, double texit);
+
     /** Returns true if time t is inside span */
     bool insideInterval(double t) const;
 
