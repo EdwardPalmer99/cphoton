@@ -28,6 +28,8 @@ public:
 
     bool boundingBox(AABB *boundingBox) override;
 
+    bool computeIntersections(Ray *ray, double tmin, double tmax, Span::SpanList &result) override;
+
 protected:
     Point3 center;
     double radius;

@@ -46,23 +46,23 @@ bool Plane::boundingBox(AABB *outputBox)
 
     if (fabs(normal.x) == 1.0)
     {
-        outputBox->min = point3(p0.x - deltaR, -INFINITY, -INFINITY);
-        outputBox->max = point3(p0.x + deltaR, INFINITY, INFINITY);
+        outputBox->minPt() = point3(p0.x - deltaR, -INFINITY, -INFINITY);
+        outputBox->maxPt() = point3(p0.x + deltaR, INFINITY, INFINITY);
     }
     else if (fabs(normal.y) == 1.0)
     {
-        outputBox->min = point3(-INFINITY, p0.y - deltaR, -INFINITY);
-        outputBox->max = point3(INFINITY, p0.y + deltaR, INFINITY);
+        outputBox->minPt() = point3(-INFINITY, p0.y - deltaR, -INFINITY);
+        outputBox->maxPt() = point3(INFINITY, p0.y + deltaR, INFINITY);
     }
     else if (fabs(normal.z) == 1.0)
     {
-        outputBox->min = point3(-INFINITY, -INFINITY, p0.z - deltaR);
-        outputBox->max = point3(INFINITY, INFINITY, p0.z + deltaR);
+        outputBox->minPt() = point3(-INFINITY, -INFINITY, p0.z - deltaR);
+        outputBox->maxPt() = point3(INFINITY, INFINITY, p0.z + deltaR);
     }
     else
     {
-        outputBox->min = point3(-INFINITY, -INFINITY, -INFINITY);
-        outputBox->max = point3(INFINITY, INFINITY, INFINITY);
+        outputBox->minPt() = point3(-INFINITY, -INFINITY, -INFINITY);
+        outputBox->maxPt() = point3(INFINITY, INFINITY, INFINITY);
     }
 
     return true;

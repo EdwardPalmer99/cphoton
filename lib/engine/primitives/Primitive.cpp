@@ -8,6 +8,7 @@
  */
 
 #include "Primitive.hpp"
+#include <stdexcept>
 
 Primitive::Primitive(Material *material_) : material(material_)
 {
@@ -27,25 +28,9 @@ Primitive::~Primitive()
 }
 
 
-void resetBoundingBox(AABB *outputBox)
+bool Primitive::computeIntersections(Ray *ray, double tmin, double tmax, Span::SpanList &result)
 {
-    if (!outputBox) return;
-
-    outputBox->min = point3(INFINITY, INFINITY, INFINITY);
-    outputBox->max = point3(-INFINITY, -INFINITY, -INFINITY);
-}
-
-
-void addPointToBoundingBox(Point3 pt, AABB *outputBox)
-{
-    if (pt.x < outputBox->min.x) outputBox->min.x = pt.x;
-    if (pt.x > outputBox->max.x) outputBox->max.x = pt.x;
-
-    if (pt.y < outputBox->min.y) outputBox->min.y = pt.y;
-    if (pt.y > outputBox->max.y) outputBox->max.y = pt.y;
-
-    if (pt.z < outputBox->min.z) outputBox->min.z = pt.z;
-    if (pt.z > outputBox->max.z) outputBox->max.z = pt.z;
+    throw std::logic_error("Not implemented");
 }
 
 

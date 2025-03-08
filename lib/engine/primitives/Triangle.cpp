@@ -95,11 +95,11 @@ bool Triangle::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
 
 bool Triangle::boundingBox(AABB *outputBox)
 {
-    resetBoundingBox(outputBox);
+    outputBox->reset();
 
-    addPointToBoundingBox(v0, outputBox);
-    addPointToBoundingBox(v1, outputBox);
-    addPointToBoundingBox(v2, outputBox);
+    outputBox->addPoint(v0);
+    outputBox->addPoint(v1);
+    outputBox->addPoint(v2);
 
     return true;
 }
