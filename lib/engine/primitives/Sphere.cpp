@@ -84,7 +84,7 @@ bool Sphere::boundingBox(AABB *boundingBox)
 }
 
 
-bool Sphere::computeIntersections(Ray *ray, double tmin, double tmax, SpanRec::SpanList &result)
+bool Sphere::computeIntersections(Ray *ray, double tmin, double tmax, Span::SpanList &result)
 {
     result.clear();
 
@@ -131,7 +131,7 @@ bool Sphere::computeIntersections(Ray *ray, double tmin, double tmax, SpanRec::S
     }
 
     // TODO: - Only need material, t1, t2, normals.
-    SpanRec sphereHit;
+    Span sphereHit;
 
     /* Compute intersection t1 (if t1 < 0 --> camera inside object) */
     {

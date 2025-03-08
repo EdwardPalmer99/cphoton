@@ -9,13 +9,13 @@
 
 #include "Span.hpp"
 
-bool SpanRec::insideInterval(double t) const
+bool Span::insideInterval(double t) const
 {
     return (t >= entry.t && t <= exit.t);
 }
 
 
-bool SpanRec::intervalsOverlap(const SpanRec &other) const
+bool Span::intervalsOverlap(const Span &other) const
 {
     bool interval2InsideInterval1 = (insideInterval(other.entry.t) || insideInterval(other.exit.t));
     bool interval1InsideInterval2 = (other.insideInterval(entry.t) || other.insideInterval(exit.t));
@@ -24,13 +24,13 @@ bool SpanRec::intervalsOverlap(const SpanRec &other) const
 }
 
 
-bool SpanRec::isSubInterval(const SpanRec &other) const
+bool Span::isSubInterval(const Span &other) const
 {
     return (insideInterval(other.entry.t) && insideInterval(other.exit.t));
 }
 
 
-int SpanRec::subtractIntervals(const SpanRec &other, std::array<SpanRec, 2> &result) const
+int Span::subtractIntervals(const Span &other, std::array<Span, 2> &result) const
 {
     // Small offset value to avoid ugly issues:
     const static double kDelta = 1e-6;
@@ -95,7 +95,7 @@ int SpanRec::subtractIntervals(const SpanRec &other, std::array<SpanRec, 2> &res
 }
 
 
-int SpanRec::subtractSpanLists(const SpanList &origList, const SpanList &otherList, SpanList &result)
+int Span::subtractSpanLists(const SpanList &origList, const SpanList &otherList, SpanList &result)
 {
     if (origList.empty()) // No result list or nothing to subtract from --> we have nothing.
     {
@@ -109,7 +109,7 @@ int SpanRec::subtractSpanLists(const SpanList &origList, const SpanList &otherLi
     }
 
     // We have two non-empty lists. We need to subtract them:
-    std::vector<SpanRec> stack;
+    std::vector<Span> stack;
 
     // Copy intervals onto stack.
     std::copy(origList.begin(), origList.end(), std::back_inserter(stack));
@@ -117,9 +117,9 @@ int SpanRec::subtractSpanLists(const SpanList &origList, const SpanList &otherLi
     // Keep looping over until we have no more splits.
     for (int i = 0; i < stack.size(); ++i)
     {
-        SpanRec &span = stack[i];
+        Span &span = stack[i];
 
-        std::array<SpanRec, 2> output;
+        std::array<Span, 2> output;
         bool isStale{false};
 
         // Iterate over subtractor to find sub-stacks.

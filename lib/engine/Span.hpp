@@ -15,7 +15,7 @@
 /**
  * Stores the hit on entry and exit of a primitive.
  */
-struct SpanRec
+struct Span
 {
     HitRec entry;
     HitRec exit;
@@ -24,10 +24,10 @@ struct SpanRec
     bool insideInterval(double t) const;
 
     /** Returns true if other span overlaps */
-    bool intervalsOverlap(const SpanRec &other) const;
+    bool intervalsOverlap(const Span &other) const;
 
     /** Returns true if other span is subinterval (contained completely with span) */
-    bool isSubInterval(const SpanRec &other) const;
+    bool isSubInterval(const Span &other) const;
 
     /**
      * @brief subtract other from this interval.
@@ -35,9 +35,9 @@ struct SpanRec
      * -1 --> intervals do not overlap
      * 0, 1, 2 --> number of intervals after subtraction.
      */
-    int subtractIntervals(const SpanRec &other, std::array<SpanRec, 2> &result) const;
+    int subtractIntervals(const Span &other, std::array<Span, 2> &result) const;
 
-    using SpanList = std::vector<SpanRec>;
+    using SpanList = std::vector<Span>;
 
     /** Subtracts otherList spans from origList */
     static int subtractSpanLists(const SpanList &origList, const SpanList &otherList, SpanList &result);

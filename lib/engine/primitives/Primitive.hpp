@@ -33,7 +33,7 @@ public:
     virtual bool hit(Ray *ray, double tmin, double tmax, HitRec *hit) = 0;
 
     /** Optional. Raises an error if not overriden. */
-    virtual bool computeIntersections(Ray *ray, double tmin, double tmax, SpanRec::SpanList &result);
+    virtual bool computeIntersections(Ray *ray, double tmin, double tmax, Span::SpanList &result);
 
     /** On success, returns true and populates bounding box structure. */
     virtual bool boundingBox(AABB *boundingBox) = 0;
