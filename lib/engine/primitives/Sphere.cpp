@@ -129,6 +129,7 @@ bool Sphere::computeIntersections(Ray *ray, double tmin, double tmax, SpanList *
     }
 
     // TODO: - Only need material, t1, t2, normals.
+    SpanRec sphereHit;
 
     /* Compute intersection t1 (if t1 < 0 --> camera inside object) */
     {
@@ -139,12 +140,11 @@ bool Sphere::computeIntersections(Ray *ray, double tmin, double tmax, SpanList *
         // Are we hitting the outside surface or are we hitting the inside?
         const bool frontFace = (dot(ray->direction, outwardNormal) < 0.0);
 
-        result->n = 1;
-        result->intervals[0].entry.frontFace = frontFace;
-        result->intervals[0].entry.t = t1;
-        result->intervals[0].entry.hitPt = hitPoint;
-        result->intervals[0].entry.normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-        result->intervals[0].entry.material = material;
+        sphereHit.entry.frontFace = frontFace;
+        sphereHit.entry.t = t1;
+        sphereHit.entry.hitPt = hitPoint;
+        sphereHit.entry.normal = frontFace ? outwardNormal : flipVector(outwardNormal);
+        sphereHit.entry.material = material;
     }
 
     /* Compute intersection t2 */
@@ -156,13 +156,14 @@ bool Sphere::computeIntersections(Ray *ray, double tmin, double tmax, SpanList *
         // Are we hitting the outside surface or are we hitting the inside?
         const bool frontFace = (dot(ray->direction, outwardNormal) < 0.0);
 
-        result->n = 1;
-        result->intervals[0].exit.frontFace = frontFace;
-        result->intervals[0].exit.t = t2;
-        result->intervals[0].exit.hitPt = hitPoint;
-        result->intervals[0].exit.normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-        result->intervals[0].exit.material = material;
+        sphereHit.exit.frontFace = frontFace;
+        sphereHit.exit.t = t2;
+        sphereHit.exit.hitPt = hitPoint;
+        sphereHit.exit.normal = frontFace ? outwardNormal : flipVector(outwardNormal);
+        sphereHit.exit.material = material;
     }
+
+    result->push_back(sphereHit);
 
     return true;
 }

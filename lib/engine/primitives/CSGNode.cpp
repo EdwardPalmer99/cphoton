@@ -104,9 +104,9 @@ bool CSGNode::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
     // Find the first positive t (either entry or exit).
     HitRec *closestCameraHit = nullptr;
 
-    for (int i = 0; i < hitTimes.n; ++i)
+    for (int i = 0; i < hitTimes.size(); ++i)
     {
-        SpanRec *span = (hitTimes.intervals + i);
+        SpanRec *span = &(hitTimes[i]);
 
         HitRec *best = (span->entry.t > tmin) ? &span->entry : &span->exit;
 
