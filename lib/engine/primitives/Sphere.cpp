@@ -84,8 +84,10 @@ bool Sphere::boundingBox(AABB *boundingBox)
 }
 
 
-bool Sphere::computeIntersections(Ray *ray, double tmin, double tmax, SpanList *result)
+bool Sphere::computeIntersections(Ray *ray, double tmin, double tmax, SpanList &result)
 {
+    result.clear();
+
     // ray origin 	 = O
     // ray direction = d
     // sphere center = C
@@ -163,7 +165,7 @@ bool Sphere::computeIntersections(Ray *ray, double tmin, double tmax, SpanList *
         sphereHit.exit.material = material;
     }
 
-    result->push_back(sphereHit);
+    result.push_back(sphereHit);
 
     return true;
 }

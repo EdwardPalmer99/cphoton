@@ -61,14 +61,14 @@ bool CSGNode::boundingBox(AABB *outputBox)
  * @param tmax      Max time for intersection (usually infinity)
  * @return          A SpanList record pointer or NULL if no intersections
  */
-bool CSGNode::computeIntersections(Ray *ray, double tmin, double tmax, SpanList *result)
+bool CSGNode::computeIntersections(Ray *ray, double tmin, double tmax, SpanList &result)
 {
     // Tree this as a tree. We want to compute this on any children and work our way up.
     SpanList leftIntervals, rightIntervals;
 
     // TODO: - can use bool results to calculate if we need to perform operation.
-    bool leftOK = left->computeIntersections(ray, tmin, tmax, &leftIntervals);
-    bool rightOK = right->computeIntersections(ray, tmin, tmax, &rightIntervals);
+    (void)left->computeIntersections(ray, tmin, tmax, leftIntervals);
+    (void)right->computeIntersections(ray, tmin, tmax, rightIntervals);
 
     // TODO: - refer to notes here https://www.doc.ic.ac.uk/~dfg/graphics/graphics2008/GraphicsSlides10.pdf
     // we can optimize for certain operations if empty list returned.
@@ -76,7 +76,7 @@ bool CSGNode::computeIntersections(Ray *ray, double tmin, double tmax, SpanList 
     switch (operationType)
     {
         case CSGDifference:
-            return subtractSpanLists(leftOK ? &leftIntervals : NULL, rightOK ? &rightIntervals : NULL, result);
+            return subtractSpanLists(leftIntervals, rightIntervals, result);
         default:
             LogFailed("This CSG operation type has not been implemented.");
             break;
@@ -94,7 +94,7 @@ bool CSGNode::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
 {
     SpanList hitTimes;
 
-    if (!computeIntersections(ray, tmin, tmax, &hitTimes))
+    if (!computeIntersections(ray, tmin, tmax, hitTimes))
     {
         return false; // Hit nothing.
     }

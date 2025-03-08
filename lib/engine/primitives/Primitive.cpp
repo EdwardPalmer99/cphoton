@@ -28,7 +28,7 @@ Primitive::~Primitive()
 }
 
 
-bool Primitive::computeIntersections(Ray *ray, double tmin, double tmax, SpanList *result)
+bool Primitive::computeIntersections(Ray *ray, double tmin, double tmax, SpanList &result)
 {
     throw std::logic_error("Not implemented");
 }

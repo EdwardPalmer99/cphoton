@@ -30,4 +30,4 @@ using SpanList = std::vector<SpanRec>;
  * @brief Computes the list of intervals after subtracting a list from an original list. Returns false if there are
  * no intervals after the subtraction.
  */
-bool subtractSpanLists(const SpanList *original, const SpanList *subtractor, SpanList *result);
+bool subtractSpanLists(const SpanList &original, const SpanList &subtractor, SpanList &result);

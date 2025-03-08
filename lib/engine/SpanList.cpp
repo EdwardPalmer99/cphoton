@@ -20,18 +20,18 @@ extern "C"
 /**
  * Returns the intersection times list after subtracting original from subtractor.
  */
-bool subtractSpanLists(const SpanList *original, const SpanList *subtractor, SpanList *result)
+bool subtractSpanLists(const SpanList &original, const SpanList &subtractor, SpanList &result)
 {
-    if (!result ||
-        !(original && original->size() > 0)) // No result list or nothing to subtract from --> we have nothing.
+    result.clear(); // Clear return results.
+
+    if (original.empty()) // No result list or nothing to subtract from --> we have nothing.
     {
         return false;
     }
 
-    if (!(subtractor && subtractor->size() > 0)) // Nothing to subtract --> copy list1.
+    if (subtractor.empty()) // Nothing to subtract --> copy list1.
     {
-        result->clear();
-        std::copy(original->begin(), original->end(), std::back_inserter(*result));
+        std::copy(original.begin(), original.end(), std::back_inserter(result));
         return true;
     }
 
@@ -40,9 +40,7 @@ bool subtractSpanLists(const SpanList *original, const SpanList *subtractor, Spa
     std::vector<SpanRec> stack1;
 
     // Copy intervals onto stack.
-    std::copy(original->begin(), original->end(), std::back_inserter(stack1));
-
-    result->clear();
+    std::copy(original.begin(), original.end(), std::back_inserter(stack1));
 
     // Keep looping over until we have no more splits.
     for (int iStackPtr = 0; iStackPtr < stack1.size(); ++iStackPtr)
@@ -55,9 +53,9 @@ bool subtractSpanLists(const SpanList *original, const SpanList *subtractor, Spa
         SpanRec output[2];
 
         // Iterate over subtractor to find sub-stacks.
-        for (int i = 0; i < subtractor->size(); ++i)
+        for (int i = 0; i < subtractor.size(); ++i)
         {
-            int n = subtractIntervals(&stack1[iStackPtr], &((*subtractor)[i]), output);
+            int n = subtractIntervals(&stack1[iStackPtr], &(subtractor[i]), output);
 
             if (n == (-1)) // No overlap.
             {
@@ -86,9 +84,9 @@ bool subtractSpanLists(const SpanList *original, const SpanList *subtractor, Spa
     {
         if (!isStale[i])
         {
-            result->push_back(stack1[i]);
+            result.push_back(stack1[i]);
         }
     }
 
-    return (result->size() > 0);
+    return (result.size() > 0);
 }
