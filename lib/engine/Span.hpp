@@ -8,9 +8,13 @@
  */
 
 #pragma once
-#include "engine/HitRec.h"
 #include <array>
 #include <vector>
+
+extern "C"
+{
+#include "engine/HitRec.h"
+}
 
 /**
  * Stores the hit on entry and exit of a primitive.

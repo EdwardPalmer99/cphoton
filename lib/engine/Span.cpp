@@ -12,6 +12,11 @@
 #include <iostream>
 #include <list>
 
+extern "C"
+{
+#include "utility/Vector3.h"
+}
+
 Span::Span(double tentry, double texit)
 {
     entry.t = tentry;
@@ -162,7 +167,12 @@ int Span::differenceSpanLists(const SpanList &origList, const SpanList &otherLis
 
         if (!isStale)
         {
-            result.push_back(stack[i]);
+            // Quick check: it is legal to have negative tmin but we must have at least one of tmin, tmax in valid
+            // range.
+            if (stack[i].exit.t > 0.0)
+            {
+                result.push_back(stack[i]);
+            }
         }
     }
 
@@ -258,7 +268,11 @@ int Span::intersectionSpanLists(const SpanList &origList, const SpanList &otherL
                     otherSpan.entry.t > origSpan.entry.t ? otherSpan.entry : origSpan.entry;
                 const HitRec &exitIntersection = otherSpan.exit.t < origSpan.exit.t ? otherSpan.exit : origSpan.exit;
 
-                result.push_back(Span(entryIntersection, exitIntersection));
+                // Ignore any spans we create where both tmin, tmax are less than zero.
+                if (exitIntersection.t > 0.0)
+                {
+                    result.push_back(Span(entryIntersection, exitIntersection));
+                }
             }
         }
     }
