@@ -62,4 +62,6 @@ struct Span
      *
      */
     static int unionSpanLists(const SpanList &origList, const SpanList &otherList, SpanList &result);
+
+    static int intersectionSpanLists(const SpanList &origList, const SpanList &otherList, SpanList &result);
 };

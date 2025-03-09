@@ -15,3 +15,13 @@ cc_binary(
     ],
     visibility = ["//visibility:private"]
 )
+
+
+cc_binary(
+    name = "CSGIntersection",
+    srcs = ["CSGIntersection.cpp"],
+    deps = [
+        "//lib:cphoton"
+    ],
+    visibility = ["//visibility:private"]
+)

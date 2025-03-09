@@ -251,3 +251,37 @@ int Span::unionSpanLists(const SpanList &origList, const SpanList &otherList, Sp
 
     return result.size();
 }
+
+
+int Span::intersectionSpanLists(const SpanList &origList, const SpanList &otherList, SpanList &result)
+{
+    // Edge cases.
+    if (origList.empty() || otherList.empty())
+    {
+        result.clear();
+        return 0;
+    }
+
+    result.clear();
+
+    for (auto &otherSpan : otherList)
+    {
+        for (auto &origSpan : origList)
+        {
+            if (otherSpan.intervalsOverlap(origSpan))
+            {
+                // Find the exact overlap:
+                const HitRec &entryIntersection =
+                    otherSpan.entry.t > origSpan.entry.t ? otherSpan.entry : origSpan.entry;
+                const HitRec &exitIntersection = otherSpan.exit.t < origSpan.exit.t ? otherSpan.exit : origSpan.exit;
+
+                result.push_back(Span(entryIntersection, exitIntersection));
+            }
+        }
+    }
+
+    std::sort(result.begin(), result.end(),
+              [](const Span &left, const Span &right) { return left.entry.t < right.entry.t; });
+
+    return result.size();
+}

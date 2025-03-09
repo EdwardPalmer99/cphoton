@@ -73,18 +73,25 @@ bool CSGNode::computeIntersections(Ray *ray, double tmin, double tmax, Span::Spa
     // TODO: - refer to notes here https://www.doc.ic.ac.uk/~dfg/graphics/graphics2008/GraphicsSlides10.pdf
     // we can optimize for certain operations if empty list returned.
 
+    int count = 0;
+
     switch (operationType)
     {
         case CSGDifference:
-            return Span::differenceSpanLists(leftIntervals, rightIntervals, result);
+            count = Span::differenceSpanLists(leftIntervals, rightIntervals, result);
+            break;
         case CSGUnion:
-            return Span::unionSpanLists(leftIntervals, rightIntervals, result);
+            count = Span::unionSpanLists(leftIntervals, rightIntervals, result);
+            break;
+        case CSGIntersection:
+            count = Span::intersectionSpanLists(leftIntervals, rightIntervals, result);
+            break;
         default:
             LogFailed("This CSG operation type has not been implemented.");
             break;
     }
 
-    return false;
+    return (count > 0);
 }
 
 
