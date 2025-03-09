@@ -20,7 +20,7 @@ TEST(SpanList, TestSimpleSubsetSubtraction)
     SpanList subtracted = {Span(2, 3)};
 
     SpanList result;
-    ASSERT_EQ(Span::subtractSpanLists(original, subtracted, result), 2);
+    ASSERT_EQ(Span::differenceSpanLists(original, subtracted, result), 2);
 
     EXPECT_DOUBLE_EQ(result[0].entry.t, 1.0);
     EXPECT_DOUBLE_EQ(result[0].exit.t, 2.0);
@@ -40,7 +40,7 @@ TEST(SpanList, Test2SpansMinus1Span)
     SpanList subtracted = {Span(2, 5)};
 
     SpanList result;
-    ASSERT_TRUE(Span::subtractSpanLists(original, subtracted, result));
+    ASSERT_TRUE(Span::differenceSpanLists(original, subtracted, result));
 
     EXPECT_EQ(result.size(), 2);
     EXPECT_TRUE(result[0].entry.t == 1 && result[0].exit.t == 2);
@@ -58,7 +58,7 @@ TEST(SpanList, Test2SpansMinus2Spans)
     SpanList subtracted = {Span(0, 2), Span(5, 6)};
 
     SpanList result;
-    ASSERT_TRUE(Span::subtractSpanLists(original, subtracted, result));
+    ASSERT_TRUE(Span::differenceSpanLists(original, subtracted, result));
 
     EXPECT_EQ(result.size(), 3);
     EXPECT_TRUE(result[0].entry.t == 2 && result[0].exit.t == 3);
@@ -73,7 +73,7 @@ TEST(SpanList, TestNoOverlapSubtraction)
     SpanList subtracted = {Span(0, 0.5)};
 
     SpanList result;
-    ASSERT_TRUE(Span::subtractSpanLists(original, subtracted, result));
+    ASSERT_TRUE(Span::differenceSpanLists(original, subtracted, result));
 
     ASSERT_TRUE(result.size() == 1);
     EXPECT_TRUE(result[0].entry.t == original[0].entry.t);
@@ -87,7 +87,7 @@ TEST(SpanList, TestCompleteOverlapSubtraction)
     SpanList subtracted = {Span(1, 5)};
 
     SpanList result;
-    EXPECT_FALSE(Span::subtractSpanLists(original, subtracted, result));
+    EXPECT_FALSE(Span::differenceSpanLists(original, subtracted, result));
 }
 
 

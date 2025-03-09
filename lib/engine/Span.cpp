@@ -126,7 +126,7 @@ int Span::unionOperation(const Span &other, std::array<Span, 2> &result) const
 }
 
 
-int Span::subtractSpanLists(const SpanList &origList, const SpanList &otherList, SpanList &result)
+int Span::differenceSpanLists(const SpanList &origList, const SpanList &otherList, SpanList &result)
 {
     if (origList.empty()) // No result list or nothing to subtract from --> we have nothing.
     {
