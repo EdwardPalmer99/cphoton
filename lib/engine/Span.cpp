@@ -16,6 +16,10 @@ Span::Span(double tentry, double texit)
     exit.t = texit;
 }
 
+Span::Span(HitRec entry_, HitRec exit_) : entry(std::move(entry_)), exit(std::move(exit_))
+{
+}
+
 
 bool Span::insideInterval(double t) const
 {
@@ -38,7 +42,7 @@ bool Span::isSubInterval(const Span &other) const
 }
 
 
-int Span::subtractIntervals(const Span &other, std::array<Span, 2> &result) const
+int Span::differenceOperation(const Span &other, std::array<Span, 2> &result) const
 {
     // Small offset value to avoid ugly issues:
     const static double kDelta = 1e-6;
@@ -103,6 +107,23 @@ int Span::subtractIntervals(const Span &other, std::array<Span, 2> &result) cons
 }
 
 
+int Span::unionOperation(const Span &other, std::array<Span, 2> &result) const
+{
+    if (!intervalsOverlap(other))
+    {
+        result[0] = *this;
+        result[1] = other;
+        return 2;
+    }
+
+    const HitRec &minEntry = entry.t < other.entry.t ? entry : other.entry;
+    const HitRec &maxExit = exit.t > other.exit.t ? exit : other.exit;
+
+    result[0] = Span(minEntry, maxExit);
+    return 1;
+}
+
+
 int Span::subtractSpanLists(const SpanList &origList, const SpanList &otherList, SpanList &result)
 {
     if (origList.empty()) // No result list or nothing to subtract from --> we have nothing.
@@ -131,7 +152,7 @@ int Span::subtractSpanLists(const SpanList &origList, const SpanList &otherList,
         // Iterate over subtractor to find sub-stacks.
         for (auto &otherSpan : otherList)
         {
-            int n = stack[i].subtractIntervals(otherSpan, output);
+            int n = stack[i].differenceOperation(otherSpan, output);
 
             if (n == (-1)) // No overlap.
             {

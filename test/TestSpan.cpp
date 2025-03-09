@@ -67,26 +67,58 @@ TEST(Span, TestSubtractIntervals)
     Span original(1, 2);
 
     Span subtract(1, 2); // Total overlap --> nothing left (0).
-    EXPECT_TRUE(original.subtractIntervals(subtract, results) == 0);
+    EXPECT_TRUE(original.differenceOperation(subtract, results) == 0);
 
     subtract = Span(0.5, 0.9); // No overlap --> returns (-1).
-    EXPECT_TRUE(original.subtractIntervals(subtract, results) == (-1));
+    EXPECT_TRUE(original.differenceOperation(subtract, results) == (-1));
 
     subtract = Span(0.5, 1.5);
-    EXPECT_TRUE(original.subtractIntervals(subtract, results) == 1);
+    EXPECT_TRUE(original.differenceOperation(subtract, results) == 1);
     EXPECT_DOUBLE_EQ(results[0].entry.t, 1.5);
     EXPECT_DOUBLE_EQ(results[0].exit.t, 2.0);
 
     subtract = Span(1.5, 2.5);
-    EXPECT_TRUE(original.subtractIntervals(subtract, results) == 1);
+    EXPECT_TRUE(original.differenceOperation(subtract, results) == 1);
     EXPECT_DOUBLE_EQ(results[0].entry.t, 1.0);
     EXPECT_DOUBLE_EQ(results[0].exit.t, 1.5);
 
     subtract = Span(1.2, 1.8);
-    EXPECT_TRUE(original.subtractIntervals(subtract, results) == 2);
+    EXPECT_TRUE(original.differenceOperation(subtract, results) == 2);
     EXPECT_DOUBLE_EQ(results[0].entry.t, 1.0);
     EXPECT_DOUBLE_EQ(results[0].exit.t, 1.2);
 
     EXPECT_DOUBLE_EQ(results[1].entry.t, 1.8);
     EXPECT_DOUBLE_EQ(results[1].exit.t, 2.0);
+}
+
+
+TEST(Span, TestUnionOperationOverlap)
+{
+    std::array<Span, 2> results;
+
+    Span first(1, 5);
+    Span second(2, 6);
+
+    /** Test overlap */
+    EXPECT_EQ(first.unionOperation(second, results), 1);
+    EXPECT_DOUBLE_EQ(results[0].entry.t, 1.0);
+    EXPECT_DOUBLE_EQ(results[0].exit.t, 6.0);
+}
+
+
+TEST(Span, TestUnionOperationNoOverlap)
+{
+    std::array<Span, 2> results;
+
+    Span first(1, 5);
+    Span second(6, 8);
+
+    /** Test no overlap */
+    second = Span(6, 8);
+    EXPECT_EQ(first.unionOperation(second, results), 2);
+    EXPECT_DOUBLE_EQ(results[0].entry.t, 1.0);
+    EXPECT_DOUBLE_EQ(results[0].exit.t, 5.0);
+
+    EXPECT_DOUBLE_EQ(results[1].entry.t, 6.0);
+    EXPECT_DOUBLE_EQ(results[1].exit.t, 8.0);
 }

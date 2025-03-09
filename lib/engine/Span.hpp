@@ -23,6 +23,7 @@ struct Span
     // Construct a span in range [tentry, texit]. Useful for testing
     Span() = default;
     Span(double tentry, double texit);
+    Span(HitRec entry, HitRec exit);
 
     /** Returns true if time t is inside span */
     bool insideInterval(double t) const;
@@ -39,7 +40,15 @@ struct Span
      * -1 --> intervals do not overlap
      * 0, 1, 2 --> number of intervals after subtraction.
      */
-    int subtractIntervals(const Span &other, std::array<Span, 2> &result) const;
+    int differenceOperation(const Span &other, std::array<Span, 2> &result) const;
+
+    /**
+     * @brief union operation of two spans.
+     * Case 1: spans overlap --> return combined span
+     * Case 2: no overlap --> return original spans untouched
+     * @returns the number of output intervals (1 or 2)
+     */
+    int unionOperation(const Span &other, std::array<Span, 2> &result) const;
 
     using SpanList = std::vector<Span>;
 
