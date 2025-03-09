@@ -90,35 +90,3 @@ TEST(Span, TestSubtractIntervals)
     EXPECT_DOUBLE_EQ(results[1].entry.t, 1.8);
     EXPECT_DOUBLE_EQ(results[1].exit.t, 2.0);
 }
-
-
-TEST(Span, TestUnionOperationOverlap)
-{
-    std::array<Span, 2> results;
-
-    Span first(1, 5);
-    Span second(2, 6);
-
-    /** Test overlap */
-    EXPECT_EQ(first.unionOperation(second, results), 1);
-    EXPECT_DOUBLE_EQ(results[0].entry.t, 1.0);
-    EXPECT_DOUBLE_EQ(results[0].exit.t, 6.0);
-}
-
-
-TEST(Span, TestUnionOperationNoOverlap)
-{
-    std::array<Span, 2> results;
-
-    Span first(1, 5);
-    Span second(6, 8);
-
-    /** Test no overlap */
-    second = Span(6, 8);
-    EXPECT_EQ(first.unionOperation(second, results), 2);
-    EXPECT_DOUBLE_EQ(results[0].entry.t, 1.0);
-    EXPECT_DOUBLE_EQ(results[0].exit.t, 5.0);
-
-    EXPECT_DOUBLE_EQ(results[1].entry.t, 6.0);
-    EXPECT_DOUBLE_EQ(results[1].exit.t, 8.0);
-}

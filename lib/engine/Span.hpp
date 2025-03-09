@@ -42,14 +42,6 @@ struct Span
      */
     int differenceOperation(const Span &other, std::array<Span, 2> &result) const;
 
-    /**
-     * @brief union operation of two spans.
-     * Case 1: spans overlap --> return combined span
-     * Case 2: no overlap --> return original spans untouched
-     * @returns the number of output intervals (1 or 2)
-     */
-    int unionOperation(const Span &other, std::array<Span, 2> &result) const;
-
     using SpanList = std::vector<Span>;
 
     /** Subtracts otherList spans from origList */

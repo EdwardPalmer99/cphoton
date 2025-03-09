@@ -109,23 +109,6 @@ int Span::differenceOperation(const Span &other, std::array<Span, 2> &result) co
 }
 
 
-int Span::unionOperation(const Span &other, std::array<Span, 2> &result) const
-{
-    if (!intervalsOverlap(other))
-    {
-        result[0] = *this;
-        result[1] = other;
-        return 2;
-    }
-
-    const HitRec &minEntry = entry.t < other.entry.t ? entry : other.entry;
-    const HitRec &maxExit = exit.t > other.exit.t ? exit : other.exit;
-
-    result[0] = Span(minEntry, maxExit);
-    return 1;
-}
-
-
 int Span::differenceSpanLists(const SpanList &origList, const SpanList &otherList, SpanList &result)
 {
     if (origList.empty()) // No result list or nothing to subtract from --> we have nothing.
