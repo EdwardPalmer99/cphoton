@@ -8,7 +8,9 @@
  */
 
 #include "Span.hpp"
+#include <algorithm>
 #include <iostream>
+#include <list>
 
 Span::Span(double tentry, double texit)
 {
@@ -181,5 +183,71 @@ int Span::subtractSpanLists(const SpanList &origList, const SpanList &otherList,
         }
     }
 
+    // Sort by increasing t-entry.
+    std::sort(result.begin(), result.end(),
+              [](const Span &left, const Span &right) { return left.entry.t < right.entry.t; });
+
     return (result.size());
+}
+
+
+int Span::unionSpanLists(const SpanList &origList, const SpanList &otherList, SpanList &result)
+{
+    // Edge cases.
+    if (origList.empty())
+    {
+        std::copy(otherList.begin(), otherList.end(), std::back_inserter(result));
+        return result.size();
+    }
+    else if (otherList.empty())
+    {
+        std::copy(origList.begin(), origList.end(), std::back_inserter(result));
+        return result.size();
+    }
+
+    std::list<Span> spans;
+    std::copy(origList.begin(), origList.end(), std::back_inserter(spans));
+    std::copy(otherList.begin(), otherList.end(), std::back_inserter(spans));
+
+    bool eraseIter = false;
+
+    for (auto iter = spans.begin(); iter != spans.end();)
+    {
+        eraseIter = false;
+
+        for (auto iter2 = spans.begin(); iter2 != spans.end();)
+        {
+            if (iter2 != iter && (*iter).intervalsOverlap(*iter2))
+            {
+                HitRec &minEntry = (*iter).entry.t < (*iter2).entry.t ? (*iter).entry : (*iter2).entry;
+                HitRec &maxExit = (*iter).exit.t > (*iter2).exit.t ? (*iter).exit : (*iter2).exit;
+
+                spans.push_back(Span(minEntry, maxExit));
+                eraseIter = true;
+                spans.erase(iter2++);
+                break;
+            }
+            else
+            {
+                iter2++;
+            }
+        }
+
+        if (eraseIter)
+        {
+            spans.erase(iter++);
+        }
+        else
+        {
+            iter++;
+        }
+    }
+
+    result.clear();
+    std::copy(spans.begin(), spans.end(), std::back_inserter(result));
+
+    std::sort(result.begin(), result.end(),
+              [](const Span &left, const Span &right) { return left.entry.t < right.entry.t; });
+
+    return result.size();
 }

@@ -77,6 +77,8 @@ bool CSGNode::computeIntersections(Ray *ray, double tmin, double tmax, Span::Spa
     {
         case CSGDifference:
             return Span::subtractSpanLists(leftIntervals, rightIntervals, result);
+        case CSGUnion:
+            return Span::unionSpanLists(leftIntervals, rightIntervals, result);
         default:
             LogFailed("This CSG operation type has not been implemented.");
             break;

@@ -89,3 +89,45 @@ TEST(SpanList, TestCompleteOverlapSubtraction)
     SpanList result;
     EXPECT_FALSE(Span::subtractSpanLists(original, subtracted, result));
 }
+
+
+TEST(SpanList, TestUnionSingleOverlap)
+{
+    SpanList first = {Span(1, 5)};
+    SpanList second = {Span(4, 10)};
+
+    SpanList result;
+    ASSERT_EQ(Span::unionSpanLists(first, second, result), 1);
+
+    EXPECT_DOUBLE_EQ(result[0].entry.t, 1);
+    EXPECT_DOUBLE_EQ(result[0].exit.t, 10);
+}
+
+
+TEST(SpanList, TestUnionPartialOverlap)
+{
+    SpanList first = {Span(1, 5), Span(8, 10)};
+    SpanList second = {Span(4, 6)};
+
+    SpanList result;
+    ASSERT_EQ(Span::unionSpanLists(first, second, result), 2);
+
+    EXPECT_DOUBLE_EQ(result[0].entry.t, 1);
+    EXPECT_DOUBLE_EQ(result[0].exit.t, 6);
+
+    EXPECT_DOUBLE_EQ(result[1].entry.t, 8);
+    EXPECT_DOUBLE_EQ(result[1].exit.t, 10);
+}
+
+
+TEST(SpanList, TestUnionFullOverlap)
+{
+    SpanList first = {Span(1, 5), Span(8, 10)};
+    SpanList second = {Span(4, 9), Span(0, 1.1)};
+
+    SpanList result;
+    EXPECT_EQ(Span::unionSpanLists(first, second, result), 1);
+
+    EXPECT_DOUBLE_EQ(result[0].entry.t, 0);
+    EXPECT_DOUBLE_EQ(result[0].exit.t, 10);
+}

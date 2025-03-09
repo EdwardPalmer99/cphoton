@@ -54,4 +54,12 @@ struct Span
 
     /** Subtracts otherList spans from origList */
     static int subtractSpanLists(const SpanList &origList, const SpanList &otherList, SpanList &result);
+
+    /** 
+     * Union operation on two span lists 
+     * Assumptions:
+     * - No spans overlap within origList (and otherList)
+     *
+     */
+    static int unionSpanLists(const SpanList &origList, const SpanList &otherList, SpanList &result);
 };
