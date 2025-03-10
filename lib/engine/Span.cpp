@@ -17,9 +17,9 @@ Span::Span(double tentry, double texit)
 }
 
 
-bool Span::insideInterval(double t) const
+bool Span::insideInterval(double t, double tolerance) const
 {
-    return (t >= entry.t && t <= exit.t);
+    return (t >= (entry.t + tolerance) && t <= (exit.t - tolerance));
 }
 
 

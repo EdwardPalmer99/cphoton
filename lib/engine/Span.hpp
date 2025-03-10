@@ -25,7 +25,7 @@ struct Span
     Span(double tentry, double texit);
 
     /** Returns true if time t is inside span */
-    bool insideInterval(double t) const;
+    bool insideInterval(double t, double tolerance = 0.0) const;
 
     /** Returns true if other span overlaps */
     bool intervalsOverlap(const Span &other) const;
