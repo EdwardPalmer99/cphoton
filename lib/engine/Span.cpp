@@ -40,8 +40,7 @@ bool Span::isSubInterval(const Span &other) const
 
 int Span::subtractIntervals(const Span &other, std::array<Span, 2> &result) const
 {
-    // Small offset value to avoid ugly issues:
-    const static double kDelta = 1e-6;
+    const double kTolerance = 1e-12;
 
     if (!intervalsOverlap(other))
     {
@@ -69,37 +68,24 @@ int Span::subtractIntervals(const Span &other, std::array<Span, 2> &result) cons
     }
 
     // Single output:
-    if (insideInterval(other.entry.t))
+    if (insideInterval(other.entry.t, kTolerance))
     {
-        if (fabs(exit.t - other.entry.t) < kDelta)
-        {
-            return (-1); // Avoid precision problems if very close.
-        }
-
-        if (other.entry.t <= 0.0)
-        {
-            return (-1); // New span is all before camera so ignore.
-        }
-
         result[0].entry = entry;
         result[0].exit = other.entry;
-
         return 1;
     }
-    else if (insideInterval(other.exit.t))
+    else if (insideInterval(other.exit.t, kTolerance))
     {
-        if (fabs(entry.t - other.exit.t) < kDelta)
-        {
-            return (-1); // Avoid precision problems if very close.
-        }
-
         result[0].entry = other.exit;
         result[0].exit = exit;
-
         return 1;
     }
-
-    return (-1);
+    else
+    {
+        // This must be the case where the intervals very very slightly overlap but we'll get all sorts of weird
+        // artifacts so we return 0. This results in these results being ignored when we are subtracting multiple spans.
+        return 0;
+    }
 }
 
 
