@@ -8,7 +8,12 @@
  */
 
 #pragma once
+
+extern "C"
+{
 #include "engine/HitRec.h"
+}
+
 #include <array>
 #include <vector>
 
