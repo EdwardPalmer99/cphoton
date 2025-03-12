@@ -8,7 +8,13 @@
  */
 
 #pragma once
+
+extern "C"
+{
 #include "engine/HitRec.h"
+#include "utility/Vector3.h"
+}
+
 #include <array>
 #include <vector>
 
@@ -25,7 +31,10 @@ struct Span
     Span(double tentry, double texit);
 
     /** Returns true if time t is inside span */
-    bool insideInterval(double t) const;
+    bool insideInterval(double t, double tolerance = 1e-6) const;
+
+    /** Returns true on complete overlap */
+    bool completeOverlap(const Span &other, double tolerance = 1e-6) const;
 
     /** Returns true if other span overlaps */
     bool intervalsOverlap(const Span &other) const;
@@ -44,5 +53,9 @@ struct Span
     using SpanList = std::vector<Span>;
 
     /** Subtracts otherList spans from origList */
-    static int subtractSpanLists(const SpanList &origList, const SpanList &otherList, SpanList &result);
+    static int subtractSpanLists(const SpanList &origList, SpanList &otherList, SpanList &result);
+
+    /** Recursive method which returns all subspans */
+    static SpanList recursiveSpanSubtractor(const Span &lhs, const SpanList::iterator subtractFirst,
+                                            const SpanList::iterator subtractLast);
 };
