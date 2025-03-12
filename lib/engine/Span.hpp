@@ -30,7 +30,10 @@ struct Span
     Span(HitRec entry, HitRec exit);
 
     /** Returns true if time t is inside span */
-    bool insideInterval(double t) const;
+    bool insideInterval(double t, double tolerance = 1e-6) const;
+
+    /** Returns true on complete overlap */
+    bool completeOverlap(const Span &other, double tolerance = 1e-6) const;
 
     /** Returns true if other span overlaps */
     bool intervalsOverlap(const Span &other) const;
@@ -44,12 +47,12 @@ struct Span
      * -1 --> intervals do not overlap
      * 0, 1, 2 --> number of intervals after subtraction.
      */
-    int differenceOperation(const Span &other, std::array<Span, 2> &result) const;
+    int subtractIntervals(const Span &other, std::array<Span, 2> &result) const;
 
     using SpanList = std::vector<Span>;
 
     /** Subtracts otherList spans from origList */
-    static int differenceSpanLists(const SpanList &origList, const SpanList &otherList, SpanList &result);
+    static int differenceSpanLists(const SpanList &origList, SpanList &otherList, SpanList &result);
 
     /**
      * Union operation on two span lists
@@ -60,4 +63,8 @@ struct Span
     static int unionSpanLists(const SpanList &origList, const SpanList &otherList, SpanList &result);
 
     static int intersectionSpanLists(const SpanList &origList, const SpanList &otherList, SpanList &result);
+
+    /** Recursive method which returns all subspans */
+    static SpanList recursiveSpanSubtractor(const Span &lhs, const SpanList::iterator subtractFirst,
+                                            const SpanList::iterator subtractLast);
 };

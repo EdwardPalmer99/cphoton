@@ -28,14 +28,25 @@ Span::Span(HitRec entry_, HitRec exit_) : entry(std::move(entry_)), exit(std::mo
 }
 
 
-bool Span::insideInterval(double t) const
+bool Span::insideInterval(double t, double tolerance) const
 {
-    return (t >= entry.t && t <= exit.t);
+    return (t >= (entry.t + tolerance) && t <= (exit.t - tolerance));
+}
+
+
+bool Span::completeOverlap(const Span &other, double tolerance) const
+{
+    return (fabs(entry.t - other.entry.t) < tolerance && fabs(exit.t - other.exit.t) < tolerance);
 }
 
 
 bool Span::intervalsOverlap(const Span &other) const
 {
+    if (completeOverlap(other))
+    {
+        return true;
+    }
+
     bool interval2InsideInterval1 = (insideInterval(other.entry.t) || insideInterval(other.exit.t));
     bool interval1InsideInterval2 = (other.insideInterval(entry.t) || other.insideInterval(exit.t));
 
@@ -45,76 +56,95 @@ bool Span::intervalsOverlap(const Span &other) const
 
 bool Span::isSubInterval(const Span &other) const
 {
-    return (insideInterval(other.entry.t) && insideInterval(other.exit.t));
+    return (insideInterval(other.entry.t, 0) && insideInterval(other.exit.t, 0));
 }
 
 
-int Span::differenceOperation(const Span &other, std::array<Span, 2> &result) const
+int Span::subtractIntervals(const Span &rhs, std::array<Span, 2> &result) const
 {
-    // Small offset value to avoid ugly issues:
-    const static double kDelta = 1e-6;
+    // Check for complete overlap and return 0 to remove span.
+    if (completeOverlap(rhs))
+    {
+        return 0;
+    }
 
-    if (!intervalsOverlap(other))
+    // NB: returning (-1) so lhs span is not removed.
+    if (!intervalsOverlap(rhs))
     {
         return (-1);
     }
 
-    if (other.isSubInterval(*this))
+    int nReturnValues = 0;
+
+    /**
+     * Original: |..............|
+     * RHS:              |...........|
+     * Result:   |.......|
+     *
+     * If RHS entry is very close to original entry then we have nothing left --> don't add.
+     */
+    if (insideInterval(rhs.entry.t))
     {
-        // Original interval completely inside interval we're subtracting --> nothing left.
-        return 0;
+        result[nReturnValues].entry = entry;
+        result[nReturnValues].exit = rhs.entry;
+
+        nReturnValues++;
     }
 
-    if (isSubInterval(other))
+    /**
+     * Original:      |..............|
+     * RHS:      |...............|
+     * Result:                   |...|
+     *
+     * If RHS exit is very close to original exit then we have nothing left --> don't add.
+     */
+    if (insideInterval(rhs.exit.t))
     {
-        // TODO: - should probably check for precision problems in here as well.
+        result[nReturnValues].entry = rhs.exit;
+        result[nReturnValues].exit = exit;
 
-        // Interval we're subtracting is inside original interval --> 2 outputs.
-        result[0].entry = entry;
-        result[0].exit = other.entry;
-
-        result[1].entry = other.exit;
-        result[1].exit = exit;
-
-        return 2;
+        nReturnValues++;
     }
 
-    // Single output:
-    if (insideInterval(other.entry.t))
-    {
-        if (fabs(exit.t - other.entry.t) < kDelta)
-        {
-            return (-1); // Avoid precision problems if very close.
-        }
-
-        if (other.entry.t <= 0.0)
-        {
-            return (-1); // New span is all before camera so ignore.
-        }
-
-        result[0].entry = entry;
-        result[0].exit = other.entry;
-
-        return 1;
-    }
-    else if (insideInterval(other.exit.t))
-    {
-        if (fabs(entry.t - other.exit.t) < kDelta)
-        {
-            return (-1); // Avoid precision problems if very close.
-        }
-
-        result[0].entry = other.exit;
-        result[0].exit = exit;
-
-        return 1;
-    }
-
-    return (-1);
+    return nReturnValues;
 }
 
 
-int Span::differenceSpanLists(const SpanList &origList, const SpanList &otherList, SpanList &result)
+std::vector<Span> Span::recursiveSpanSubtractor(const Span &lhs, const SpanList::iterator subtractFirst,
+                                                const SpanList::iterator subtractLast)
+{
+    std::array<Span, 2> output;
+
+    for (SpanList::iterator iter = subtractFirst; iter != subtractLast; ++iter)
+    {
+        int n = lhs.subtractIntervals(*iter, output);
+
+        switch (n)
+        {
+            case 0:
+                return {}; // Empty vector (complete overlap).
+            case 1:
+                return recursiveSpanSubtractor(output[0], iter + 1, subtractLast);
+            case 2:
+            {
+                SpanList leftResult = recursiveSpanSubtractor(output[0], iter + 1, subtractLast);
+                SpanList rightResult = recursiveSpanSubtractor(output[1], iter + 1, subtractLast);
+
+                leftResult.insert(leftResult.end(), rightResult.begin(), rightResult.end());
+                return leftResult;
+            }
+            case (-1): // Continue. No overlap.
+            default:
+                break;
+        }
+    }
+
+    // No overlaps.
+    return {lhs};
+}
+
+
+int Span::differenceSpanLists(const SpanList &origList, SpanList &otherList, SpanList &result)
 {
     if (origList.empty()) // No result list or nothing to subtract from --> we have nothing.
     {
@@ -127,52 +157,16 @@ int Span::differenceSpanLists(const SpanList &origList, const SpanList &otherLis
         return result.size();
     }
 
-    // We have two non-empty lists. We need to subtract them:
-    std::vector<Span> stack;
-
-    // Copy intervals onto stack.
-    std::copy(origList.begin(), origList.end(), std::back_inserter(stack));
+    result.clear();
 
     // Keep looping over until we have no more splits.
-    for (int i = 0; i < stack.size(); ++i)
+    for (auto &lhsSpan : origList)
     {
-        std::array<Span, 2> output;
-        bool isStale{false};
+        auto subSpans = recursiveSpanSubtractor(lhsSpan, otherList.begin(), otherList.end());
 
-        // Iterate over subtractor to find sub-stacks.
-        for (auto &otherSpan : otherList)
+        if (subSpans.size())
         {
-            int n = stack[i].differenceOperation(otherSpan, output);
-
-            if (n == (-1)) // No overlap.
-            {
-                continue;
-            }
-
-            if (n == 1)
-            {
-                stack[i] = output[0];
-            }
-            else if (n == 2)
-            {
-                stack[i] = output[0];
-                stack.push_back(output[1]);
-            }
-            else if (n == 0)
-            {
-                isStale = true;
-                break;
-            }
-        }
-
-        if (!isStale)
-        {
-            // Quick check: it is legal to have negative tmin but we must have at least one of tmin, tmax in valid
-            // range.
-            if (stack[i].exit.t > 0.0)
-            {
-                result.push_back(stack[i]);
-            }
+            result.insert(result.end(), subSpans.begin(), subSpans.end());
         }
     }
 

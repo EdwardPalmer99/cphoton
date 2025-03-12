@@ -11,13 +11,14 @@
 #include <array>
 #include <gtest/gtest.h>
 
+
 TEST(Span, TestInsideInterval)
 {
     Span span(1, 2);
 
-    EXPECT_TRUE(span.insideInterval(1.0));
+    EXPECT_FALSE(span.insideInterval(1.0));
     EXPECT_TRUE(span.insideInterval(1.5));
-    EXPECT_TRUE(span.insideInterval(2.0));
+    EXPECT_FALSE(span.insideInterval(2.0));
 
     EXPECT_FALSE(span.insideInterval(0.5));
     EXPECT_FALSE(span.insideInterval(2.5));
@@ -41,7 +42,7 @@ TEST(Span, TestIntervalsOverlap)
     EXPECT_TRUE(i1.intervalsOverlap(i2));
 
     i2 = Span(1.0, 1.0);
-    EXPECT_TRUE(i1.intervalsOverlap(i2));
+    EXPECT_FALSE(i1.intervalsOverlap(i2));
 }
 
 
