@@ -73,16 +73,25 @@ bool CSGNode::computeIntersections(Ray *ray, double tmin, double tmax, Span::Spa
     // TODO: - refer to notes here https://www.doc.ic.ac.uk/~dfg/graphics/graphics2008/GraphicsSlides10.pdf
     // we can optimize for certain operations if empty list returned.
 
+    int count = 0;
+
     switch (operationType)
     {
         case CSGDifference:
-            return Span::subtractSpanLists(leftIntervals, rightIntervals, result);
+            count = Span::differenceSpanLists(leftIntervals, rightIntervals, result);
+            break;
+        case CSGUnion:
+            count = Span::unionSpanLists(leftIntervals, rightIntervals, result);
+            break;
+        case CSGIntersection:
+            count = Span::intersectionSpanLists(leftIntervals, rightIntervals, result);
+            break;
         default:
             LogFailed("This CSG operation type has not been implemented.");
             break;
     }
 
-    return false;
+    return (count > 0);
 }
 
 
@@ -99,26 +108,14 @@ bool CSGNode::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
         return false; // Hit nothing.
     }
 
-    // TODO: - will need to do some logic based on which normals to preserve, materials, etc based on CSG type.
-
+    // Already sorted so take first item in list. Possible that entry time will be negative in which case we take texit.
     // Find the first positive t (either entry or exit).
-    HitRec *closestCameraHit = nullptr;
+    const Span &front = hitTimes.front();
 
-    for (auto &span : hitTimes)
-    {
-        HitRec *best = (span.entry.t > tmin) ? &span.entry : &span.exit;
+    if (front.entry.t >= tmin)
+        *hit = front.entry;
+    else
+        *hit = front.exit;
 
-        if (best->t > 0 && (!closestCameraHit || closestCameraHit->t > best->t))
-        {
-            closestCameraHit = best;
-        }
-    } // TODO: - optimize this code.
-
-    if (closestCameraHit && closestCameraHit->t < tmax)
-    {
-        *hit = *closestCameraHit;
-        return true;
-    }
-
-    return false;
+    return true;
 }

@@ -8,15 +8,13 @@
  */
 
 #pragma once
+#include <array>
+#include <vector>
 
 extern "C"
 {
 #include "engine/HitRec.h"
-#include "utility/Vector3.h"
 }
-
-#include <array>
-#include <vector>
 
 /**
  * Stores the hit on entry and exit of a primitive.
@@ -29,6 +27,7 @@ struct Span
     // Construct a span in range [tentry, texit]. Useful for testing
     Span() = default;
     Span(double tentry, double texit);
+    Span(HitRec entry, HitRec exit);
 
     /** Returns true if time t is inside span */
     bool insideInterval(double t, double tolerance = 1e-6) const;
@@ -53,7 +52,17 @@ struct Span
     using SpanList = std::vector<Span>;
 
     /** Subtracts otherList spans from origList */
-    static int subtractSpanLists(const SpanList &origList, SpanList &otherList, SpanList &result);
+    static int differenceSpanLists(const SpanList &origList, SpanList &otherList, SpanList &result);
+
+    /**
+     * Union operation on two span lists
+     * Assumptions:
+     * - No spans overlap within origList (and otherList)
+     *
+     */
+    static int unionSpanLists(const SpanList &origList, const SpanList &otherList, SpanList &result);
+
+    static int intersectionSpanLists(const SpanList &origList, const SpanList &otherList, SpanList &result);
 
     /** Recursive method which returns all subspans */
     static SpanList recursiveSpanSubtractor(const Span &lhs, const SpanList::iterator subtractFirst,

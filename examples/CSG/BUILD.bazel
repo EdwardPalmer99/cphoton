@@ -1,6 +1,25 @@
 cc_binary(
-    name = "hemisphere",
-    srcs = ["Hemisphere.cpp"],
+    name = "CSGDifference",
+    srcs = ["CSGDifference.cpp"],
+    deps = [
+        "//lib:cphoton"
+    ],
+    visibility = ["//visibility:private"]
+)
+
+cc_binary(
+    name = "CSGUnion",
+    srcs = ["CSGUnion.cpp"],
+    deps = [
+        "//lib:cphoton"
+    ],
+    visibility = ["//visibility:private"]
+)
+
+
+cc_binary(
+    name = "CSGIntersection",
+    srcs = ["CSGIntersection.cpp"],
     deps = [
         "//lib:cphoton"
     ],
