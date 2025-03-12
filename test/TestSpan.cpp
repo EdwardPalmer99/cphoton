@@ -68,23 +68,23 @@ TEST(Span, TestSubtractIntervals)
     Span original(1, 2);
 
     Span subtract(1, 2); // Total overlap --> nothing left (0).
-    EXPECT_TRUE(original.differenceOperation(subtract, results) == 0);
+    EXPECT_TRUE(original.subtractIntervals(subtract, results) == 0);
 
     subtract = Span(0.5, 0.9); // No overlap --> returns (-1).
-    EXPECT_TRUE(original.differenceOperation(subtract, results) == (-1));
+    EXPECT_TRUE(original.subtractIntervals(subtract, results) == (-1));
 
     subtract = Span(0.5, 1.5);
-    EXPECT_TRUE(original.differenceOperation(subtract, results) == 1);
+    EXPECT_TRUE(original.subtractIntervals(subtract, results) == 1);
     EXPECT_DOUBLE_EQ(results[0].entry.t, 1.5);
     EXPECT_DOUBLE_EQ(results[0].exit.t, 2.0);
 
     subtract = Span(1.5, 2.5);
-    EXPECT_TRUE(original.differenceOperation(subtract, results) == 1);
+    EXPECT_TRUE(original.subtractIntervals(subtract, results) == 1);
     EXPECT_DOUBLE_EQ(results[0].entry.t, 1.0);
     EXPECT_DOUBLE_EQ(results[0].exit.t, 1.5);
 
     subtract = Span(1.2, 1.8);
-    EXPECT_TRUE(original.differenceOperation(subtract, results) == 2);
+    EXPECT_TRUE(original.subtractIntervals(subtract, results) == 2);
     EXPECT_DOUBLE_EQ(results[0].entry.t, 1.0);
     EXPECT_DOUBLE_EQ(results[0].exit.t, 1.2);
 
