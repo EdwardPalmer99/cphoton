@@ -9,11 +9,11 @@
 
 #pragma once
 #include "Primitive.hpp"
+#include "engine/HitRec.hpp"
+#include "engine/materials/Material.hpp"
 
 extern "C"
 {
-#include "engine/HitRec.h"
-#include "engine/Material.h"
 #include "utility/Vector3.h"
 }
 
@@ -22,7 +22,7 @@ class Triangle : public Primitive
 {
 public:
     Triangle() = delete;
-    Triangle(Point3 v0_, Point3 v1_, Point3 v2_, Material *material_);
+    Triangle(Point3 v0_, Point3 v1_, Point3 v2_, std::shared_ptr<Material> material_);
     ~Triangle() override = default;
 
     bool hit(Ray *ray, double tmin, double tmax, HitRec *hit) override;

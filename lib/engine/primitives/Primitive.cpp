@@ -10,21 +10,8 @@
 #include "Primitive.hpp"
 #include <stdexcept>
 
-Primitive::Primitive(Material *material_) : material(material_)
+Primitive::Primitive(std::shared_ptr<Material> material_) : material(material_)
 {
-    if (material)
-    {
-        material->incrementRefCounter(material);
-    }
-}
-
-
-Primitive::~Primitive()
-{
-    if (material)
-    {
-        material->decrementRefCounter(material);
-    }
 }
 
 

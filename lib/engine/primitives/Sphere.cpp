@@ -9,7 +9,7 @@
 
 #include "Sphere.hpp"
 
-Sphere::Sphere(Point3 center_, double radius_, Material *material_)
+Sphere::Sphere(Point3 center_, double radius_, std::shared_ptr<Material> material_)
     : Primitive(material_), center(center_), radius(radius_)
 {
 }
@@ -67,7 +67,7 @@ bool Sphere::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
     hit->t = hitTime;
     hit->hitPt = hitPoint;
     hit->normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-    hit->material = material;
+    hit->material = material.get();
 
     // Calculate the U, V texture coordinates:
     setSphereUV(&hit->normal, &hit->u, &hit->v);
@@ -146,7 +146,7 @@ bool Sphere::computeIntersections(Ray *ray, double tmin, double tmax, Span::Span
         sphereHit.entry.t = t1;
         sphereHit.entry.hitPt = hitPoint;
         sphereHit.entry.normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-        sphereHit.entry.material = material;
+        sphereHit.entry.material = material.get();
     }
 
     /* Compute intersection t2 */
@@ -162,7 +162,7 @@ bool Sphere::computeIntersections(Ray *ray, double tmin, double tmax, Span::Span
         sphereHit.exit.t = t2;
         sphereHit.exit.hitPt = hitPoint;
         sphereHit.exit.normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-        sphereHit.exit.material = material;
+        sphereHit.exit.material = material.get();
     }
 
     result.push_back(sphereHit);

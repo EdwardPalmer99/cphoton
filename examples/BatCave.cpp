@@ -20,7 +20,12 @@ extern "C"
 #include "engine/primitives/Plane.hpp"
 #include "engine/primitives/Primitive.hpp"
 
+#include "engine/materials/EmitterMaterial.hpp"
+#include "engine/materials/MatteMaterial.hpp"
+#include "engine/textures/SolidTexture.hpp"
+
 #include <cstdlib>
+#include <memory>
 #include <vector>
 
 Primitive *makeDarkKnightRoom(double length, double width, double height);
@@ -39,13 +44,13 @@ int main(int argc, const char *argv[])
     scene.addObject(room);
 
     // Monolith:
+    auto monolithMaterial = std::make_shared<MatteMaterial>(std::make_shared<SolidTexture>(color3(.01, .01, .01)));
+
     for (int i = 0; i < 4; i++)
     {
         for (int j = 0; j < 9; j++)
         {
-            Primitive *cube = new Cube(point3(0.5 * i, 0.25 + 0.5 * j, 0), zeroVector(), 0.5,
-                                       makeLambertian(makeSolidTexture(color3(.01, .01, .01))));
-
+            Primitive *cube = new Cube(point3(0.5 * i, 0.25 + 0.5 * j, 0), zeroVector(), 0.5, monolithMaterial);
             scene.addObject(cube);
         }
     }
@@ -67,8 +72,8 @@ Primitive *makeDarkKnightRoom(double length, double width, double height)
     const double halfRoomW = 0.5 * width;
     const double halfRoomL = 0.5 * length;
 
-    Material *wallMaterial = makeLambertian(makeSolidTexture(color3(0.05, 0.05, 0.05)));
-    Material *lightMaterial = makeEmitter(color3(.9, .9, .9));
+    auto wallMaterial = std::make_shared<MatteMaterial>(std::make_shared<SolidTexture>(color3(0.05, 0.05, 0.05)));
+    auto lightMaterial = std::make_shared<EmitterMaterial>(color3(.9, .9, .9));
 
     std::vector<Primitive *> objects;
 

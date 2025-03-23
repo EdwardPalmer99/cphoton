@@ -9,7 +9,8 @@
 
 #include "Cylinder.hpp"
 
-Cylinder::Cylinder(Point3 center_, Vector3 rotAngles_, double radius_, double height_, Material *material_)
+Cylinder::Cylinder(Point3 center_, Vector3 rotAngles_, double radius_, double height_,
+                   std::shared_ptr<Material> material_)
     : Primitive(material_), center(center_), radius(radius_), height(height_),
       topCap(point3(0, height / 2.0, 0), vector3(0, 1, 0), radius, material),
       bottomCap(point3(0, -height / 2.0, 0), vector3(0, -1, 0), radius, material),
@@ -101,7 +102,7 @@ bool Cylinder::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
     hit->t = hitTime;
     hit->hitPt = hitPoint;
     hit->normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-    hit->material = material;
+    hit->material = material.get();
 
     hit->u = 0.0;
     hit->v = 0.0;

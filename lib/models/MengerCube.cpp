@@ -11,6 +11,7 @@
 #include "engine/primitives/Cube.hpp"
 #include <cstdlib>
 #include <cstring>
+#include <memory>
 
 extern "C"
 {
@@ -47,7 +48,7 @@ static bool subdivideCube(MengerCube *subCubes, MengerCube *parent);
 static MengerCube makeMengerCube(short int iter, double len, double x, double y, double z);
 
 
-Primitive *makeMengerSponge(int8_t n, Point3 center, double sideLength, Material *material)
+Primitive *makeMengerSponge(int8_t n, Point3 center, double sideLength, std::shared_ptr<Material> material)
 {
     if (n < 0 || n > 6 || sideLength <= 0.0 || !material) return NULL;
 

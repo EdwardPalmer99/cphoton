@@ -13,4 +13,4 @@ extern "C"
 #include "utility/Vector3.h"
 }
 
-Primitive *makeMengerSponge(int8_t n, Point3 center, double sideLength, Material *material);
+Primitive *makeMengerSponge(int8_t n, Point3 center, double sideLength, std::shared_ptr<Material> material);

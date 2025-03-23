@@ -19,6 +19,11 @@ extern "C"
 #include "engine/primitives/Primitive.hpp"
 #include "engine/primitives/Sphere.hpp"
 
+#include "engine/materials/MatteMaterial.hpp"
+#include "engine/materials/MetalMaterial.hpp"
+#include "engine/textures/SolidTexture.hpp"
+#include <memory>
+
 int main(int argc, const char *argv[])
 {
     gRenderSettings.pixelsWide = 500;
@@ -30,10 +35,14 @@ int main(int argc, const char *argv[])
     const double aspectRatio = ((double)gRenderSettings.pixelsWide / (double)gRenderSettings.pixelsHigh);
     Camera camera(45.0, aspectRatio, 1, 0, point3(0, 4, 4), point3(0, 1, 0));
 
-    Primitive *sphere1 = new Sphere(point3(+0.8, 1, 0), 1, makeMetal(makeSolidTexture(color3(0, 1, 0)), 0));
-    Primitive *sphere2 = new Sphere(point3(-0.8, 1, 0), 1, makeMetal(makeSolidTexture(color3(1, 0, 0)), 0));
+    Primitive *sphere1 = new Sphere(point3(+0.8, 1, 0), 1,
+                                    std::make_shared<MetalMaterial>(std::make_shared<SolidTexture>(color3(0, 1, 0))));
+    Primitive *sphere2 = new Sphere(point3(-0.8, 1, 0), 1,
+                                    std::make_shared<MetalMaterial>(std::make_shared<SolidTexture>(color3(1, 0, 0))));
 
-    Primitive *plane = new Plane(point3(0, 0, 0), point3(0, 1, 0), makeLambertianWithColor(color3(0.1, 0.1, 0.1)));
+    Primitive *plane =
+        new Plane(point3(0, 0, 0), point3(0, 1, 0),
+                  std::make_shared<MatteMaterial>(std::make_shared<SolidTexture>(color3(0.1, 0.1, 0.1))));
 
     Primitive *CSG = new CSGNode(sphere1, sphere2, CSGNode::CSGIntersection);
 

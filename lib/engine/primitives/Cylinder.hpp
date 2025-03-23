@@ -8,10 +8,10 @@
  */
 
 #pragma once
+#include "engine/materials/Material.hpp"
 
 extern "C"
 {
-#include "engine/Material.h"
 #include "utility/Matrix3.h"
 #include "utility/Vector3.h"
 }
@@ -24,7 +24,7 @@ class Cylinder : public Primitive
 {
 public:
     Cylinder() = delete;
-    Cylinder(Point3 center_, Vector3 rotAngles_, double radius_, double height_, Material *material_);
+    Cylinder(Point3 center_, Vector3 rotAngles_, double radius_, double height_, std::shared_ptr<Material> material_);
     ~Cylinder() override;
 
     bool hit(Ray *ray, double tmin, double tmax, HitRec *hit) override;

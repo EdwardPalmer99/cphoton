@@ -8,6 +8,7 @@
  */
 
 
+#include "engine/materials/MetalMaterial.hpp"
 #include "engine/primitives/CSGNode.hpp"
 #include "engine/primitives/Sphere.hpp"
 #include <gtest/gtest.h>
@@ -64,8 +65,8 @@ TEST(CSGPrimitive, TestBoundingBoxWithNonLeafCSG)
 /// Constructs a leaf-CSG node from two overlapping spheres.
 static Primitive *BuildLeafCSGFromSpherePair(Point3 pt1, Point3 pt2, double radius)
 {
-    Material *material1 = makeMetal(makeSolidTexture(color3(0, 1, 0)), 0);
-    Material *material2 = makeMetal(makeSolidTexture(color3(1, 0, 0)), 0);
+    auto material1 = std::make_shared<MetalMaterial>(color3(0, 1, 0));
+    auto material2 = std::make_shared<MetalMaterial>(color3(1, 0, 0));
 
     Primitive *sphere1 = new Sphere(pt1, radius, material1);
     Primitive *sphere2 = new Sphere(pt2, radius, material2);

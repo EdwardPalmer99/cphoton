@@ -15,7 +15,7 @@ extern "C"
 }
 
 
-Cube::Cube(Point3 center_, Vector3 rotAngles_, double length_, Material *material_)
+Cube::Cube(Point3 center_, Vector3 rotAngles_, double length_, std::shared_ptr<Material> material_)
     : Primitive(material_), center(center_), length(length_)
 {
     rotationMatrix = makeRotate3(rotAngles_);
@@ -114,7 +114,7 @@ bool Cube::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
     hit->t = hitTime;
     hit->hitPt = hitPoint;
     hit->normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-    hit->material = material;
+    hit->material = material.get();
 
     hit->u = 0.0;
     hit->v = 0.0;

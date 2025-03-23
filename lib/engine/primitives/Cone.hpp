@@ -21,7 +21,7 @@ class Cone : public Primitive
 {
 public:
     Cone() = delete;
-    Cone(Point3 center_, Vector3 rotAngles_, double height_, Material *material_);
+    Cone(Point3 center_, Vector3 rotAngles_, double height_, std::shared_ptr<Material> material_);
     ~Cone() override;
 
     bool hit(Ray *ray, double tmin, double tmax, HitRec *hit) override;

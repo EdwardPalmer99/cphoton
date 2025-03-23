@@ -9,7 +9,7 @@
 
 #include "Cone.hpp"
 
-Cone::Cone(Point3 center_, Vector3 rotAngles_, double height_, Material *material_)
+Cone::Cone(Point3 center_, Vector3 rotAngles_, double height_, std::shared_ptr<Material> material_)
     : Primitive(material_), center(center_), height(height_),
       base(point3(0, height, 0), vector3(0, 1, 0), height, material), rotationMatrix(makeRotate3(rotAngles_))
 {
@@ -89,7 +89,7 @@ bool Cone::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
     hit->t = hitTime;
     hit->hitPt = hitPoint;
     hit->normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-    hit->material = material;
+    hit->material = material.get();
 
     hit->u = 0.0;
     hit->v = 0.0;

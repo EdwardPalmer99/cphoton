@@ -21,6 +21,10 @@ extern "C"
 #include "engine/primitives/Primitive.hpp"
 #include "models/MengerCube.hpp"
 
+#include "engine/materials/MatteMaterial.hpp"
+#include "engine/materials/MetalMaterial.hpp"
+#include "engine/textures/SolidTexture.hpp"
+
 int main(int argc, const char *argv[])
 {
     gRenderSettings.pixelsWide = 800;
@@ -33,12 +37,12 @@ int main(int argc, const char *argv[])
     Camera camera(45.0, aspectRatio, 4, 0.0, point3(2, 5, 5), point3(0.2, 0.6, 1.0));
 
     // Create the textures:
-    Texture *greyColor = makeSolidTexture(color3(0.20, 0.26, 0.35));
-    Texture *goldColor = makeSolidTexture(makeGoldColor());
+    auto greyColor = std::make_shared<SolidTexture>(color3(0.20, 0.26, 0.35));
+    auto goldColor = std::make_shared<SolidTexture>(SolidTexture::Gold);
 
     // Create the materials:
-    Material *greyMetal = makeMetal(greyColor, 0.2);
-    Material *goldLambertian = makeLambertian(goldColor);
+    auto greyMetal = std::make_shared<MetalMaterial>(greyColor, 0.2);
+    auto goldLambertian = std::make_shared<MatteMaterial>(goldColor);
 
     // Create the scene:
     Scene scene;

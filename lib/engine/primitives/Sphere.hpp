@@ -22,7 +22,7 @@ class Sphere : public Primitive
 {
 public:
     Sphere() = delete;
-    Sphere(Point3 center, double radius, Material *material);
+    Sphere(Point3 center, double radius, std::shared_ptr<Material> material);
 
     bool hit(Ray *ray, double tmin, double tmax, HitRec *hit) override;
 
