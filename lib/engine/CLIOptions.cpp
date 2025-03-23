@@ -7,17 +7,10 @@
  *
  */
 
-#include "engine/RenderSettings.h"
-#include <stdbool.h>
+#include "engine/RenderSettings.hpp"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-// clang-format off
-RenderSettings gRenderSettings = {.pixelsWide = 2560,
-                                  .pixelsHigh = 1600,
-                                  .outputPath = NULL};
-// clang-format on
 
 void printCLIOptions(const char *programName);
 
@@ -36,8 +29,8 @@ void parseCLIOptions(int argc, const char *argv[])
         strncpy(argBuffer, argv[iarg], kBufferSize - 1);
         argBuffer[kBufferSize - 1] = '\0';
 
-        char *name = NULL;
-        char *value = NULL;
+        char *name = nullptr;
+        char *value = nullptr;
 
         for (char *c = (char *)argBuffer; *c; ++c)
         {
@@ -67,7 +60,7 @@ void parseCLIOptions(int argc, const char *argv[])
 
         if (strcmp(name, "--path") == 0)
         {
-            gRenderSettings.outputPath = strdup((char *)value);
+            RenderSettings::instance().outputPath = strdup((char *)value);
             hasRequiredArg = true;
         }
         else
@@ -83,9 +76,9 @@ void parseCLIOptions(int argc, const char *argv[])
             uint16_t unsignedValue = (uint16_t)outputValue;
 
             if (strcmp(name, "--width") == 0)
-                gRenderSettings.pixelsWide = unsignedValue;
+                RenderSettings::instance().pixelsWide = unsignedValue;
             else if (strcmp(name, "--height") == 0)
-                gRenderSettings.pixelsHigh = unsignedValue;
+                RenderSettings::instance().pixelsHigh = unsignedValue;
         }
     }
 
@@ -107,5 +100,5 @@ void printCLIOptions(const char *programName)
             "  --help              print this message and exit\n"
             "  --width             image output width in pixels (default: %u)\n"
             "  --height            image output height in pixels (default: %u)\n",
-            programName, gRenderSettings.pixelsWide, gRenderSettings.pixelsHigh);
+            programName, RenderSettings::instance().pixelsWide, RenderSettings::instance().pixelsHigh);
 }

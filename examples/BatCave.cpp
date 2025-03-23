@@ -9,11 +9,11 @@
 
 extern "C"
 {
-#include "engine/RenderSettings.h"
 #include "utility/PPMWriter.h"
 }
 
 #include "engine/PhotonEngine.hpp"
+#include "engine/RenderSettings.hpp"
 #include "engine/Scene.hpp"
 #include "engine/primitives/BVHNode.hpp"
 #include "engine/primitives/Cube.hpp"
@@ -24,6 +24,8 @@ extern "C"
 #include "engine/materials/MatteMaterial.hpp"
 #include "engine/textures/SolidTexture.hpp"
 
+#include "engine/CLIOptions.hpp"
+
 #include <cstdlib>
 #include <memory>
 #include <vector>
@@ -32,11 +34,11 @@ Primitive *makeDarkKnightRoom(double length, double width, double height);
 
 int main(int argc, const char *argv[])
 {
+    RenderSettings::instance().setDefaultWidthHeight(2560, 1600);
     parseCLIOptions(argc, argv);
 
     // Create the camera:
-    const double aspectRatio = ((double)gRenderSettings.pixelsWide / (double)gRenderSettings.pixelsHigh);
-    Camera camera(45.0, aspectRatio, 1, 0, point3(-2.5, 2, 10), point3(0, 2, 0));
+    Camera camera(45.0, RenderSettings::instance().aspectRatio(), 1, 0, point3(-2.5, 2, 10), point3(0, 2, 0));
 
     Primitive *room = makeDarkKnightRoom(20, 16.0, 5);
 
@@ -44,7 +46,7 @@ int main(int argc, const char *argv[])
     scene.addObject(room);
 
     // Monolith:
-    auto monolithMaterial = std::make_shared<MatteMaterial>(std::make_shared<SolidTexture>(color3(.01, .01, .01)));
+    auto monolithMaterial = std::make_shared<MatteMaterial>(color3(.01, .01, .01));
 
     for (int i = 0; i < 4; i++)
     {
@@ -55,11 +57,11 @@ int main(int argc, const char *argv[])
         }
     }
 
-    PhotonEngine engine(gRenderSettings.pixelsWide, gRenderSettings.pixelsHigh);
+    PhotonEngine engine(RenderSettings::instance().pixelsWide, RenderSettings::instance().pixelsHigh);
 
     PPMImage *outputImage = engine.render(&scene, &camera);
 
-    writeBinary16BitPPMImage(outputImage, gRenderSettings.outputPath);
+    writeBinary16BitPPMImage(outputImage, RenderSettings::instance().outputPath);
 
     freePPMImage(outputImage);
 
@@ -72,7 +74,7 @@ Primitive *makeDarkKnightRoom(double length, double width, double height)
     const double halfRoomW = 0.5 * width;
     const double halfRoomL = 0.5 * length;
 
-    auto wallMaterial = std::make_shared<MatteMaterial>(std::make_shared<SolidTexture>(color3(0.05, 0.05, 0.05)));
+    auto wallMaterial = std::make_shared<MatteMaterial>(color3(0.05, 0.05, 0.05));
     auto lightMaterial = std::make_shared<EmitterMaterial>(color3(.9, .9, .9));
 
     std::vector<Primitive *> objects;

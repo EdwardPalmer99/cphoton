@@ -8,15 +8,5 @@
  */
 
 #pragma once
-#include <stdint.h>
-
-typedef struct renderSettings_t
-{
-    uint16_t pixelsWide;
-    uint16_t pixelsHigh;
-    char *outputPath;
-} RenderSettings;
-
-extern RenderSettings gRenderSettings;
 
 void parseCLIOptions(int argc, const char *argv[]);

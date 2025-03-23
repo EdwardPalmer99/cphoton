@@ -7,11 +7,7 @@
  *
  */
 
-extern "C"
-{
-#include "engine/RenderSettings.h"
-}
-
+#include "engine/CLIOptions.hpp"
 #include "engine/PhotonEngine.hpp"
 #include "engine/Scene.hpp"
 #include "engine/primitives/CSGNode.hpp"
@@ -19,6 +15,7 @@ extern "C"
 #include "engine/primitives/Primitive.hpp"
 #include "engine/primitives/Sphere.hpp"
 
+#include "engine/RenderSettings.hpp"
 #include "engine/materials/MatteMaterial.hpp"
 #include "engine/materials/MetalMaterial.hpp"
 #include "engine/textures/SolidTexture.hpp"
@@ -26,14 +23,11 @@ extern "C"
 
 int main(int argc, const char *argv[])
 {
-    gRenderSettings.pixelsWide = 500;
-    gRenderSettings.pixelsHigh = 500;
-
+    RenderSettings::instance().setDefaultWidthHeight(500, 500);
     parseCLIOptions(argc, argv);
 
     // Create the camera:
-    const double aspectRatio = ((double)gRenderSettings.pixelsWide / (double)gRenderSettings.pixelsHigh);
-    Camera camera(45.0, aspectRatio, 1, 0, point3(0, 4, 4), point3(0, 1, 0));
+    Camera camera(45.0, RenderSettings::instance().aspectRatio(), 1, 0, point3(0, 4, 4), point3(0, 1, 0));
 
     Primitive *sphere1 = new Sphere(point3(+0.8, 1, 0), 1,
                                     std::make_shared<MetalMaterial>(std::make_shared<SolidTexture>(color3(0, 1, 0))));
@@ -50,10 +44,10 @@ int main(int argc, const char *argv[])
     scene.addObject(CSG);
     scene.addObject(plane);
 
-    PhotonEngine engine(gRenderSettings.pixelsWide, gRenderSettings.pixelsHigh);
+    PhotonEngine engine(RenderSettings::instance().pixelsWide, RenderSettings::instance().pixelsHigh);
 
     PPMImage *outputImage = engine.render(&scene, &camera);
-    writeBinary16BitPPMImage(outputImage, gRenderSettings.outputPath);
+    writeBinary16BitPPMImage(outputImage, RenderSettings::instance().outputPath);
     freePPMImage(outputImage);
 
     return 0;
