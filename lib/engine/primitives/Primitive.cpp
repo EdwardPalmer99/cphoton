@@ -10,21 +10,8 @@
 #include "Primitive.hpp"
 #include <stdexcept>
 
-Primitive::Primitive(Material *material_) : material(material_)
+Primitive::Primitive(std::shared_ptr<Material> material_) : material(material_)
 {
-    if (material)
-    {
-        material->incrementRefCounter(material);
-    }
-}
-
-
-Primitive::~Primitive()
-{
-    if (material)
-    {
-        material->decrementRefCounter(material);
-    }
 }
 
 
@@ -69,7 +56,7 @@ Ray transformRay(Ray *ray, Point3 center, Rotate3 *rotation)
     Vector3 newDir = inverseRotation(ray->direction, rotation);
     Point3 newOrigin = inverseRotation(subtractVectors(ray->origin, center), rotation);
 
-    return makeRay(newOrigin, newDir);
+    return Ray(newOrigin, newDir);
 }
 
 

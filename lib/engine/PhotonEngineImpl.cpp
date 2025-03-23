@@ -8,10 +8,10 @@
  */
 
 #include "engine/PhotonEngineImpl.hpp"
+#include "engine/HitRec.hpp"
 
 extern "C"
 {
-#include "engine/HitRec.h"
 #include "utility/Randomizer.h"
 }
 
@@ -29,16 +29,18 @@ Color3 rayColor(Ray *ray, Primitive *objectsBVH, int depth)
     {
         Ray scatteredRay;
         Color3 attenuation;
-        Color3 emitted = hit.material->emitted;
+        Color3 emitted = hit.material->emitted();
 
         if (hit.material->scatter(ray, &hit, &scatteredRay, &attenuation))
         {
             Color3 outputColor = rayColor(&scatteredRay, objectsBVH, depth - 1);
 
+            // Light source color + (ray output * attenuation)
             return addVectors(emitted, multiplyColors(outputColor, attenuation));
         }
         else
         {
+            // Light source. Just return emitted source color:
             return emitted;
         }
     }

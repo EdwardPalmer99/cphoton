@@ -12,7 +12,7 @@
 
 extern "C"
 {
-#include "utility/Utility.h"
+#include "utility/MathMacros.h"
 }
 
 int compareBoundingBoxes(AABB *boxA, AABB *boxB, int axis);

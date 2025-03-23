@@ -14,7 +14,7 @@ class Disc : public Plane
 {
 public:
     Disc() = delete;
-    Disc(Point3 p0_, Point3 normal_, double radius_, Material *material_);
+    Disc(Point3 p0_, Point3 normal_, double radius_, std::shared_ptr<Material> material_);
     ~Disc() override = default;
 
     bool hit(Ray *ray, double tmin, double tmax, HitRec *hit) override;

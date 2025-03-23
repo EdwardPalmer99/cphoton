@@ -12,7 +12,7 @@
 // #include "engine/Primitive.h"
 // #include "engine/Texture.h"
 // #include "utility/Matrix3.h"
-// #include "utility/Utility.h"
+// #include "utility/MathUtils.h"
 // #include "utility/Vector3.h"
 // #include <math.h>
 // #include <stdio.h>

@@ -9,7 +9,7 @@
 
 extern "C"
 {
-#include "utility/Utility.h"
+#include "utility/MathMacros.h"
 }
 
 
@@ -54,5 +54,5 @@ Ray Camera::fireRay(double s, double t)
 
     Vector3 direction = subtractVectors(rayTarget, rayStart);
 
-    return makeRay(rayStart, direction);
+    return Ray(rayStart, direction);
 }

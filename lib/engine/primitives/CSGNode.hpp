@@ -10,11 +10,7 @@
 
 #pragma once
 #include "Primitive.hpp"
-
-extern "C"
-{
-#include "engine/HitRec.h"
-}
+#include "engine/HitRec.hpp"
 
 class CSGNode : public Primitive
 {

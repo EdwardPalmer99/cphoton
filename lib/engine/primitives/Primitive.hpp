@@ -11,23 +11,23 @@
 
 extern "C"
 {
-#include "engine/HitRec.h"
-#include "engine/Material.h"
-#include "engine/Ray.h"
 #include "utility/Matrix3.h"
 #include "utility/Vector3.h"
 }
 
 #include "CSGNodeInterface.hpp"
 #include "engine/AABB.hpp"
+#include "engine/HitRec.hpp"
+#include "engine/Ray.hpp"
 #include "engine/Span.hpp"
+#include "engine/materials/Material.hpp"
+#include <memory>
 
 /** Base object class. */
 class Primitive : public CSGNodeInterface
 {
 public:
     Primitive() = delete;
-    ~Primitive() override;
 
     /** On success, returns true and populates hit structure if hit in interval [tmin, tmax]. */
     virtual bool hit(Ray *ray, double tmin, double tmax, HitRec *hit) = 0;
@@ -39,10 +39,10 @@ public:
     virtual bool boundingBox(AABB *boundingBox) = 0;
 
 protected:
-    Primitive(Material *material_);
+    Primitive(std::shared_ptr<Material> material_);
 
     /** Object material. */
-    Material *material{nullptr};
+    std::shared_ptr<Material> material{nullptr};
 };
 
 bool isValidIntersectionTime(double hitTime, double tmin, double tmax);

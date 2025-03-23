@@ -7,7 +7,7 @@
 
 #include "utility/PPMWriter.h"
 #include "logger/Logger.h"
-#include "utility/Utility.h"
+#include "utility/MathMacros.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>

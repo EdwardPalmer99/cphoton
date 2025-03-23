@@ -9,7 +9,7 @@
 
 #include "Cone.hpp"
 
-Cone::Cone(Point3 center_, Vector3 rotAngles_, double height_, Material *material_)
+Cone::Cone(Point3 center_, Vector3 rotAngles_, double height_, std::shared_ptr<Material> material_)
     : Primitive(material_), center(center_), height(height_),
       base(point3(0, height, 0), vector3(0, 1, 0), height, material), rotationMatrix(makeRotate3(rotAngles_))
 {
@@ -51,8 +51,8 @@ bool Cone::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
 
     if (t1Valid || t2Valid)
     {
-        Point3 hitPt1 = pointAtTime(&tranRay, t1);
-        Point3 hitPt2 = pointAtTime(&tranRay, t2);
+        Point3 hitPt1 = tranRay.pointAtTime(t1);
+        Point3 hitPt2 = tranRay.pointAtTime(t2);
 
         const bool hitPt1Valid = (hitPt1.y > minY && hitPt1.y < maxY);
         const bool hitPt2Valid = (hitPt2.y > minY && hitPt2.y < maxY);
@@ -80,7 +80,7 @@ bool Cone::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
     if (hitTime == tmax) return false;
 
     // Calculate the hit point in original coordinates and rotate normal:
-    hitPoint = pointAtTime(ray, hitTime);
+    hitPoint = ray->pointAtTime(hitTime);
     outwardNormal = rotation(outwardNormal, rotationMatrix);
 
     const bool frontFace = (dot(ray->direction, outwardNormal) < 0.0);
@@ -89,7 +89,7 @@ bool Cone::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
     hit->t = hitTime;
     hit->hitPt = hitPoint;
     hit->normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-    hit->material = material;
+    hit->material = material.get();
 
     hit->u = 0.0;
     hit->v = 0.0;

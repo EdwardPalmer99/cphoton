@@ -9,7 +9,8 @@
 
 #include "Cylinder.hpp"
 
-Cylinder::Cylinder(Point3 center_, Vector3 rotAngles_, double radius_, double height_, Material *material_)
+Cylinder::Cylinder(Point3 center_, Vector3 rotAngles_, double radius_, double height_,
+                   std::shared_ptr<Material> material_)
     : Primitive(material_), center(center_), radius(radius_), height(height_),
       topCap(point3(0, height / 2.0, 0), vector3(0, 1, 0), radius, material),
       bottomCap(point3(0, -height / 2.0, 0), vector3(0, -1, 0), radius, material),
@@ -57,8 +58,8 @@ bool Cylinder::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
     // Check for intersections with side of cylinder:
     if (t1Valid || t2Valid)
     {
-        Point3 hitPt1 = pointAtTime(&tranRay, t1);
-        Point3 hitPt2 = pointAtTime(&tranRay, t2);
+        Point3 hitPt1 = tranRay.pointAtTime(t1);
+        Point3 hitPt2 = tranRay.pointAtTime(t2);
 
         const bool hitPt1Valid = (hitPt1.y > ymin && hitPt1.y < ymax);
         const bool hitPt2Valid = (hitPt2.y > ymin && hitPt2.y < ymax);
@@ -92,7 +93,7 @@ bool Cylinder::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
 
     // Calculate the hit point and outward normal in original coordinates
     // (rotate back to original). hitTime is correct in both coordinates.
-    hitPoint = pointAtTime(ray, hitTime);
+    hitPoint = ray->pointAtTime(hitTime);
     outwardNormal = rotation(outwardNormal, rotationMatrix);
 
     const bool frontFace = (dot(ray->direction, outwardNormal) < 0.0);
@@ -101,7 +102,7 @@ bool Cylinder::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
     hit->t = hitTime;
     hit->hitPt = hitPoint;
     hit->normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-    hit->material = material;
+    hit->material = material.get();
 
     hit->u = 0.0;
     hit->v = 0.0;

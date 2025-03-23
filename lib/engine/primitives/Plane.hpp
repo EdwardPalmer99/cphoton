@@ -14,7 +14,7 @@ class Plane : public Primitive
 {
 public:
     Plane() = delete;
-    Plane(Point3 p0_, Point3 normal_, Material *material_);
+    Plane(Point3 p0_, Point3 normal_, std::shared_ptr<Material> material_);
     ~Plane() override = default;
 
     bool hit(Ray *ray, double tmin, double tmax, HitRec *hit) override;

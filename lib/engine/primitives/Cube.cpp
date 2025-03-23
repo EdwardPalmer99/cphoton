@@ -11,11 +11,11 @@
 
 extern "C"
 {
-#include "utility/Utility.h"
+#include "utility/MathMacros.h"
 }
 
 
-Cube::Cube(Point3 center_, Vector3 rotAngles_, double length_, Material *material_)
+Cube::Cube(Point3 center_, Vector3 rotAngles_, double length_, std::shared_ptr<Material> material_)
     : Primitive(material_), center(center_), length(length_)
 {
     rotationMatrix = makeRotate3(rotAngles_);
@@ -105,7 +105,7 @@ bool Cube::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
 
     // Calculate the hit point and outward normal in original coordinates
     // (rotate back to original). hitTime is correct in both coordinates.
-    Vector3 hitPoint = pointAtTime(ray, hitTime);
+    Vector3 hitPoint = ray->pointAtTime(hitTime);
     outwardNormal = rotation(outwardNormal, rotationMatrix);
 
     const bool frontFace = (dot(ray->direction, outwardNormal) < 0.0);
@@ -114,7 +114,7 @@ bool Cube::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
     hit->t = hitTime;
     hit->hitPt = hitPoint;
     hit->normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-    hit->material = material;
+    hit->material = material.get();
 
     hit->u = 0.0;
     hit->v = 0.0;

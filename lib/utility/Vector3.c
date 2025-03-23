@@ -6,8 +6,8 @@
 //
 
 #include "utility/Vector3.h"
+#include "utility/MathMacros.h"
 #include "utility/Randomizer.h"
-#include "utility/Utility.h"
 
 Color3 color3(double r, double g, double b)
 {

@@ -9,7 +9,8 @@
 
 #include "Plane.hpp"
 
-Plane::Plane(Point3 p0_, Point3 normal_, Material *material_) : Primitive(material_), p0(p0_), normal(normal_)
+Plane::Plane(Point3 p0_, Point3 normal_, std::shared_ptr<Material> material_)
+    : Primitive(material_), p0(p0_), normal(normal_)
 {
 }
 
@@ -26,9 +27,9 @@ bool Plane::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
 
         hit->frontFace = frontFace;
         hit->t = hitTime;
-        hit->hitPt = pointAtTime(ray, hitTime);
+        hit->hitPt = ray->pointAtTime(hitTime);
         hit->normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-        hit->material = material;
+        hit->material = material.get();
 
         hit->u = 0.0;
         hit->v = 0.0;

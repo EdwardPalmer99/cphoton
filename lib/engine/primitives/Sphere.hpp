@@ -10,10 +10,10 @@
 
 #pragma once
 #include "Primitive.hpp"
+#include "engine/Ray.hpp"
 
 extern "C"
 {
-#include "engine/Ray.h"
 #include "utility/Vector3.h"
 }
 
@@ -22,7 +22,7 @@ class Sphere : public Primitive
 {
 public:
     Sphere() = delete;
-    Sphere(Point3 center, double radius, Material *material);
+    Sphere(Point3 center, double radius, std::shared_ptr<Material> material);
 
     bool hit(Ray *ray, double tmin, double tmax, HitRec *hit) override;
 

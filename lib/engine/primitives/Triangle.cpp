@@ -9,7 +9,7 @@
 
 #include "Triangle.hpp"
 
-Triangle::Triangle(Point3 v0_, Point3 v1_, Point3 v2_, Material *material_)
+Triangle::Triangle(Point3 v0_, Point3 v1_, Point3 v2_, std::shared_ptr<Material> material_)
     : Primitive(material_), v0(v0_), v1(v1_), v2(v2_)
 {
     normal = cross(subtractVectors(v1, v0), subtractVectors(v2, v1));
@@ -71,7 +71,7 @@ bool Triangle::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
         if (v < 0.0 || u + v > 1.0) return false;
 
         // Compute the normal vector:
-        Point3 hitPoint = pointAtTime(ray, hitTime);
+        Point3 hitPoint = ray->pointAtTime(hitTime);
         Vector3 outwardNormal = normal;
 
         // Are we hitting the outside surface or are we hitting the inside?
@@ -81,7 +81,7 @@ bool Triangle::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
         hit->t = hitTime;
         hit->hitPt = hitPoint;
         hit->normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-        hit->material = material;
+        hit->material = material.get();
 
         hit->u = u;
         hit->v = v;

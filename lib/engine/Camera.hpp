@@ -6,10 +6,10 @@
 //
 
 #pragma once
+#include "engine/Ray.hpp"
 
 extern "C"
 {
-#include "engine/Ray.h"
 #include "utility/Vector3.h"
 }
 

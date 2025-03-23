@@ -8,13 +8,13 @@
  */
 
 #include "CSGNode.hpp"
+#include "engine/HitRec.hpp"
 #include "engine/Span.hpp"
 
 extern "C"
 {
-#include "engine/HitRec.h"
 #include "logger/Logger.h"
-#include "utility/Utility.h"
+#include "utility/MathMacros.h"
 }
 
 

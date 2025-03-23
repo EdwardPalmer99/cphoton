@@ -9,10 +9,10 @@
 
 #pragma once
 #include "Primitive.hpp"
+#include "engine/materials/Material.hpp"
 
 extern "C"
 {
-#include "engine/Material.h"
 #include "utility/Matrix3.h"
 #include "utility/Vector3.h"
 }
@@ -21,7 +21,7 @@ class Cube : public Primitive
 {
 public:
     Cube() = delete;
-    Cube(Point3 center_, Vector3 rotAngles_, double length_, Material *material_);
+    Cube(Point3 center_, Vector3 rotAngles_, double length_, std::shared_ptr<Material> material_);
     ~Cube() override;
 
     bool hit(Ray *ray, double tmin, double tmax, HitRec *hit) override;

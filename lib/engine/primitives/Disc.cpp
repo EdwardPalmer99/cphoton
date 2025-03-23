@@ -9,7 +9,7 @@
 
 #include "Disc.hpp"
 
-Disc::Disc(Point3 p0_, Point3 normal_, double radius_, Material *material_)
+Disc::Disc(Point3 p0_, Point3 normal_, double radius_, std::shared_ptr<Material> material_)
     : Plane(p0_, normal_, material_), radius(radius_)
 {
 }
@@ -22,7 +22,7 @@ bool Disc::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
     if (intersectionWithPlane(p0, normal, ray, &hitTime) && isValidIntersectionTime(hitTime, tmin, tmax))
     {
         // Check that hit point is inside disc radius:
-        Point3 hitPoint = pointAtTime(ray, hitTime);
+        Point3 hitPoint = ray->pointAtTime(hitTime);
 
         Vector3 hitPointMinusCenter = subtractVectors(hitPoint, p0);
 
@@ -39,7 +39,7 @@ bool Disc::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
         hit->t = hitTime;
         hit->hitPt = hitPoint;
         hit->normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-        hit->material = material;
+        hit->material = material.get();
 
         hit->u = 0.0;
         hit->v = 0.0;
