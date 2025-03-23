@@ -1,13 +1,11 @@
 //
-//  Utility.h
+//  MathMacros.h
 //  CPhoton
 //
 //  Created by Edward on 19/01/2023.
 //
 
-#ifndef Utility_h
-#define Utility_h
-
+#pragma once
 #include <math.h>
 #include <stdlib.h>
 
@@ -25,5 +23,3 @@
 #define asind(x) (asin((x)) * kRadiansToDegrees)
 #define acosd(x) (acos((x)) * kRadiansToDegrees)
 #define atand(x) (atan((x)) * kRadiansToDegrees)
-
-#endif /* Utility_h */

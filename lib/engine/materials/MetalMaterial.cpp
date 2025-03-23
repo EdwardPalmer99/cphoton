@@ -12,7 +12,7 @@
 
 extern "C"
 {
-#include "utility/Utility.h"
+#include "utility/MathMacros.h"
 }
 
 MetalMaterial::MetalMaterial(std::shared_ptr<Texture> albedo_, double fuzziness_)

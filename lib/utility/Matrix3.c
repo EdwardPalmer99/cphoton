@@ -6,8 +6,8 @@
 //
 
 #include "utility/Matrix3.h"
+#include "utility/MathMacros.h"
 #include <stdlib.h>
-#include "utility/Utility.h"
 
 typedef double Matrix3[3][3];
 
