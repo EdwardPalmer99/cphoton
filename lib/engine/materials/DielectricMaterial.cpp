@@ -45,7 +45,7 @@ bool DielectricMaterial::scatter(Ray *incidentRay, HitRec *hit, Ray *scatteredRa
     else
         direction = refract(unitDirection, hit->normal, refractionRatio);
 
-    *scatteredRay = makeRay(hit->hitPt, direction);
+    *scatteredRay = Ray(hit->hitPt, direction);
     *attenuation = color3(1.0, 1.0, 1.0);
 
     return true;

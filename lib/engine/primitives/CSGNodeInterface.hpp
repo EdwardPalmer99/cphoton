@@ -8,12 +8,8 @@
  */
 
 #pragma once
+#include "engine/Ray.hpp"
 #include "engine/Span.hpp"
-
-extern "C"
-{
-#include "engine/Ray.h"
-}
 
 /**
  * Interface to be implemented by primitives which are capable of CSG operations.

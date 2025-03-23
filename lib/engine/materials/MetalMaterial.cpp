@@ -39,7 +39,7 @@ bool MetalMaterial::scatter(Ray *incidentRay, HitRec *hit, Ray *scatteredRay, Co
         reflectDirection = addVectors(reflectDirection, changeToVector);
     }
 
-    *scatteredRay = makeRay(hit->hitPt, reflectDirection);
+    *scatteredRay = Ray(hit->hitPt, reflectDirection);
     *attenuation = albedo->value(hit->u, hit->v, &hit->hitPt);
 
     // Make sure that the scattered ray is not scattering into the object:

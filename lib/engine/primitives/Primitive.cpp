@@ -56,7 +56,7 @@ Ray transformRay(Ray *ray, Point3 center, Rotate3 *rotation)
     Vector3 newDir = inverseRotation(ray->direction, rotation);
     Point3 newOrigin = inverseRotation(subtractVectors(ray->origin, center), rotation);
 
-    return makeRay(newOrigin, newDir);
+    return Ray(newOrigin, newDir);
 }
 
 

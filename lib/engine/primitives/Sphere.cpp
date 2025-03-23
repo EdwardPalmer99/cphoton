@@ -55,7 +55,7 @@ bool Sphere::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
     else
         return false;
 
-    Point3 hitPoint = pointAtTime(ray, hitTime);
+    Point3 hitPoint = ray->pointAtTime(hitTime);
 
     // Compute the normal vector:
     Vector3 outwardNormal = scaleVector(subtractVectors(hitPoint, center), 1.0 / radius);
@@ -135,7 +135,7 @@ bool Sphere::computeIntersections(Ray *ray, double tmin, double tmax, Span::Span
 
     /* Compute intersection t1 (if t1 < 0 --> camera inside object) */
     {
-        Point3 hitPoint = pointAtTime(ray, t1);
+        Point3 hitPoint = ray->pointAtTime(t1);
 
         Vector3 outwardNormal = scaleVector(subtractVectors(hitPoint, center), 1.0 / radius);
 
@@ -151,7 +151,7 @@ bool Sphere::computeIntersections(Ray *ray, double tmin, double tmax, Span::Span
 
     /* Compute intersection t2 */
     {
-        Point3 hitPoint = pointAtTime(ray, t2);
+        Point3 hitPoint = ray->pointAtTime(t2);
 
         Vector3 outwardNormal = scaleVector(subtractVectors(hitPoint, center), 1.0 / radius);
 

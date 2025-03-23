@@ -105,7 +105,7 @@ bool Cube::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
 
     // Calculate the hit point and outward normal in original coordinates
     // (rotate back to original). hitTime is correct in both coordinates.
-    Vector3 hitPoint = pointAtTime(ray, hitTime);
+    Vector3 hitPoint = ray->pointAtTime(hitTime);
     outwardNormal = rotation(outwardNormal, rotationMatrix);
 
     const bool frontFace = (dot(ray->direction, outwardNormal) < 0.0);

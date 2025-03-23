@@ -71,7 +71,7 @@ bool Triangle::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
         if (v < 0.0 || u + v > 1.0) return false;
 
         // Compute the normal vector:
-        Point3 hitPoint = pointAtTime(ray, hitTime);
+        Point3 hitPoint = ray->pointAtTime(hitTime);
         Vector3 outwardNormal = normal;
 
         // Are we hitting the outside surface or are we hitting the inside?

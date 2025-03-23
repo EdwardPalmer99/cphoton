@@ -11,7 +11,6 @@
 
 extern "C"
 {
-#include "engine/Ray.h"
 #include "utility/Matrix3.h"
 #include "utility/Vector3.h"
 }
@@ -19,6 +18,7 @@ extern "C"
 #include "CSGNodeInterface.hpp"
 #include "engine/AABB.hpp"
 #include "engine/HitRec.hpp"
+#include "engine/Ray.hpp"
 #include "engine/Span.hpp"
 #include "engine/materials/Material.hpp"
 #include <memory>

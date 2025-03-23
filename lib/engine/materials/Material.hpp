@@ -8,13 +8,13 @@
  */
 
 #pragma once
+#include "engine/Ray.hpp"
 
 // Forward declaration:
 struct HitRec;
 
 extern "C"
 {
-#include "engine/Ray.h"
 #include "utility/Vector3.h"
 }
 

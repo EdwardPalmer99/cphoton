@@ -58,8 +58,8 @@ bool Cylinder::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
     // Check for intersections with side of cylinder:
     if (t1Valid || t2Valid)
     {
-        Point3 hitPt1 = pointAtTime(&tranRay, t1);
-        Point3 hitPt2 = pointAtTime(&tranRay, t2);
+        Point3 hitPt1 = tranRay.pointAtTime(t1);
+        Point3 hitPt2 = tranRay.pointAtTime(t2);
 
         const bool hitPt1Valid = (hitPt1.y > ymin && hitPt1.y < ymax);
         const bool hitPt2Valid = (hitPt2.y > ymin && hitPt2.y < ymax);
@@ -93,7 +93,7 @@ bool Cylinder::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
 
     // Calculate the hit point and outward normal in original coordinates
     // (rotate back to original). hitTime is correct in both coordinates.
-    hitPoint = pointAtTime(ray, hitTime);
+    hitPoint = ray->pointAtTime(hitTime);
     outwardNormal = rotation(outwardNormal, rotationMatrix);
 
     const bool frontFace = (dot(ray->direction, outwardNormal) < 0.0);

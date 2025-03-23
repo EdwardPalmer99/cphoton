@@ -22,7 +22,7 @@ bool Disc::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
     if (intersectionWithPlane(p0, normal, ray, &hitTime) && isValidIntersectionTime(hitTime, tmin, tmax))
     {
         // Check that hit point is inside disc radius:
-        Point3 hitPoint = pointAtTime(ray, hitTime);
+        Point3 hitPoint = ray->pointAtTime(hitTime);
 
         Vector3 hitPointMinusCenter = subtractVectors(hitPoint, p0);
 

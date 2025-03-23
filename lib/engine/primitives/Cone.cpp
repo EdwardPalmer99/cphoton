@@ -51,8 +51,8 @@ bool Cone::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
 
     if (t1Valid || t2Valid)
     {
-        Point3 hitPt1 = pointAtTime(&tranRay, t1);
-        Point3 hitPt2 = pointAtTime(&tranRay, t2);
+        Point3 hitPt1 = tranRay.pointAtTime(t1);
+        Point3 hitPt2 = tranRay.pointAtTime(t2);
 
         const bool hitPt1Valid = (hitPt1.y > minY && hitPt1.y < maxY);
         const bool hitPt2Valid = (hitPt2.y > minY && hitPt2.y < maxY);
@@ -80,7 +80,7 @@ bool Cone::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
     if (hitTime == tmax) return false;
 
     // Calculate the hit point in original coordinates and rotate normal:
-    hitPoint = pointAtTime(ray, hitTime);
+    hitPoint = ray->pointAtTime(hitTime);
     outwardNormal = rotation(outwardNormal, rotationMatrix);
 
     const bool frontFace = (dot(ray->direction, outwardNormal) < 0.0);

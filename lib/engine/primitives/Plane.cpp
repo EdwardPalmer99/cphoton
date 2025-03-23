@@ -27,7 +27,7 @@ bool Plane::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
 
         hit->frontFace = frontFace;
         hit->t = hitTime;
-        hit->hitPt = pointAtTime(ray, hitTime);
+        hit->hitPt = ray->pointAtTime(hitTime);
         hit->normal = frontFace ? outwardNormal : flipVector(outwardNormal);
         hit->material = material.get();
 

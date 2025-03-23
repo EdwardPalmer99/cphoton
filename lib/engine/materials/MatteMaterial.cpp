@@ -32,7 +32,7 @@ bool MatteMaterial::scatter(Ray *incidentRay, HitRec *hit, Ray *scatteredRay, Co
         scatterDirection = hit->normal;
     }
 
-    *scatteredRay = makeRay(hit->hitPt, scatterDirection);
+    *scatteredRay = Ray(hit->hitPt, scatterDirection);
     *attenuation = albedo->value(hit->u, hit->v, &hit->hitPt);
 
     return true;
