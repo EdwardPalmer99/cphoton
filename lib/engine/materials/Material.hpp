@@ -25,7 +25,7 @@ class Material
 {
 public:
     /* Sets the scatteredRay and attenuation */
-    virtual bool scatter(Ray *incidentRay, Hit *hit, Ray *scatteredRay, Color3 *attenuation) = 0;
+    virtual bool scatter(Ray &incidentRay, Hit &hit, Ray &scatteredRay, Color3 &attenuation) = 0;
 
     /* Returns black color (material doesn't emit light). */
     virtual Color3 emitted() const;

@@ -25,7 +25,7 @@ public:
     MatteMaterial(Color3 color);
 
     /* Scatters ray */
-    bool scatter(Ray *incidentRay, Hit *hit, Ray *scatteredRay, Color3 *attenuation) override;
+    bool scatter(Ray &incidentRay, Hit &hit, Ray &scatteredRay, Color3 &attenuation) override;
 
 protected:
     std::shared_ptr<Texture> albedo{nullptr};

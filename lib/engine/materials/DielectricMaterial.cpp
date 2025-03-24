@@ -20,20 +20,20 @@ DielectricMaterial::DielectricMaterial(double indexOfRefraction_) : indexOfRefra
 }
 
 
-bool DielectricMaterial::scatter(Ray *incidentRay, Hit *hit, Ray *scatteredRay, Color3 *attenuation)
+bool DielectricMaterial::scatter(Ray &incidentRay, Hit &hit, Ray &scatteredRay, Color3 &attenuation)
 {
-    Vector3 unitDirection = unitVector(incidentRay->direction);
+    Vector3 unitDirection = unitVector(incidentRay.direction);
 
     // Angle theta is the angle between the normal and incident ray.
-    const double cosTheta = dot(flipVector(unitDirection), hit->normal);
+    const double cosTheta = dot(flipVector(unitDirection), hit.normal);
     const double sinTheta = sqrt(1.0 - cosTheta * cosTheta);
 
     // If it's the front face, we're going into the object otherwise we're leaving
     // and exiting into the air.
     const double ir = indexOfRefraction;
     const double refractionRatio =
-        hit->frontFace ? (1.0 / ir) : ir; // TODO: - we can calculate based on incident ray and normal whether this was
-                                          // inside or outside object. Don't need this.
+        hit.frontFace ? (1.0 / ir) : ir; // TODO: - we can calculate based on incident ray and normal whether this was
+                                         // inside or outside object. Don't need this.
 
     // Total internal reflection:
     bool cannotRefract = (refractionRatio * sinTheta > 1.0);
@@ -41,12 +41,12 @@ bool DielectricMaterial::scatter(Ray *incidentRay, Hit *hit, Ray *scatteredRay, 
     Vector3 direction;
 
     if (cannotRefract || reflectance(cosTheta, refractionRatio) > randomDouble())
-        direction = reflect(unitDirection, hit->normal);
+        direction = reflect(unitDirection, hit.normal);
     else
-        direction = refract(unitDirection, hit->normal, refractionRatio);
+        direction = refract(unitDirection, hit.normal, refractionRatio);
 
-    *scatteredRay = Ray(hit->hitPt, direction);
-    *attenuation = color3(1.0, 1.0, 1.0);
+    scatteredRay = Ray(hit.hitPt, direction);
+    attenuation = color3(1.0, 1.0, 1.0);
 
     return true;
 }

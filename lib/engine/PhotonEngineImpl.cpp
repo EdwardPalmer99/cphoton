@@ -31,7 +31,7 @@ Color3 rayColor(Ray &ray, Primitive *objectsBVH, int depth)
         Color3 attenuation;
         Color3 emitted = hit.material->emitted();
 
-        if (hit.material->scatter(&ray, &hit, &scatteredRay, &attenuation))
+        if (hit.material->scatter(ray, hit, scatteredRay, attenuation))
         {
             Color3 outputColor = rayColor(scatteredRay, objectsBVH, depth - 1);
 

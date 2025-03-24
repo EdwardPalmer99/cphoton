@@ -28,9 +28,9 @@ MetalMaterial::MetalMaterial(Color3 color_, double fuzziness_)
 }
 
 
-bool MetalMaterial::scatter(Ray *incidentRay, Hit *hit, Ray *scatteredRay, Color3 *attenuation)
+bool MetalMaterial::scatter(Ray &incidentRay, Hit &hit, Ray &scatteredRay, Color3 &attenuation)
 {
-    Vector3 reflectDirection = reflect(unitVector(incidentRay->direction), hit->normal);
+    Vector3 reflectDirection = reflect(unitVector(incidentRay.direction), hit.normal);
 
     // Fuzzy reflections are created by choosing a new endpoint in a unit sphere.
     if (fuzziness > 0.0)
@@ -39,9 +39,9 @@ bool MetalMaterial::scatter(Ray *incidentRay, Hit *hit, Ray *scatteredRay, Color
         reflectDirection = addVectors(reflectDirection, changeToVector);
     }
 
-    *scatteredRay = Ray(hit->hitPt, reflectDirection);
-    *attenuation = albedo->value(hit->u, hit->v, &hit->hitPt);
+    scatteredRay = Ray(hit.hitPt, reflectDirection);
+    attenuation = albedo->value(hit.u, hit.v, &hit.hitPt);
 
     // Make sure that the scattered ray is not scattering into the object:
-    return (dot(reflectDirection, hit->normal) > 0.0);
+    return (dot(reflectDirection, hit.normal) > 0.0);
 }
