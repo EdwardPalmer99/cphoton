@@ -15,13 +15,30 @@ extern "C"
 #include "utility/Vector3.h"
 }
 
+/* Stores single-hit information */
 class Hit
 {
 public:
-    double t;     // Time of hit.
-    Point3 hitPt; // Location of hit.
+    using Time = double;
+
+    /* Default constructor */
+    Hit() = default;
+
+    /* Hit time */
+    Time t;
+
+    /* Location of hit */
+    Point3 hitPt;
+
+    /* Normal to surface */
     Vector3 normal;
+
+    /* Are we inside or outside object? */
     bool frontFace;
-    double u, v; // Texture coordinates [0, 1].
+
+    /* Texture coordinates [0, 1] */
+    double u, v;
+
+    /* Surface material */
     Material *material{nullptr};
 };
