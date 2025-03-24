@@ -54,7 +54,7 @@ public:
     }
 
     /** Returns true if box is hit by ray in range [tmin, tmax]. */
-    bool hit(Ray *ray, double tmin, double tmax);
+    bool hit(Ray &ray, double tmin, double tmax);
 
 protected:
     /** Adds two bounding boxes and returns the result. */

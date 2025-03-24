@@ -15,7 +15,7 @@ Sphere::Sphere(Point3 center_, double radius_, std::shared_ptr<Material> materia
 }
 
 
-bool Sphere::hit(Ray *ray, double tmin, double tmax, Hit *hit)
+bool Sphere::hit(Ray &ray, Time tmin, Time tmax, Hit &hit)
 {
     // ray origin 	 = O
     // ray direction = d
@@ -36,10 +36,10 @@ bool Sphere::hit(Ray *ray, double tmin, double tmax, Hit *hit)
     // B = 2d.(O - C)
     // C = (O - C).(O - C) - r^2
 
-    Vector3 rayOriginMinusCenter = subtractVectors(ray->origin, center);
+    Vector3 rayOriginMinusCenter = subtractVectors(ray.origin, center);
 
-    const double quadA = dot(ray->direction, ray->direction);
-    const double quadB = 2.0 * dot(ray->direction, rayOriginMinusCenter);
+    const double quadA = dot(ray.direction, ray.direction);
+    const double quadB = 2.0 * dot(ray.direction, rayOriginMinusCenter);
     const double quadC = dot(rayOriginMinusCenter, rayOriginMinusCenter) - radius * radius;
 
     double t1, t2;
@@ -55,22 +55,22 @@ bool Sphere::hit(Ray *ray, double tmin, double tmax, Hit *hit)
     else
         return false;
 
-    Point3 hitPoint = ray->pointAtTime(hitTime);
+    Point3 hitPoint = ray.pointAtTime(hitTime);
 
     // Compute the normal vector:
     Vector3 outwardNormal = scaleVector(subtractVectors(hitPoint, center), 1.0 / radius);
 
     // Are we hitting the outside surface or are we hitting the inside?
-    const bool frontFace = (dot(ray->direction, outwardNormal) < 0.0);
+    const bool frontFace = (dot(ray.direction, outwardNormal) < 0.0);
 
-    hit->frontFace = frontFace;
-    hit->t = hitTime;
-    hit->hitPt = hitPoint;
-    hit->normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-    hit->material = material.get();
+    hit.frontFace = frontFace;
+    hit.t = hitTime;
+    hit.hitPt = hitPoint;
+    hit.normal = frontFace ? outwardNormal : flipVector(outwardNormal);
+    hit.material = material.get();
 
     // Calculate the U, V texture coordinates:
-    setSphereUV(&hit->normal, &hit->u, &hit->v);
+    setSphereUV(&hit.normal, &hit.u, &hit.v);
     return true;
 }
 
@@ -84,7 +84,7 @@ bool Sphere::boundingBox(AABB *boundingBox)
 }
 
 
-bool Sphere::computeIntersections(Ray *ray, double tmin, double tmax, Span::SpanList &result)
+bool Sphere::computeIntersections(Ray &ray, double tmin, double tmax, Span::SpanList &result)
 {
     result.clear();
 
@@ -107,10 +107,10 @@ bool Sphere::computeIntersections(Ray *ray, double tmin, double tmax, Span::Span
     // B = 2d.(O - C)
     // C = (O - C).(O - C) - r^2
 
-    Vector3 rayOriginMinusCenter = subtractVectors(ray->origin, center);
+    Vector3 rayOriginMinusCenter = subtractVectors(ray.origin, center);
 
-    const double quadA = dot(ray->direction, ray->direction);
-    const double quadB = 2.0 * dot(ray->direction, rayOriginMinusCenter);
+    const double quadA = dot(ray.direction, ray.direction);
+    const double quadB = 2.0 * dot(ray.direction, rayOriginMinusCenter);
     const double quadC = dot(rayOriginMinusCenter, rayOriginMinusCenter) - radius * radius;
 
     double t1, t2; // t1 < t2
@@ -135,12 +135,12 @@ bool Sphere::computeIntersections(Ray *ray, double tmin, double tmax, Span::Span
 
     /* Compute intersection t1 (if t1 < 0 --> camera inside object) */
     {
-        Point3 hitPoint = ray->pointAtTime(t1);
+        Point3 hitPoint = ray.pointAtTime(t1);
 
         Vector3 outwardNormal = scaleVector(subtractVectors(hitPoint, center), 1.0 / radius);
 
         // Are we hitting the outside surface or are we hitting the inside?
-        const bool frontFace = (dot(ray->direction, outwardNormal) < 0.0);
+        const bool frontFace = (dot(ray.direction, outwardNormal) < 0.0);
 
         sphereHit.entry.frontFace = frontFace;
         sphereHit.entry.t = t1;
@@ -151,12 +151,12 @@ bool Sphere::computeIntersections(Ray *ray, double tmin, double tmax, Span::Span
 
     /* Compute intersection t2 */
     {
-        Point3 hitPoint = ray->pointAtTime(t2);
+        Point3 hitPoint = ray.pointAtTime(t2);
 
         Vector3 outwardNormal = scaleVector(subtractVectors(hitPoint, center), 1.0 / radius);
 
         // Are we hitting the outside surface or are we hitting the inside?
-        const bool frontFace = (dot(ray->direction, outwardNormal) < 0.0);
+        const bool frontFace = (dot(ray.direction, outwardNormal) < 0.0);
 
         sphereHit.exit.frontFace = frontFace;
         sphereHit.exit.t = t2;

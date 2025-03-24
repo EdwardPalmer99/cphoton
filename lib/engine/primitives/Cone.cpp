@@ -25,7 +25,7 @@ Cone::~Cone()
 }
 
 
-bool Cone::hit(Ray *ray, double tmin, double tmax, Hit *hit)
+bool Cone::hit(Ray &ray, Time tmin, Time tmax, Hit &hit)
 {
     Ray tranRay = transformRay(ray, center, rotationMatrix);
     Vector3 tOrigin = tranRay.origin;
@@ -70,29 +70,29 @@ bool Cone::hit(Ray *ray, double tmin, double tmax, Hit *hit)
     }
 
     // Check for a closer intersection from hitting the base of the cone:
-    if (base.hit(&tranRay, tmin, hitTime, hit))
+    if (base.hit(tranRay, tmin, hitTime, hit))
     {
-        hitTime = hit->t;
-        outwardNormal = hit->normal;
+        hitTime = hit.t;
+        outwardNormal = hit.normal;
     }
 
     // No intersections --> return false;
     if (hitTime == tmax) return false;
 
     // Calculate the hit point in original coordinates and rotate normal:
-    hitPoint = ray->pointAtTime(hitTime);
+    hitPoint = ray.pointAtTime(hitTime);
     outwardNormal = rotation(outwardNormal, rotationMatrix);
 
-    const bool frontFace = (dot(ray->direction, outwardNormal) < 0.0);
+    const bool frontFace = (dot(ray.direction, outwardNormal) < 0.0);
 
-    hit->frontFace = frontFace;
-    hit->t = hitTime;
-    hit->hitPt = hitPoint;
-    hit->normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-    hit->material = material.get();
+    hit.frontFace = frontFace;
+    hit.t = hitTime;
+    hit.hitPt = hitPoint;
+    hit.normal = frontFace ? outwardNormal : flipVector(outwardNormal);
+    hit.material = material.get();
 
-    hit->u = 0.0;
-    hit->v = 0.0;
+    hit.u = 0.0;
+    hit.v = 0.0;
 
     return true;
 }

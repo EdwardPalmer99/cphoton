@@ -17,7 +17,7 @@ public:
     Plane(Point3 p0_, Point3 normal_, std::shared_ptr<Material> material_);
     ~Plane() override = default;
 
-    bool hit(Ray *ray, double tmin, double tmax, Hit *hit) override;
+    bool hit(Ray &ray, Time tmin, Time tmax, Hit &hit) override;
 
     bool boundingBox(AABB *boundingBox) override;
 

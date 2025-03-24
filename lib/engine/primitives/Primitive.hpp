@@ -32,10 +32,10 @@ public:
     using Time = double;
 
     /** On success, returns true and populates hit structure if hit in interval [tmin, tmax]. */
-    virtual bool hit(Ray *ray, Time tmin, Time tmax, Hit *hit) = 0;
+    virtual bool hit(Ray &ray, Time tmin, Time tmax, Hit &hit) = 0;
 
     /** Optional. Raises an error if not overriden. */
-    virtual bool computeIntersections(Ray *ray, double tmin, double tmax, Span::SpanList &result);
+    virtual bool computeIntersections(Ray &ray, double tmin, double tmax, Span::SpanList &result);
 
     /** On success, returns true and populates bounding box structure. */
     virtual bool boundingBox(AABB *boundingBox) = 0;
@@ -48,8 +48,8 @@ protected:
 };
 
 bool isValidIntersectionTime(double hitTime, double tmin, double tmax);
-bool intersectionWithPlane(Point3 p0, Vector3 n, Ray *ray, double *hitTime);
+bool intersectionWithPlane(Point3 p0, Vector3 n, Ray &ray, double *hitTime);
 
-Ray transformRay(Ray *ray, Point3 center, Rotate3 *rotation);
+Ray transformRay(Ray &ray, Point3 center, Rotate3 *rotation);
 
 bool solveQuadratic(double a, double b, double c, double *t1, double *t2);

@@ -24,7 +24,7 @@ public:
     Cone(Point3 center_, Vector3 rotAngles_, double height_, std::shared_ptr<Material> material_);
     ~Cone() override;
 
-    bool hit(Ray *ray, double tmin, double tmax, Hit *hit) override;
+    bool hit(Ray &ray, Time tmin, Time tmax, Hit &hit) override;
 
     bool boundingBox(AABB *boundingBox) override;
 

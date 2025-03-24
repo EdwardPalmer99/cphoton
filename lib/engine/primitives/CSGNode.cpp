@@ -61,7 +61,7 @@ bool CSGNode::boundingBox(AABB *outputBox)
  * @param tmax      Max time for intersection (usually infinity)
  * @return          A SpanList record pointer or NULL if no intersections
  */
-bool CSGNode::computeIntersections(Ray *ray, double tmin, double tmax, Span::SpanList &result)
+bool CSGNode::computeIntersections(Ray &ray, double tmin, double tmax, Span::SpanList &result)
 {
     // Tree this as a tree. We want to compute this on any children and work our way up.
     Span::SpanList leftIntervals, rightIntervals;
@@ -99,7 +99,7 @@ bool CSGNode::computeIntersections(Ray *ray, double tmin, double tmax, Span::Spa
  * Returns true if the ray intersects with the primitive in interval [tmin, tmax]. If we have a hit, we populate hte
  * HitRec structure.
  */
-bool CSGNode::hit(Ray *ray, double tmin, double tmax, Hit *hit)
+bool CSGNode::hit(Ray &ray, Time tmin, Time tmax, Hit &hit)
 {
     Span::SpanList hitTimes;
 
@@ -113,9 +113,9 @@ bool CSGNode::hit(Ray *ray, double tmin, double tmax, Hit *hit)
     const Span &front = hitTimes.front();
 
     if (front.entry.t >= tmin)
-        *hit = front.entry;
+        hit = front.entry;
     else
-        *hit = front.exit;
+        hit = front.exit;
 
     return true;
 }

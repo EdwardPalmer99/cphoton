@@ -15,7 +15,7 @@ Triangle::Triangle(Point3 v0_, Point3 v1_, Point3 v2_, std::shared_ptr<Material>
     normal = cross(subtractVectors(v1, v0), subtractVectors(v2, v1));
 }
 
-bool Triangle::hit(Ray *ray, double tmin, double tmax, Hit *hit)
+bool Triangle::hit(Ray &ray, Time tmin, Time tmax, Hit &hit)
 {
     // Triangle can be defined in terms of coordinates (u, v):
     // T(u, v) = (1 - u - v) * V0 + u * V1 + v * V2
@@ -49,8 +49,8 @@ bool Triangle::hit(Ray *ray, double tmin, double tmax, Hit *hit)
 
     if (intersectionWithPlane(v0, normal, ray, &hitTime) && isValidIntersectionTime(hitTime, tmin, tmax))
     {
-        Vector3 vecO = ray->origin;
-        Vector3 vecD = ray->direction;
+        Vector3 vecO = ray.origin;
+        Vector3 vecD = ray.direction;
 
         Vector3 vecE1 = subtractVectors(v1, v0);
         Vector3 vecE2 = subtractVectors(v2, v0);
@@ -71,20 +71,20 @@ bool Triangle::hit(Ray *ray, double tmin, double tmax, Hit *hit)
         if (v < 0.0 || u + v > 1.0) return false;
 
         // Compute the normal vector:
-        Point3 hitPoint = ray->pointAtTime(hitTime);
+        Point3 hitPoint = ray.pointAtTime(hitTime);
         Vector3 outwardNormal = normal;
 
         // Are we hitting the outside surface or are we hitting the inside?
-        const bool frontFace = (dot(ray->direction, outwardNormal) < 0.0);
+        const bool frontFace = (dot(ray.direction, outwardNormal) < 0.0);
 
-        hit->frontFace = frontFace;
-        hit->t = hitTime;
-        hit->hitPt = hitPoint;
-        hit->normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-        hit->material = material.get();
+        hit.frontFace = frontFace;
+        hit.t = hitTime;
+        hit.hitPt = hitPoint;
+        hit.normal = frontFace ? outwardNormal : flipVector(outwardNormal);
+        hit.material = material.get();
 
-        hit->u = u;
-        hit->v = v;
+        hit.u = u;
+        hit.v = v;
 
         return true;
     }
