@@ -48,8 +48,8 @@ bool Cylinder::hit(Ray &ray, Time tmin, Time tmax, Hit &hit)
 
     if (!solveQuadratic(quadA, quadB, quadC, &t1, &t2)) return false;
 
-    const bool t1Valid = isValidIntersectionTime(t1, tmin, tmax);
-    const bool t2Valid = isValidIntersectionTime(t2, tmin, tmax);
+    const bool t1Valid = Hit::isValid(t1, tmin, tmax);
+    const bool t2Valid = Hit::isValid(t2, tmin, tmax);
 
     double hitTime = tmax; // Set to tmax initially.
     Point3 hitPoint = {0};

@@ -44,8 +44,8 @@ bool Cone::hit(Ray &ray, Time tmin, Time tmax, Hit &hit)
     Vector3 outwardNormal = {0};
 
     // Check for intersection with cone side:
-    const bool t1Valid = isValidIntersectionTime(t1, tmin, tmax);
-    const bool t2Valid = isValidIntersectionTime(t2, tmin, tmax);
+    const bool t1Valid = Hit::isValid(t1, tmin, tmax);
+    const bool t2Valid = Hit::isValid(t2, tmin, tmax);
 
     double minY = 0, maxY = height;
 

@@ -30,7 +30,7 @@ Cube::~Cube()
 }
 
 
-bool Cube::hit(Ray &ray, Time tmin, Time tmax, Hit &hit)
+bool Cube::hit(Ray &ray, Hit &hit, HitType type)
 {
     const double halfLength = 0.5 * length;
 
@@ -90,9 +90,9 @@ bool Cube::hit(Ray &ray, Time tmin, Time tmax, Hit &hit)
     tEnter = max(tEnter, tzEnter);
     tExit = min(tExit, tzExit);
 
-    if (tExit < tEnter || tEnter > tmax || tEnter < tmin) return false;
+    if (tExit < tEnter) return false;
 
-    const double hitTime = tEnter;
+    const double hitTime = ((type == HitType::Entry) ? tEnter : tExit);
     Vector3 outwardNormal;
 
     // The hit will occur at time tmin. Now calculate which face it intersects.

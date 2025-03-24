@@ -19,7 +19,7 @@ bool Plane::hit(Ray &ray, Time tmin, Time tmax, Hit &hit)
 {
     double hitTime = 0.0;
 
-    if (intersectionWithPlane(p0, normal, ray, &hitTime) && isValidIntersectionTime(hitTime, tmin, tmax))
+    if (intersectionWithPlane(p0, normal, ray, &hitTime) && Hit::isValid(hitTime, tmin, tmax))
     {
         Vector3 outwardNormal = normal;
 

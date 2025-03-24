@@ -11,6 +11,7 @@
 #include "engine/PhotonEngine.hpp"
 #include "engine/Scene.hpp"
 #include "engine/primitives/CSGNode.hpp"
+#include "engine/primitives/Cube.hpp"
 #include "engine/primitives/Plane.hpp"
 #include "engine/primitives/Primitive.hpp"
 #include "engine/primitives/Sphere.hpp"
@@ -27,18 +28,18 @@ int main(int argc, const char *argv[])
     parseCLIOptions(argc, argv);
 
     // Create the camera:
-    Camera camera(45.0, RenderSettings::instance().aspectRatio(), 1, 0, point3(0, 4, 4), point3(0, 1, 0));
+    Camera camera(45.0, RenderSettings::instance().aspectRatio(), 1, 0, point3(-2, 3, 4), point3(0, 1, 0));
 
-    Primitive *sphere1 = new Sphere(point3(+0.8, 1, 0), 1,
-                                    std::make_shared<MetalMaterial>(std::make_shared<SolidTexture>(color3(0, 1, 0))));
-    Primitive *sphere2 = new Sphere(point3(-0.8, 1, 0), 1,
-                                    std::make_shared<MetalMaterial>(std::make_shared<SolidTexture>(color3(1, 0, 0))));
+    Primitive *cube1 = new Cube(point3(0.5, 1, 0), vector3(10, 0, 0), 1,
+                                std::make_shared<MetalMaterial>(std::make_shared<SolidTexture>(color3(0, 1, 0))));
+    Primitive *cube2 = new Cube(point3(0, 1, 0), vector3(0, 0, 0), 1,
+                                std::make_shared<MetalMaterial>(std::make_shared<SolidTexture>(color3(1, 0, 0))));
 
     Primitive *plane =
         new Plane(point3(0, 0, 0), point3(0, 1, 0),
                   std::make_shared<MatteMaterial>(std::make_shared<SolidTexture>(color3(0.1, 0.1, 0.1))));
 
-    Primitive *CSG = new CSGNode(sphere1, sphere2, CSGNode::CSGIntersection);
+    Primitive *CSG = new CSGNode(cube1, cube2, CSGNode::CSGIntersection);
 
     Scene scene;
     scene.addObject(CSG);

@@ -47,7 +47,7 @@ bool Triangle::hit(Ray &ray, Time tmin, Time tmax, Hit &hit)
 
     double hitTime = 0.0;
 
-    if (intersectionWithPlane(v0, normal, ray, &hitTime) && isValidIntersectionTime(hitTime, tmin, tmax))
+    if (intersectionWithPlane(v0, normal, ray, &hitTime) && Hit::isValid(hitTime, tmin, tmax))
     {
         Vector3 vecO = ray.origin;
         Vector3 vecD = ray.direction;

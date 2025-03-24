@@ -21,6 +21,14 @@ class Hit
 public:
     using Time = double;
 
+    /* Returns true if hit lies within range (min, max) */
+    bool isValid(Time min, Time max) const;
+
+    static constexpr bool isValid(Time t, Time min, Time max)
+    {
+        return (min < t && t < max);
+    }
+
     /* Default constructor */
     Hit() = default;
 

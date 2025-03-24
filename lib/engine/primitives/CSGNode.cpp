@@ -61,14 +61,14 @@ bool CSGNode::boundingBox(AABB *outputBox)
  * @param tmax      Max time for intersection (usually infinity)
  * @return          A SpanList record pointer or NULL if no intersections
  */
-bool CSGNode::computeIntersections(Ray &ray, double tmin, double tmax, Span::SpanList &result)
+bool CSGNode::hit(Ray &ray, Time tmin, Time tmax, Span::SpanList &result)
 {
     // Tree this as a tree. We want to compute this on any children and work our way up.
     Span::SpanList leftIntervals, rightIntervals;
 
     // TODO: - can use bool results to calculate if we need to perform operation.
-    (void)left->computeIntersections(ray, tmin, tmax, leftIntervals);
-    (void)right->computeIntersections(ray, tmin, tmax, rightIntervals);
+    (void)left->hit(ray, tmin, tmax, leftIntervals);
+    (void)right->hit(ray, tmin, tmax, rightIntervals);
 
     // TODO: - refer to notes here https://www.doc.ic.ac.uk/~dfg/graphics/graphics2008/GraphicsSlides10.pdf
     // we can optimize for certain operations if empty list returned.
@@ -103,11 +103,11 @@ bool CSGNode::hit(Ray &ray, Time tmin, Time tmax, Hit &hit)
 {
     Span::SpanList hitTimes;
 
-    if (!computeIntersections(ray, tmin, tmax, hitTimes))
+    if (!CSGNode::hit(ray, tmin, tmax, hitTimes))
     {
         return false; // Hit nothing.
     }
-
+    
     // Already sorted so take first item in list. Possible that entry time will be negative in which case we take texit.
     // Find the first positive t (either entry or exit).
     const Span &front = hitTimes.front();

@@ -19,7 +19,7 @@ bool Disc::hit(Ray &ray, Time tmin, Time tmax, Hit &hit)
 {
     double hitTime = 0.0;
 
-    if (intersectionWithPlane(p0, normal, ray, &hitTime) && isValidIntersectionTime(hitTime, tmin, tmax))
+    if (intersectionWithPlane(p0, normal, ray, &hitTime) && Hit::isValid(hitTime, tmin, tmax))
     {
         // Check that hit point is inside disc radius:
         Point3 hitPoint = ray.pointAtTime(hitTime);

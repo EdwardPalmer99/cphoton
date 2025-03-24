@@ -24,11 +24,10 @@ public:
     Sphere() = delete;
     Sphere(Point3 center, double radius, std::shared_ptr<Material> material);
 
-    bool hit(Ray &ray, Time tmin, Time tmax, Hit &hit) override;
+    /* Returns the entry or exit hit time */
+    bool hit(Ray &ray, Hit &hit, HitType type) override;
 
     bool boundingBox(AABB *boundingBox) override;
-
-    bool computeIntersections(Ray &ray, double tmin, double tmax, Span::SpanList &result) override;
 
 protected:
     Point3 center;

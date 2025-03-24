@@ -17,10 +17,13 @@
 class CSGNodeInterface
 {
 public:
+    using Time = double;
+
     /**
      * @brief Populates the SpanList structure with all intersections between a ray and an object.
      */
-    virtual bool computeIntersections(Ray &ray, double tmin, double tmax, Span::SpanList &result) = 0;
+    virtual bool hit(Ray &ray, Time tmin, Time tmax, Span::SpanList &result) = 0;
+
     virtual ~CSGNodeInterface() = default;
 
 protected:

@@ -15,15 +15,57 @@ Primitive::Primitive(std::shared_ptr<Material> material_) : material(material_)
 }
 
 
-bool Primitive::computeIntersections(Ray &ray, double tmin, double tmax, Span::SpanList &result)
+bool Primitive::hit(Ray &ray, Hit &hit, HitType type)
 {
     throw std::logic_error("Not implemented");
 }
 
 
-bool isValidIntersectionTime(double hitTime, double tmin, double tmax)
+bool Primitive::hit(Ray &ray, Time tmin, Time tmax, Hit &hitRec)
 {
-    return (tmin < hitTime && hitTime < tmax);
+    if (!hit(ray, hitRec, Entry))
+    {
+        return false; // No hits.
+    }
+
+    if (!hitRec.isValid(tmin, tmax))
+    {
+        (void)hit(ray, hitRec, Exit); // Try exit time (case: camera could be inside object).
+        if (!hitRec.isValid(tmin, tmax))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+bool Primitive::hit(Ray &ray, Time tmin, Time tmax, Span::SpanList &result)
+{
+    /* Calculate entry hit */
+    Hit entry;
+    if (!hit(ray, entry, Entry))
+    {
+        return false; // Ray never intersected sphere.
+    }
+
+    /* Calculate exit hit (nb: if we hit on entry, we must hit on exit) */
+    Hit exit;
+    (void)hit(ray, exit, Exit);
+
+    /*
+     * NB: we allow 1 of the intersections to be invalid. i.e. Entry is behind camera but exit is ahead of camera
+     * which would be the case where camera is inside object. This is fine because we will be performing CSG operations
+     * and only need to check at the end whether the intersection is valid.
+     */
+    if (!entry.isValid(tmin, tmax) && !exit.isValid(tmin, tmax))
+    {
+        return false; // Full intersection behind camera --> ignore.
+    }
+
+    result.push_back(Span(entry, exit));
+    return true;
 }
 
 
