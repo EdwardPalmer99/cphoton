@@ -14,6 +14,7 @@
 #include "engine/materials/Materials.hpp"
 #include "engine/primitives/Primitives.hpp"
 #include "engine/textures/Textures.hpp"
+#include <memory>
 
 int main(int argc, const char *argv[])
 {
@@ -31,7 +32,7 @@ int main(int argc, const char *argv[])
     Primitive *plane =
         new Plane(point3(0, 0, 0), point3(0, 1, 0), std::make_shared<MatteMaterial>(color3(0.1, 0.1, 0.1)));
 
-    Primitive *CSG = new CSGNode(cube1, cube2, CSGNode::CSGUnion);
+    Primitive *CSG = new CSGNode(cube1, cube2, CSGNode::CSGIntersection);
 
     Scene scene;
     scene.addObject(CSG);
@@ -39,7 +40,7 @@ int main(int argc, const char *argv[])
 
     PhotonEngine engine(RenderSettings::instance().pixelsWide, RenderSettings::instance().pixelsHigh);
 
-    PPMImage *outputImage = engine.render(&scene, &camera);
+    PPMImage *outputImage = engine.render(scene, camera);
     writeBinary16BitPPMImage(outputImage, RenderSettings::instance().outputPath);
     freePPMImage(outputImage);
 

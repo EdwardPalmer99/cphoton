@@ -83,10 +83,13 @@ int Span::subtractIntervals(const Span &rhs, std::array<Span, 2> &result) const
      *
      * If RHS entry is very close to original entry then we have nothing left --> don't add.
      */
-    if (insideInterval(rhs.entry.t))
+    if (insideInterval(rhs.entry.t, 0.1))
     {
         result[nReturnValues].entry = entry;
+
         result[nReturnValues].exit = rhs.entry;
+        result[nReturnValues].exit.frontFace = false;
+        result[nReturnValues].exit.normal = flipVector(rhs.entry.normal);
 
         nReturnValues++;
     }
@@ -98,9 +101,12 @@ int Span::subtractIntervals(const Span &rhs, std::array<Span, 2> &result) const
      *
      * If RHS exit is very close to original exit then we have nothing left --> don't add.
      */
-    if (insideInterval(rhs.exit.t))
+    if (insideInterval(rhs.exit.t, 0.1))
     {
         result[nReturnValues].entry = rhs.exit;
+        result[nReturnValues].entry.frontFace = false;
+        result[nReturnValues].entry.normal = flipVector(rhs.exit.normal);
+
         result[nReturnValues].exit = exit;
 
         nReturnValues++;
@@ -124,14 +130,17 @@ std::vector<Span> Span::recursiveSpanSubtractor(const Span &lhs, const SpanList:
             case 0:
                 return {}; // Empty vector (complete overlap).
             case 1:
-                return recursiveSpanSubtractor(output[0], iter + 1, subtractLast);
+                return {output[0]};
+                // return recursiveSpanSubtractor(output[0], iter + 1, subtractLast);
             case 2:
             {
-                SpanList leftResult = recursiveSpanSubtractor(output[0], iter + 1, subtractLast);
-                SpanList rightResult = recursiveSpanSubtractor(output[1], iter + 1, subtractLast);
+                return {output[0], output[1]};
 
-                leftResult.insert(leftResult.end(), rightResult.begin(), rightResult.end());
-                return leftResult;
+                // SpanList leftResult = recursiveSpanSubtractor(output[0], iter + 1, subtractLast);
+                // SpanList rightResult = recursiveSpanSubtractor(output[1], iter + 1, subtractLast);
+
+                // leftResult.insert(leftResult.end(), rightResult.begin(), rightResult.end());
+                // return leftResult;
             }
             case (-1): // Continue. No overlap.
             default:

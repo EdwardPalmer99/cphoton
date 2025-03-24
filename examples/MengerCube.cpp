@@ -61,7 +61,7 @@ int main(int argc, const char *argv[])
     // Render:
     PhotonEngine engine(RenderSettings::instance().pixelsWide, RenderSettings::instance().pixelsHigh);
 
-    PPMImage *outputImage = engine.render(&scene, &camera);
+    PPMImage *outputImage = engine.render(scene, camera);
     writeBinary16BitPPMImage(outputImage, RenderSettings::instance().outputPath);
 
     // Cleanup:

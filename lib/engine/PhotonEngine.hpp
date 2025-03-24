@@ -26,7 +26,7 @@ public:
     /**
      * @brief Renders a scene.
      */
-    PPMImage *render(Scene *scene, Camera *camera) const;
+    PPMImage *render(Scene &scene, Camera &camera) const;
 
 private:
     unsigned int pixelsWide;

@@ -107,15 +107,32 @@ bool CSGNode::hit(Ray &ray, Time tmin, Time tmax, Hit &hit)
     {
         return false; // Hit nothing.
     }
-    
+
     // Already sorted so take first item in list. Possible that entry time will be negative in which case we take texit.
     // Find the first positive t (either entry or exit).
-    const Span &front = hitTimes.front();
+    for (auto &span : hitTimes)
+    {
+        if (span.entry.isValid(tmin, tmax))
+        {
+            hit = span.entry;
+            return true;
+        }
+        else if (span.exit.isValid(tmin, tmax))
+        {
+            hit = span.exit;
+            return true;
+        }
+    }
 
-    if (front.entry.t >= tmin)
-        hit = front.entry;
-    else
-        hit = front.exit;
+    return false;
 
-    return true;
+
+    // const Span &front = hitTimes.front();
+
+    // if (front.entry.t >= tmin)
+    //     hit = front.entry;
+    // else
+    //     hit = front.exit;
+
+    // return true;
 }
