@@ -9,7 +9,7 @@
 
 #pragma once
 #include "Material.hpp"
-#include "engine/HitRec.hpp"
+#include "engine/Hit.hpp"
 
 /* Emitter (i.e. light source)*/
 class EmitterMaterial : public Material

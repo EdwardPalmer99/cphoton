@@ -8,7 +8,7 @@
  */
 
 #pragma once
-#include "engine/HitRec.hpp"
+#include "engine/Hit.hpp"
 #include <array>
 #include <vector>
 

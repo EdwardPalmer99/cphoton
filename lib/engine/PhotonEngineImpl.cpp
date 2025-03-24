@@ -8,7 +8,7 @@
  */
 
 #include "engine/PhotonEngineImpl.hpp"
-#include "engine/HitRec.hpp"
+#include "engine/Hit.hpp"
 
 extern "C"
 {

@@ -17,7 +17,7 @@ extern "C"
 
 #include "CSGNodeInterface.hpp"
 #include "engine/AABB.hpp"
-#include "engine/HitRec.hpp"
+#include "engine/Hit.hpp"
 #include "engine/Ray.hpp"
 #include "engine/Span.hpp"
 #include "engine/materials/Material.hpp"

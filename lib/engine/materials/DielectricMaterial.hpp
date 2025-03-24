@@ -9,7 +9,7 @@
 
 #pragma once
 #include "Material.hpp"
-#include "engine/HitRec.hpp"
+#include "engine/Hit.hpp"
 
 /**
  * Dielectric material (i.e. glass, water).

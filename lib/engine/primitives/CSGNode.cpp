@@ -8,7 +8,7 @@
  */
 
 #include "CSGNode.hpp"
-#include "engine/HitRec.hpp"
+#include "engine/Hit.hpp"
 #include "engine/Span.hpp"
 
 extern "C"
