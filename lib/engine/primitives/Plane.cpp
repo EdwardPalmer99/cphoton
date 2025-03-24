@@ -15,7 +15,7 @@ Plane::Plane(Point3 p0_, Point3 normal_, std::shared_ptr<Material> material_)
 }
 
 
-bool Plane::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
+bool Plane::hit(Ray *ray, double tmin, double tmax, Hit *hit)
 {
     double hitTime = 0.0;
 

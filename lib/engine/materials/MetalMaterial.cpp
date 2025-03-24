@@ -28,7 +28,7 @@ MetalMaterial::MetalMaterial(Color3 color_, double fuzziness_)
 }
 
 
-bool MetalMaterial::scatter(Ray *incidentRay, HitRec *hit, Ray *scatteredRay, Color3 *attenuation)
+bool MetalMaterial::scatter(Ray *incidentRay, Hit *hit, Ray *scatteredRay, Color3 *attenuation)
 {
     Vector3 reflectDirection = reflect(unitVector(incidentRay->direction), hit->normal);
 

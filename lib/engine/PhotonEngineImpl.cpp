@@ -21,7 +21,7 @@ static const double kMaxHitTime = INFINITY;
 
 Color3 rayColor(Ray *ray, Primitive *objectsBVH, int depth)
 {
-    HitRec hit;
+    Hit hit;
 
     if (depth <= 0) return color3(0, 0, 0); // Exceeded ray bounce limit.
 

@@ -27,7 +27,7 @@ Cylinder::~Cylinder()
 }
 
 
-bool Cylinder::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
+bool Cylinder::hit(Ray *ray, double tmin, double tmax, Hit *hit)
 {
     const double ymin = -height / 2.0;
     const double ymax = height / 2.0;

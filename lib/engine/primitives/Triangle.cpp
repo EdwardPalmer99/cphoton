@@ -15,7 +15,7 @@ Triangle::Triangle(Point3 v0_, Point3 v1_, Point3 v2_, std::shared_ptr<Material>
     normal = cross(subtractVectors(v1, v0), subtractVectors(v2, v1));
 }
 
-bool Triangle::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
+bool Triangle::hit(Ray *ray, double tmin, double tmax, Hit *hit)
 {
     // Triangle can be defined in terms of coordinates (u, v):
     // T(u, v) = (1 - u - v) * V0 + u * V1 + v * V2

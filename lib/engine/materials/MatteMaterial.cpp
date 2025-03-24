@@ -20,7 +20,7 @@ MatteMaterial::MatteMaterial(Color3 color_) : MatteMaterial(std::make_shared<Sol
 }
 
 
-bool MatteMaterial::scatter(Ray *incidentRay, HitRec *hit, Ray *scatteredRay, Color3 *attenuation)
+bool MatteMaterial::scatter(Ray *incidentRay, Hit *hit, Ray *scatteredRay, Color3 *attenuation)
 {
     // Compute random scattering direction:
     Vector3 scatterDirection = addVectors(hit->normal, randomUnitVector());

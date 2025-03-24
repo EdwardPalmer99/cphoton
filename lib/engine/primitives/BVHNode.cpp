@@ -87,7 +87,7 @@ BVHNode::~BVHNode()
 }
 
 
-bool BVHNode::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
+bool BVHNode::hit(Ray *ray, double tmin, double tmax, Hit *hit)
 {
     if (!box.hit(ray, tmin, tmax)) return false;
 

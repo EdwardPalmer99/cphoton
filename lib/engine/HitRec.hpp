@@ -1,5 +1,5 @@
 /**
- * @file HitRec.hpp
+ * @file Hit.hpp
  * @author Edward Palmer
  * @date 2025-03-23
  *
@@ -15,8 +15,9 @@ extern "C"
 #include "utility/Vector3.h"
 }
 
-struct HitRec
+class Hit
 {
+public:
     double t;     // Time of hit.
     Point3 hitPt; // Location of hit.
     Vector3 normal;

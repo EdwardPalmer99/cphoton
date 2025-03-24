@@ -15,7 +15,7 @@ Sphere::Sphere(Point3 center_, double radius_, std::shared_ptr<Material> materia
 }
 
 
-bool Sphere::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
+bool Sphere::hit(Ray *ray, double tmin, double tmax, Hit *hit)
 {
     // ray origin 	 = O
     // ray direction = d

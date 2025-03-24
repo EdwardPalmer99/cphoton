@@ -15,7 +15,7 @@ Disc::Disc(Point3 p0_, Point3 normal_, double radius_, std::shared_ptr<Material>
 }
 
 
-bool Disc::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
+bool Disc::hit(Ray *ray, double tmin, double tmax, Hit *hit)
 {
     double hitTime = 0.0;
 

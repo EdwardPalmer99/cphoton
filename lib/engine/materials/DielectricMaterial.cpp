@@ -20,7 +20,7 @@ DielectricMaterial::DielectricMaterial(double indexOfRefraction_) : indexOfRefra
 }
 
 
-bool DielectricMaterial::scatter(Ray *incidentRay, HitRec *hit, Ray *scatteredRay, Color3 *attenuation)
+bool DielectricMaterial::scatter(Ray *incidentRay, Hit *hit, Ray *scatteredRay, Color3 *attenuation)
 {
     Vector3 unitDirection = unitVector(incidentRay->direction);
 

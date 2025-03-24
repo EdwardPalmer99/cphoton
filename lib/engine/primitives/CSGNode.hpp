@@ -26,7 +26,7 @@ public:
     CSGNode(Primitive *left_, Primitive *right_, CSGOperation operationType_);
     ~CSGNode() override;
 
-    bool hit(Ray *ray, double tmin, double tmax, HitRec *hit) override;
+    bool hit(Ray *ray, double tmin, double tmax, Hit *hit) override;
 
     bool boundingBox(AABB *boundingBox) override;
 

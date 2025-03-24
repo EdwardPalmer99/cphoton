@@ -25,7 +25,7 @@ Cone::~Cone()
 }
 
 
-bool Cone::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
+bool Cone::hit(Ray *ray, double tmin, double tmax, Hit *hit)
 {
     Ray tranRay = transformRay(ray, center, rotationMatrix);
     Vector3 tOrigin = tranRay.origin;

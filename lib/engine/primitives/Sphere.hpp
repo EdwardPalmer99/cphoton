@@ -24,7 +24,7 @@ public:
     Sphere() = delete;
     Sphere(Point3 center, double radius, std::shared_ptr<Material> material);
 
-    bool hit(Ray *ray, double tmin, double tmax, HitRec *hit) override;
+    bool hit(Ray *ray, double tmin, double tmax, Hit *hit) override;
 
     bool boundingBox(AABB *boundingBox) override;
 

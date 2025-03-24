@@ -17,7 +17,7 @@ public:
     Disc(Point3 p0_, Point3 normal_, double radius_, std::shared_ptr<Material> material_);
     ~Disc() override = default;
 
-    bool hit(Ray *ray, double tmin, double tmax, HitRec *hit) override;
+    bool hit(Ray *ray, double tmin, double tmax, Hit *hit) override;
 
     bool boundingBox(AABB *boundingBox) override;
 

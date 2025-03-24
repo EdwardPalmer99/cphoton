@@ -30,7 +30,7 @@ Cube::~Cube()
 }
 
 
-bool Cube::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
+bool Cube::hit(Ray *ray, double tmin, double tmax, Hit *hit)
 {
     const double halfLength = 0.5 * length;
 

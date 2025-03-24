@@ -99,7 +99,7 @@ bool CSGNode::computeIntersections(Ray *ray, double tmin, double tmax, Span::Spa
  * Returns true if the ray intersects with the primitive in interval [tmin, tmax]. If we have a hit, we populate hte
  * HitRec structure.
  */
-bool CSGNode::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
+bool CSGNode::hit(Ray *ray, double tmin, double tmax, Hit *hit)
 {
     Span::SpanList hitTimes;
 

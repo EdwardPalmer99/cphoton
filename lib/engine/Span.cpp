@@ -23,7 +23,7 @@ Span::Span(double tentry, double texit)
     exit.t = texit;
 }
 
-Span::Span(HitRec entry_, HitRec exit_) : entry(std::move(entry_)), exit(std::move(exit_))
+Span::Span(Hit entry_, Hit exit_) : entry(std::move(entry_)), exit(std::move(exit_))
 {
 }
 
@@ -206,8 +206,8 @@ int Span::unionSpanLists(const SpanList &origList, const SpanList &otherList, Sp
         {
             if (iter2 != iter && (*iter).intervalsOverlap(*iter2))
             {
-                HitRec &minEntry = (*iter).entry.t < (*iter2).entry.t ? (*iter).entry : (*iter2).entry;
-                HitRec &maxExit = (*iter).exit.t > (*iter2).exit.t ? (*iter).exit : (*iter2).exit;
+                Hit &minEntry = (*iter).entry.t < (*iter2).entry.t ? (*iter).entry : (*iter2).entry;
+                Hit &maxExit = (*iter).exit.t > (*iter2).exit.t ? (*iter).exit : (*iter2).exit;
 
                 spans.push_back(Span(minEntry, maxExit));
                 eraseIter = true;
@@ -258,9 +258,8 @@ int Span::intersectionSpanLists(const SpanList &origList, const SpanList &otherL
             if (otherSpan.intervalsOverlap(origSpan))
             {
                 // Find the exact overlap:
-                const HitRec &entryIntersection =
-                    otherSpan.entry.t > origSpan.entry.t ? otherSpan.entry : origSpan.entry;
-                const HitRec &exitIntersection = otherSpan.exit.t < origSpan.exit.t ? otherSpan.exit : origSpan.exit;
+                const Hit &entryIntersection = otherSpan.entry.t > origSpan.entry.t ? otherSpan.entry : origSpan.entry;
+                const Hit &exitIntersection = otherSpan.exit.t < origSpan.exit.t ? otherSpan.exit : origSpan.exit;
 
                 // Ignore any spans we create where both tmin, tmax are less than zero.
                 if (exitIntersection.t > 0.0)

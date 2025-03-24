@@ -32,7 +32,7 @@ public:
     using Time = double;
 
     /** On success, returns true and populates hit structure if hit in interval [tmin, tmax]. */
-    virtual bool hit(Ray *ray, Time tmin, Time tmax, HitRec *hit) = 0;
+    virtual bool hit(Ray *ray, Time tmin, Time tmax, Hit *hit) = 0;
 
     /** Optional. Raises an error if not overriden. */
     virtual bool computeIntersections(Ray *ray, double tmin, double tmax, Span::SpanList &result);
