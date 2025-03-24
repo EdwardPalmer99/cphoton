@@ -13,6 +13,8 @@
 #include "engine/textures/Texture.hpp"
 #include <memory>
 
+// TODO: - instead of shared pointers for textures, we can store a reference.
+
 /**
  * Class for a metal material (reflective).
  */
