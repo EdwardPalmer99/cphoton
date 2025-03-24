@@ -15,7 +15,6 @@ extern "C"
 #include "utility/Vector3.h"
 }
 
-#include "CSGNodeInterface.hpp"
 #include "engine/AABB.hpp"
 #include "engine/Hit.hpp"
 #include "engine/Ray.hpp"
@@ -24,10 +23,12 @@ extern "C"
 #include <memory>
 
 /** Base object class. */
-class Primitive : public CSGNodeInterface
+class Primitive
 {
 public:
     Primitive() = delete;
+
+    virtual ~Primitive() = default;
 
     using Time = double;
 

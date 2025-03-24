@@ -9,17 +9,11 @@
 
 #include "engine/CLIOptions.hpp"
 #include "engine/PhotonEngine.hpp"
-#include "engine/Scene.hpp"
-#include "engine/primitives/CSGNode.hpp"
-#include "engine/primitives/Cube.hpp"
-#include "engine/primitives/Plane.hpp"
-#include "engine/primitives/Primitive.hpp"
-#include "engine/primitives/Sphere.hpp"
-
 #include "engine/RenderSettings.hpp"
-#include "engine/materials/MatteMaterial.hpp"
-#include "engine/materials/MetalMaterial.hpp"
-#include "engine/textures/SolidTexture.hpp"
+#include "engine/Scene.hpp"
+#include "engine/materials/Materials.hpp"
+#include "engine/primitives/Primitives.hpp"
+#include "engine/textures/Textures.hpp"
 #include <memory>
 
 int main(int argc, const char *argv[])
@@ -30,9 +24,9 @@ int main(int argc, const char *argv[])
     // Create the camera:
     Camera camera(45.0, RenderSettings::instance().aspectRatio(), 1, 0, point3(-2, 3, 4), point3(0, 1, 0));
 
-    Primitive *cube1 = new Cube(point3(0.5, 1, 0), vector3(10, 0, 0), 1,
+    Primitive *cube1 = new Cube(point3(0.5, 1, 0), vector3(22.5, 0, 0), 1,
                                 std::make_shared<MetalMaterial>(std::make_shared<SolidTexture>(color3(0, 1, 0))));
-    Primitive *cube2 = new Cube(point3(0, 1, 0), vector3(0, 0, 0), 1,
+    Primitive *cube2 = new Cube(point3(0, 1, 0), vector3(-22.5, 0, 0), 1,
                                 std::make_shared<MetalMaterial>(std::make_shared<SolidTexture>(color3(1, 0, 0))));
 
     Primitive *plane =

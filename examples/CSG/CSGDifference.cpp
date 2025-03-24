@@ -11,14 +11,9 @@
 #include "engine/PhotonEngine.hpp"
 #include "engine/RenderSettings.hpp"
 #include "engine/Scene.hpp"
-#include "engine/primitives/CSGNode.hpp"
-#include "engine/primitives/Plane.hpp"
-#include "engine/primitives/Primitive.hpp"
-#include "engine/primitives/Sphere.hpp"
-
-#include "engine/materials/MatteMaterial.hpp"
-#include "engine/materials/MetalMaterial.hpp"
-#include "engine/textures/SolidTexture.hpp"
+#include "engine/materials/Materials.hpp"
+#include "engine/primitives/Primitives.hpp"
+#include "engine/textures/Textures.hpp"
 
 int main(int argc, const char *argv[])
 {
