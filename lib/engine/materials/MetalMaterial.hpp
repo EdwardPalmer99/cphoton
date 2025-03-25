@@ -9,9 +9,11 @@
 
 #pragma once
 #include "Material.hpp"
-#include "engine/HitRec.hpp"
+#include "engine/Hit.hpp"
 #include "engine/textures/Texture.hpp"
 #include <memory>
+
+// TODO: - instead of shared pointers for textures, we can store a reference.
 
 /**
  * Class for a metal material (reflective).
@@ -24,7 +26,7 @@ public:
     MetalMaterial(Color3 color, double fuzziness = 0.0);
 
     /* Reflects incoming ray */
-    bool scatter(Ray *incidentRay, HitRec *hit, Ray *scatteredRay, Color3 *attenuation) override;
+    bool scatter(Ray &incidentRay, Hit &hit, Ray &scatteredRay, Color3 &attenuation) override;
 
 protected:
     std::shared_ptr<Texture> albedo{nullptr};

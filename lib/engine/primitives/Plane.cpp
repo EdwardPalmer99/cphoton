@@ -15,24 +15,24 @@ Plane::Plane(Point3 p0_, Point3 normal_, std::shared_ptr<Material> material_)
 }
 
 
-bool Plane::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
+bool Plane::hit(Ray &ray, Time tmin, Time tmax, Hit &hit)
 {
     double hitTime = 0.0;
 
-    if (intersectionWithPlane(p0, normal, ray, &hitTime) && isValidIntersectionTime(hitTime, tmin, tmax))
+    if (intersectionWithPlane(p0, normal, ray, &hitTime) && Hit::isValid(hitTime, tmin, tmax))
     {
         Vector3 outwardNormal = normal;
 
-        const bool frontFace = (dot(ray->direction, outwardNormal) < 0.0);
+        const bool frontFace = (dot(ray.direction, outwardNormal) < 0.0);
 
-        hit->frontFace = frontFace;
-        hit->t = hitTime;
-        hit->hitPt = ray->pointAtTime(hitTime);
-        hit->normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-        hit->material = material.get();
+        hit.frontFace = frontFace;
+        hit.t = hitTime;
+        hit.hitPt = ray.pointAtTime(hitTime);
+        hit.normal = frontFace ? outwardNormal : flipVector(outwardNormal);
+        hit.material = material.get();
 
-        hit->u = 0.0;
-        hit->v = 0.0;
+        hit.u = 0.0;
+        hit.v = 0.0;
 
         return true;
     }

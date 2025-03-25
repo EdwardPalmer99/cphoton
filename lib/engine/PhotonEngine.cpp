@@ -24,19 +24,19 @@ PhotonEngine::PhotonEngine(unsigned int pixelsWide_, unsigned int pixelsHigh_)
 {
 }
 
-PPMImage *PhotonEngine::render(Scene *scene, Camera *camera) const
+PPMImage *PhotonEngine::render(Scene &scene, Camera &camera) const
 {
-    if (!scene || !scene->BVH() || !camera)
+    if (!scene.BVH())
     {
-        return NULL;
+        return nullptr;
     }
 
     PPMImage *image = makePPMImage(pixelsWide, pixelsHigh);
-    if (!image) return NULL;
+    if (!image) return nullptr;
 
     ThreadPool *threadPool = allocThreadPool(computeNumWorkers());
 
-    RenderPixelArgs args = {.row = 0, .col = 0, .camera = camera, .objects = scene->BVH(), .image = image};
+    RenderPixelArgs args = {.row = 0, .col = 0, .camera = &camera, .objects = scene.BVH(), .image = image};
 
     for (int iRow = 0; iRow < image->height; ++iRow)
     {

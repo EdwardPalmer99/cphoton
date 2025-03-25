@@ -17,7 +17,7 @@ public:
     BVHNode(Primitive **objects, int start, int end);
     ~BVHNode() override;
 
-    bool hit(Ray *ray, double tmin, double tmax, HitRec *hit) override;
+    bool hit(Ray &ray, Time tmin, Time tmax, Hit &hit) override;
 
     bool boundingBox(AABB *boundingBox) override;
 

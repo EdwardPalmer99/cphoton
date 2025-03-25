@@ -9,7 +9,7 @@
 
 #pragma once
 #include "Material.hpp"
-#include "engine/HitRec.hpp"
+#include "engine/Hit.hpp"
 
 /**
  * Dielectric material (i.e. glass, water).
@@ -22,7 +22,7 @@ public:
     DielectricMaterial(double indexOfRefraction);
 
     /* Refracts an incident ray */
-    bool scatter(Ray *incidentRay, HitRec *hit, Ray *scatteredRay, Color3 *attenuation) override;
+    bool scatter(Ray &incidentRay, Hit &hit, Ray &scatteredRay, Color3 &attenuation) override;
 
 protected:
     double indexOfRefraction;

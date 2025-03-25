@@ -15,7 +15,7 @@
         (val1) = (val2);                                                                                               \
         (val2) = temp;                                                                                                 \
     })
-    
+
 
 AABB::AABB()
 {
@@ -65,12 +65,12 @@ AABB AABB::operator+(const AABB &other)
 }
 
 
-bool AABB::hit(Ray *ray, double tmin, double tmax)
+bool AABB::hit(Ray &ray, double tmin, double tmax)
 {
-    Point3 origin = ray->origin;
+    Point3 origin = ray.origin;
 
     // Now test against x-direction.
-    double invD = 1.0 / ray->direction.x;
+    double invD = 1.0 / ray.direction.x;
     double t0 = (min.x - origin.x) * invD;
     double t1 = (max.x - origin.x) * invD;
 
@@ -82,7 +82,7 @@ bool AABB::hit(Ray *ray, double tmin, double tmax)
     if (tmax <= tmin) return false;
 
     // Now test against y-direction.
-    invD = 1.0 / ray->direction.y;
+    invD = 1.0 / ray.direction.y;
     t0 = (min.y - origin.y) * invD;
     t1 = (max.y - origin.y) * invD;
 
@@ -94,7 +94,7 @@ bool AABB::hit(Ray *ray, double tmin, double tmax)
     if (tmax <= tmin) return false;
 
     // Now test against z-direction:
-    invD = 1.0 / ray->direction.z;
+    invD = 1.0 / ray.direction.z;
     t0 = (min.z - origin.z) * invD;
     t1 = (max.z - origin.z) * invD;
 

@@ -30,7 +30,7 @@ Cube::~Cube()
 }
 
 
-bool Cube::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
+bool Cube::hit(Ray &ray, Hit &hit, HitType type)
 {
     const double halfLength = 0.5 * length;
 
@@ -90,9 +90,9 @@ bool Cube::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
     tEnter = max(tEnter, tzEnter);
     tExit = min(tExit, tzExit);
 
-    if (tExit < tEnter || tEnter > tmax || tEnter < tmin) return false;
+    if (tExit < tEnter) return false;
 
-    const double hitTime = tEnter;
+    const double hitTime = ((type == HitType::Entry) ? tEnter : tExit);
     Vector3 outwardNormal;
 
     // The hit will occur at time tmin. Now calculate which face it intersects.
@@ -105,19 +105,19 @@ bool Cube::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
 
     // Calculate the hit point and outward normal in original coordinates
     // (rotate back to original). hitTime is correct in both coordinates.
-    Vector3 hitPoint = ray->pointAtTime(hitTime);
+    Vector3 hitPoint = ray.pointAtTime(hitTime);
     outwardNormal = rotation(outwardNormal, rotationMatrix);
 
-    const bool frontFace = (dot(ray->direction, outwardNormal) < 0.0);
+    const bool frontFace = (dot(ray.direction, outwardNormal) < 0.0);
 
-    hit->frontFace = frontFace;
-    hit->t = hitTime;
-    hit->hitPt = hitPoint;
-    hit->normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-    hit->material = material.get();
+    hit.frontFace = frontFace;
+    hit.t = hitTime;
+    hit.hitPt = hitPoint;
+    hit.normal = frontFace ? outwardNormal : flipVector(outwardNormal);
+    hit.material = material.get();
 
-    hit->u = 0.0;
-    hit->v = 0.0;
+    hit.u = 0.0;
+    hit.v = 0.0;
 
     return true;
 }

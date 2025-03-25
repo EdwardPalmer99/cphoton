@@ -1,15 +1,6 @@
 cc_binary(
-    name = "CSGDifference",
-    srcs = ["CSGDifference.cpp"],
-    deps = [
-        "//lib:cphoton"
-    ],
-    visibility = ["//visibility:private"]
-)
-
-cc_binary(
-    name = "CSGUnion",
-    srcs = ["CSGUnion.cpp"],
+    name = "CubeDifference",
+    srcs = ["CubeDifference.cpp"],
     deps = [
         "//lib:cphoton"
     ],
@@ -18,8 +9,28 @@ cc_binary(
 
 
 cc_binary(
-    name = "CSGIntersection",
-    srcs = ["CSGIntersection.cpp"],
+    name = "CubeUnion",
+    srcs = ["CubeUnion.cpp"],
+    deps = [
+        "//lib:cphoton"
+    ],
+    visibility = ["//visibility:private"]
+)
+
+
+cc_binary(
+    name = "CubeIntersection",
+    srcs = ["CubeIntersection.cpp"],
+    deps = [
+        "//lib:cphoton"
+    ],
+    visibility = ["//visibility:private"]
+)
+
+
+cc_binary(
+    name = "CubeSphereDifference",
+    srcs = ["CubeSphereDifference.cpp"],
     deps = [
         "//lib:cphoton"
     ],

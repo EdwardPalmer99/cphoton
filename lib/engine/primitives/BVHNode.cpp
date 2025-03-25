@@ -87,12 +87,12 @@ BVHNode::~BVHNode()
 }
 
 
-bool BVHNode::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
+bool BVHNode::hit(Ray &ray, Time tmin, Time tmax, Hit &hit)
 {
     if (!box.hit(ray, tmin, tmax)) return false;
 
     bool hitLeft = left && left->hit(ray, tmin, tmax, hit);
-    bool hitRight = right && right->hit(ray, tmin, (hitLeft ? hit->t : tmax), hit);
+    bool hitRight = right && right->hit(ray, tmin, (hitLeft ? hit.t : tmax), hit);
 
     return (hitLeft || hitRight);
 }

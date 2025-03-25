@@ -14,7 +14,7 @@ EmitterMaterial::EmitterMaterial(Color3 color_) : color(std::move(color_))
 }
 
 
-bool EmitterMaterial::scatter(Ray *incidentRay, HitRec *hit, Ray *scatteredRay, Color3 *attenuation)
+bool EmitterMaterial::scatter(Ray &incidentRay, Hit &hit, Ray &scatteredRay, Color3 &attenuation)
 {
     // Absorb ray:
     return false;

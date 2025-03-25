@@ -9,7 +9,7 @@
 
 #pragma once
 #include "Material.hpp"
-#include "engine/HitRec.hpp"
+#include "engine/Hit.hpp"
 #include "engine/textures/Texture.hpp"
 #include "utility/Vector3.h"
 #include <memory>
@@ -25,7 +25,7 @@ public:
     MatteMaterial(Color3 color);
 
     /* Scatters ray */
-    bool scatter(Ray *incidentRay, HitRec *hit, Ray *scatteredRay, Color3 *attenuation) override;
+    bool scatter(Ray &incidentRay, Hit &hit, Ray &scatteredRay, Color3 &attenuation) override;
 
 protected:
     std::shared_ptr<Texture> albedo{nullptr};

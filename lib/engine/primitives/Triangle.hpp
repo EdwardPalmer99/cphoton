@@ -9,7 +9,7 @@
 
 #pragma once
 #include "Primitive.hpp"
-#include "engine/HitRec.hpp"
+#include "engine/Hit.hpp"
 #include "engine/materials/Material.hpp"
 
 extern "C"
@@ -25,7 +25,7 @@ public:
     Triangle(Point3 v0_, Point3 v1_, Point3 v2_, std::shared_ptr<Material> material_);
     ~Triangle() override = default;
 
-    bool hit(Ray *ray, double tmin, double tmax, HitRec *hit) override;
+    bool hit(Ray &ray, Time tmin, Time tmax, Hit &hit) override;
 
     bool boundingBox(AABB *boundingBox) override;
 

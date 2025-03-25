@@ -8,7 +8,7 @@
  */
 
 #include "engine/PhotonEngineImpl.hpp"
-#include "engine/HitRec.hpp"
+#include "engine/Hit.hpp"
 
 extern "C"
 {
@@ -19,21 +19,21 @@ static const double kMinHitTime = 0.002; // Positive tmin fixes shadow acne.
 static const double kMaxHitTime = INFINITY;
 
 
-Color3 rayColor(Ray *ray, Primitive *objectsBVH, int depth)
+Color3 rayColor(Ray &ray, Primitive *objectsBVH, int depth)
 {
-    HitRec hit;
+    Hit hit;
 
     if (depth <= 0) return color3(0, 0, 0); // Exceeded ray bounce limit.
 
-    if (objectsBVH->hit(ray, kMinHitTime, kMaxHitTime, &hit))
+    if (objectsBVH->hit(ray, kMinHitTime, kMaxHitTime, hit))
     {
         Ray scatteredRay;
         Color3 attenuation;
         Color3 emitted = hit.material->emitted();
 
-        if (hit.material->scatter(ray, &hit, &scatteredRay, &attenuation))
+        if (hit.material->scatter(ray, hit, scatteredRay, attenuation))
         {
-            Color3 outputColor = rayColor(&scatteredRay, objectsBVH, depth - 1);
+            Color3 outputColor = rayColor(scatteredRay, objectsBVH, depth - 1);
 
             // Light source color + (ray output * attenuation)
             return addVectors(emitted, multiplyColors(outputColor, attenuation));
@@ -47,7 +47,7 @@ Color3 rayColor(Ray *ray, Primitive *objectsBVH, int depth)
     else
     {
         // Didn't hit anything. Return the background color for the sky:
-        const double t = 0.5 * (unitVector(ray->direction).y + 1.0);
+        const double t = 0.5 * (unitVector(ray.direction).y + 1.0);
 
         Color3 whiteComponent = scaleVector(color3(1, 1, 1), 1 - t);
         Color3 blueComponent = scaleVector(color3(0.5, 0.7, 1.0), t);
@@ -105,7 +105,7 @@ void renderPixel(void *args)
         // Generate a new camera ray:
         Ray ray = pArgs->camera->fireRay(u, v);
 
-        Color3 color = rayColor(&ray, pArgs->objects, kMaxDepth);
+        Color3 color = rayColor(ray, pArgs->objects, kMaxDepth);
 
         // Compute the luminance:
         // https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color

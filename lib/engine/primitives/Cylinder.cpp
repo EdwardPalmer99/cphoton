@@ -27,7 +27,7 @@ Cylinder::~Cylinder()
 }
 
 
-bool Cylinder::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
+bool Cylinder::hit(Ray &ray, Time tmin, Time tmax, Hit &hit)
 {
     const double ymin = -height / 2.0;
     const double ymax = height / 2.0;
@@ -48,8 +48,8 @@ bool Cylinder::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
 
     if (!solveQuadratic(quadA, quadB, quadC, &t1, &t2)) return false;
 
-    const bool t1Valid = isValidIntersectionTime(t1, tmin, tmax);
-    const bool t2Valid = isValidIntersectionTime(t2, tmin, tmax);
+    const bool t1Valid = Hit::isValid(t1, tmin, tmax);
+    const bool t2Valid = Hit::isValid(t2, tmin, tmax);
 
     double hitTime = tmax; // Set to tmax initially.
     Point3 hitPoint = {0};
@@ -77,15 +77,15 @@ bool Cylinder::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
     }
 
     // Check for closer intersection with bottom or top cap:
-    if (topCap.hit(&tranRay, tmin, hitTime, hit))
+    if (topCap.hit(tranRay, tmin, hitTime, hit))
     {
-        hitTime = hit->t;
-        outwardNormal = hit->normal;
+        hitTime = hit.t;
+        outwardNormal = hit.normal;
     }
-    else if (bottomCap.hit(&tranRay, tmin, hitTime, hit))
+    else if (bottomCap.hit(tranRay, tmin, hitTime, hit))
     {
-        hitTime = hit->t;
-        outwardNormal = hit->normal;
+        hitTime = hit.t;
+        outwardNormal = hit.normal;
     }
 
     // Check for any hits:
@@ -93,19 +93,19 @@ bool Cylinder::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
 
     // Calculate the hit point and outward normal in original coordinates
     // (rotate back to original). hitTime is correct in both coordinates.
-    hitPoint = ray->pointAtTime(hitTime);
+    hitPoint = ray.pointAtTime(hitTime);
     outwardNormal = rotation(outwardNormal, rotationMatrix);
 
-    const bool frontFace = (dot(ray->direction, outwardNormal) < 0.0);
+    const bool frontFace = (dot(ray.direction, outwardNormal) < 0.0);
 
-    hit->frontFace = frontFace;
-    hit->t = hitTime;
-    hit->hitPt = hitPoint;
-    hit->normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-    hit->material = material.get();
+    hit.frontFace = frontFace;
+    hit.t = hitTime;
+    hit.hitPt = hitPoint;
+    hit.normal = frontFace ? outwardNormal : flipVector(outwardNormal);
+    hit.material = material.get();
 
-    hit->u = 0.0;
-    hit->v = 0.0;
+    hit.u = 0.0;
+    hit.v = 0.0;
 
     return true;
 }

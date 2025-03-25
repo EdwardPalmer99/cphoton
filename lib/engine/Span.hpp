@@ -8,7 +8,7 @@
  */
 
 #pragma once
-#include "engine/HitRec.hpp"
+#include "engine/Hit.hpp"
 #include <array>
 #include <vector>
 
@@ -17,13 +17,13 @@
  */
 struct Span
 {
-    HitRec entry;
-    HitRec exit;
+    Hit entry;
+    Hit exit;
 
     // Construct a span in range [tentry, texit]. Useful for testing
     Span() = default;
     Span(double tentry, double texit);
-    Span(HitRec entry, HitRec exit);
+    Span(Hit entry, Hit exit);
 
     /** Returns true if time t is inside span */
     bool insideInterval(double t, double tolerance = 1e-6) const;

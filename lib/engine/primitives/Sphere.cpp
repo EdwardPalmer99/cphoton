@@ -15,7 +15,7 @@ Sphere::Sphere(Point3 center_, double radius_, std::shared_ptr<Material> materia
 }
 
 
-bool Sphere::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
+bool Sphere::hit(Ray &ray, Hit &hit, HitType type)
 {
     // ray origin 	 = O
     // ray direction = d
@@ -36,41 +36,37 @@ bool Sphere::hit(Ray *ray, double tmin, double tmax, HitRec *hit)
     // B = 2d.(O - C)
     // C = (O - C).(O - C) - r^2
 
-    Vector3 rayOriginMinusCenter = subtractVectors(ray->origin, center);
+    Vector3 rayOriginMinusCenter = subtractVectors(ray.origin, center);
 
-    const double quadA = dot(ray->direction, ray->direction);
-    const double quadB = 2.0 * dot(ray->direction, rayOriginMinusCenter);
+    const double quadA = dot(ray.direction, ray.direction);
+    const double quadB = 2.0 * dot(ray.direction, rayOriginMinusCenter);
     const double quadC = dot(rayOriginMinusCenter, rayOriginMinusCenter) - radius * radius;
 
     double t1, t2;
 
-    if (!solveQuadratic(quadA, quadB, quadC, &t1, &t2)) return false;
+    if (!solveQuadratic(quadA, quadB, quadC, &t1, &t2))
+    {
+        return false; // No hits.
+    }
 
-    double hitTime;
+    double hitTime = ((type == Entry) ? t1 : t2);
 
-    if (isValidIntersectionTime(t1, tmin, tmax))
-        hitTime = t1;
-    else if (isValidIntersectionTime(t2, tmin, tmax))
-        hitTime = t2;
-    else
-        return false;
-
-    Point3 hitPoint = ray->pointAtTime(hitTime);
+    Point3 hitPoint = ray.pointAtTime(hitTime);
 
     // Compute the normal vector:
     Vector3 outwardNormal = scaleVector(subtractVectors(hitPoint, center), 1.0 / radius);
 
     // Are we hitting the outside surface or are we hitting the inside?
-    const bool frontFace = (dot(ray->direction, outwardNormal) < 0.0);
+    const bool frontFace = (dot(ray.direction, outwardNormal) < 0.0);
 
-    hit->frontFace = frontFace;
-    hit->t = hitTime;
-    hit->hitPt = hitPoint;
-    hit->normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-    hit->material = material.get();
+    hit.frontFace = frontFace;
+    hit.t = hitTime;
+    hit.hitPt = hitPoint;
+    hit.normal = frontFace ? outwardNormal : flipVector(outwardNormal);
+    hit.material = material.get();
 
     // Calculate the U, V texture coordinates:
-    setSphereUV(&hit->normal, &hit->u, &hit->v);
+    setSphereUV(&hit.normal, &hit.u, &hit.v);
     return true;
 }
 
@@ -80,93 +76,6 @@ bool Sphere::boundingBox(AABB *boundingBox)
     Point3 min = point3(center.x - radius, center.y - radius, center.z - radius);
     Point3 max = point3(center.x + radius, center.y + radius, center.z + radius);
     *boundingBox = AABB(min, max);
-    return true;
-}
-
-
-bool Sphere::computeIntersections(Ray *ray, double tmin, double tmax, Span::SpanList &result)
-{
-    result.clear();
-
-    // ray origin 	 = O
-    // ray direction = d
-    // sphere center = C
-    // sphere radius = r
-    //
-    // ray = O + t * d
-    //
-    // Solve:
-    // (ray - C)^2 = r^2
-    //
-    // t^2*(d.d) + 2t*d.(O - C) + (O - C).(O - C) - r^2 = 0
-    //
-    // Quadratic formula:
-    // t = [-B +/- sqrt(B^2 - 4 * AC)] / 2A
-    //
-    // A = d.d
-    // B = 2d.(O - C)
-    // C = (O - C).(O - C) - r^2
-
-    Vector3 rayOriginMinusCenter = subtractVectors(ray->origin, center);
-
-    const double quadA = dot(ray->direction, ray->direction);
-    const double quadB = 2.0 * dot(ray->direction, rayOriginMinusCenter);
-    const double quadC = dot(rayOriginMinusCenter, rayOriginMinusCenter) - radius * radius;
-
-    double t1, t2; // t1 < t2
-
-    // Case: no intersections.
-    if (!solveQuadratic(quadA, quadB, quadC, &t1, &t2))
-    {
-        return false;
-    }
-
-    bool t1Valid = isValidIntersectionTime(t1, tmin, tmax);
-    bool t2Valid = isValidIntersectionTime(t2, tmin, tmax);
-
-    // Case: t1, t2 negative --> intersected behind the camera (IGNORE).
-    if (!t1Valid && !t2Valid)
-    {
-        return false;
-    }
-
-    // TODO: - Only need material, t1, t2, normals.
-    Span sphereHit;
-
-    /* Compute intersection t1 (if t1 < 0 --> camera inside object) */
-    {
-        Point3 hitPoint = ray->pointAtTime(t1);
-
-        Vector3 outwardNormal = scaleVector(subtractVectors(hitPoint, center), 1.0 / radius);
-
-        // Are we hitting the outside surface or are we hitting the inside?
-        const bool frontFace = (dot(ray->direction, outwardNormal) < 0.0);
-
-        sphereHit.entry.frontFace = frontFace;
-        sphereHit.entry.t = t1;
-        sphereHit.entry.hitPt = hitPoint;
-        sphereHit.entry.normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-        sphereHit.entry.material = material.get();
-    }
-
-    /* Compute intersection t2 */
-    {
-        Point3 hitPoint = ray->pointAtTime(t2);
-
-        Vector3 outwardNormal = scaleVector(subtractVectors(hitPoint, center), 1.0 / radius);
-
-        // Are we hitting the outside surface or are we hitting the inside?
-        const bool frontFace = (dot(ray->direction, outwardNormal) < 0.0);
-
-        sphereHit.exit.frontFace = frontFace;
-        sphereHit.exit.t = t2;
-        sphereHit.exit.hitPt = hitPoint;
-        sphereHit.exit.normal = frontFace ? outwardNormal : flipVector(outwardNormal);
-        sphereHit.exit.material = material.get();
-    }
-
-    result.push_back(sphereHit);
-
     return true;
 }
 

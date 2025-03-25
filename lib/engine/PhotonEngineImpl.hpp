@@ -44,4 +44,4 @@ void renderPixel(void *args);
  * @param depth is the maximum number of "bounces"
  * @return Color3 is the color of the returned ray
  */
-Color3 rayColor(Ray *ray, Primitive *objectsBVH, int depth);
+Color3 rayColor(Ray &ray, Primitive *objectsBVH, int depth);
