@@ -8,6 +8,8 @@
  */
 
 #include "EmitterMaterial.hpp"
+#include <utility>
+
 
 EmitterMaterial::EmitterMaterial(Color3 color_) : color(std::move(color_))
 {

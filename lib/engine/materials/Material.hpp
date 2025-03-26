@@ -9,14 +9,10 @@
 
 #pragma once
 #include "engine/Ray.hpp"
+#include "utility/Vector3.hpp"
 
 // Forward declaration:
 struct Hit;
-
-extern "C"
-{
-#include "utility/Vector3.h"
-}
 
 /**
  * Base material class.
@@ -34,7 +30,7 @@ protected:
     /* Protect default constructor to avoid direct initialization */
     Material() = default;
 
-    Vector3 reflect(Vector3 v, Vector3 n);
+    Vector3 reflect(const Vector3 &v, const Vector3 &n) const;
 
-    Vector3 refract(Vector3 vin, Vector3 n, double refractionRatio);
+    Vector3 refract(const Vector3 &vin, const Vector3 &n, double refractionRatio) const;
 };

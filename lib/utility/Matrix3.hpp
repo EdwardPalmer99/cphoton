@@ -23,6 +23,12 @@ public:
     /* Undoes a rotation */
     Vector3 undoRotation(const Vector3 &vector) const;
 
+    /* Returns true if it is a zero rotation */
+    constexpr bool isZeroRotation() const
+    {
+        return _isZeroRotation;
+    }
+
 protected:
     using Matrix3 = double[3][3];
 

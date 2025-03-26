@@ -12,7 +12,7 @@
 Triangle::Triangle(Point3 v0_, Point3 v1_, Point3 v2_, std::shared_ptr<Material> material_)
     : Primitive(material_), v0(v0_), v1(v1_), v2(v2_)
 {
-    normal = cross(subtractVectors(v1, v0), subtractVectors(v2, v1));
+    normal = (v1 - v0).cross(v2 - v1);
 }
 
 bool Triangle::hit(Ray &ray, Time tmin, Time tmax, Hit &hit)
@@ -49,24 +49,24 @@ bool Triangle::hit(Ray &ray, Time tmin, Time tmax, Hit &hit)
 
     if (intersectionWithPlane(v0, normal, ray, &hitTime) && Hit::isValid(hitTime, tmin, tmax))
     {
-        Vector3 vecO = ray.origin;
-        Vector3 vecD = ray.direction;
+        Vector3 vecO = ray.origin();
+        Vector3 vecD = ray.direction();
 
-        Vector3 vecE1 = subtractVectors(v1, v0);
-        Vector3 vecE2 = subtractVectors(v2, v0);
-        Vector3 vecT = subtractVectors(vecO, v0);
+        Vector3 vecE1 = (v1 - v0);
+        Vector3 vecE2 = (v2 - v0);
+        Vector3 vecT = (vecO - v0);
 
-        Vector3 vecP = cross(vecD, vecE2);
+        Vector3 vecP = vecD.cross(vecE2);
 
-        const double invPDotE1 = 1.0 / dot(vecP, vecE1);
+        const double invPDotE1 = 1.0 / vecP.dot(vecE1);
 
-        const double u = invPDotE1 * dot(vecP, vecT);
+        const double u = invPDotE1 * vecP.dot(vecT);
 
         if (u < 0.0 || u > 1.0) return false;
 
-        Vector3 vecQ = cross(vecT, vecE1);
+        Vector3 vecQ = vecT.cross(vecE1);
 
-        const double v = invPDotE1 * dot(vecQ, vecD);
+        const double v = invPDotE1 * vecQ.dot(vecD);
 
         if (v < 0.0 || u + v > 1.0) return false;
 
@@ -75,12 +75,12 @@ bool Triangle::hit(Ray &ray, Time tmin, Time tmax, Hit &hit)
         Vector3 outwardNormal = normal;
 
         // Are we hitting the outside surface or are we hitting the inside?
-        const bool frontFace = (dot(ray.direction, outwardNormal) < 0.0);
+        const bool frontFace = (ray.direction().dot(outwardNormal) < 0.0);
 
         hit.frontFace = frontFace;
         hit.t = hitTime;
         hit.hitPt = hitPoint;
-        hit.normal = frontFace ? outwardNormal : flipVector(outwardNormal);
+        hit.normal = frontFace ? outwardNormal : -outwardNormal;
         hit.material = material.get();
 
         hit.u = u;

@@ -8,6 +8,7 @@
  */
 
 #include "Disc.hpp"
+#include <cmath>
 
 Disc::Disc(Point3 p0_, Point3 normal_, double radius_, std::shared_ptr<Material> material_)
     : Plane(p0_, normal_, material_), radius(radius_)
@@ -24,21 +25,21 @@ bool Disc::hit(Ray &ray, Time tmin, Time tmax, Hit &hit)
         // Check that hit point is inside disc radius:
         Point3 hitPoint = ray.pointAtTime(hitTime);
 
-        Vector3 hitPointMinusCenter = subtractVectors(hitPoint, p0);
+        Vector3 hitPointMinusCenter = hitPoint - p0;
 
-        if (dot(hitPointMinusCenter, hitPointMinusCenter) > (radius * radius))
+        if (hitPointMinusCenter.dot(hitPointMinusCenter) > (radius * radius))
         {
             return false;
         }
 
         Vector3 outwardNormal = normal;
 
-        const bool frontFace = (dot(ray.direction, outwardNormal) < 0.0);
+        const bool frontFace = (ray.direction().dot(outwardNormal) < 0.0);
 
         hit.frontFace = frontFace;
         hit.t = hitTime;
         hit.hitPt = hitPoint;
-        hit.normal = frontFace ? outwardNormal : flipVector(outwardNormal);
+        hit.normal = frontFace ? outwardNormal : -outwardNormal;
         hit.material = material.get();
 
         hit.u = 0.0;
@@ -55,25 +56,25 @@ bool Disc::boundingBox(AABB *outputBox)
 {
     const double deltaR = 0.001;
 
-    if (fabs(normal.x) == 1.0)
+    if (fabs(normal.x()) == 1.0)
     {
-        outputBox->minPt() = point3(p0.x - deltaR, p0.y - radius, p0.z - radius);
-        outputBox->maxPt() = point3(p0.x + deltaR, p0.y + radius, p0.z + radius);
+        outputBox->minPt() = Point3(p0.x() - deltaR, p0.y() - radius, p0.z() - radius);
+        outputBox->maxPt() = Point3(p0.x() + deltaR, p0.y() + radius, p0.z() + radius);
     }
-    else if (fabs(normal.y) == 1.0)
+    else if (fabs(normal.y()) == 1.0)
     {
-        outputBox->minPt() = point3(p0.x - radius, p0.y - deltaR, p0.z - radius);
-        outputBox->maxPt() = point3(p0.x + radius, p0.y + deltaR, p0.z + radius);
+        outputBox->minPt() = Point3(p0.x() - radius, p0.y() - deltaR, p0.z() - radius);
+        outputBox->maxPt() = Point3(p0.x() + radius, p0.y() + deltaR, p0.z() + radius);
     }
-    else if (fabs(normal.z) == 1.0)
+    else if (fabs(normal.z()) == 1.0)
     {
-        outputBox->minPt() = point3(p0.x - radius, p0.y - radius, p0.z - deltaR);
-        outputBox->maxPt() = point3(p0.x + radius, p0.y + radius, p0.z + deltaR);
+        outputBox->minPt() = Point3(p0.x() - radius, p0.y() - radius, p0.z() - deltaR);
+        outputBox->maxPt() = Point3(p0.x() + radius, p0.y() + radius, p0.z() + deltaR);
     }
     else
     {
-        outputBox->minPt() = point3(p0.x - radius, p0.y - radius, p0.z - radius);
-        outputBox->maxPt() = point3(p0.x + radius, p0.y + radius, p0.z + radius);
+        outputBox->minPt() = Point3(p0.x() - radius, p0.y() - radius, p0.z() - radius);
+        outputBox->maxPt() = Point3(p0.x() + radius, p0.y() + radius, p0.z() + radius);
     }
 
     return true;

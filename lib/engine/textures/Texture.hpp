@@ -8,11 +8,7 @@
  */
 
 #pragma once
-
-extern "C"
-{
-#include "utility/Vector3.h"
-}
+#include "utility/Vector3.hpp"
 
 /* Base texture class. */
 class Texture

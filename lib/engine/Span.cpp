@@ -8,14 +8,12 @@
  */
 
 #include "Span.hpp"
+#include "utility/Vector3.hpp"
 #include <algorithm>
+#include <cmath>
 #include <iostream>
 #include <list>
 
-extern "C"
-{
-#include "utility/Vector3.h"
-}
 
 Span::Span(double tentry, double texit)
 {
@@ -89,7 +87,7 @@ int Span::subtractIntervals(const Span &rhs, std::array<Span, 2> &result) const
 
         result[nReturnValues].exit = rhs.entry;
         result[nReturnValues].exit.frontFace = false;
-        result[nReturnValues].exit.normal = flipVector(rhs.entry.normal);
+        result[nReturnValues].exit.normal = -rhs.entry.normal;
 
         nReturnValues++;
     }
@@ -105,7 +103,7 @@ int Span::subtractIntervals(const Span &rhs, std::array<Span, 2> &result) const
     {
         result[nReturnValues].entry = rhs.exit;
         result[nReturnValues].entry.frontFace = false;
-        result[nReturnValues].entry.normal = flipVector(rhs.exit.normal);
+        result[nReturnValues].entry.normal = -rhs.exit.normal;
 
         result[nReturnValues].exit = exit;
 
@@ -130,17 +128,14 @@ std::vector<Span> Span::recursiveSpanSubtractor(const Span &lhs, const SpanList:
             case 0:
                 return {}; // Empty vector (complete overlap).
             case 1:
-                return {output[0]};
-                // return recursiveSpanSubtractor(output[0], iter + 1, subtractLast);
+                return recursiveSpanSubtractor(output[0], iter + 1, subtractLast);
             case 2:
             {
-                return {output[0], output[1]};
+                SpanList leftResult = recursiveSpanSubtractor(output[0], iter + 1, subtractLast);
+                SpanList rightResult = recursiveSpanSubtractor(output[1], iter + 1, subtractLast);
 
-                // SpanList leftResult = recursiveSpanSubtractor(output[0], iter + 1, subtractLast);
-                // SpanList rightResult = recursiveSpanSubtractor(output[1], iter + 1, subtractLast);
-
-                // leftResult.insert(leftResult.end(), rightResult.begin(), rightResult.end());
-                // return leftResult;
+                leftResult.insert(leftResult.end(), rightResult.begin(), rightResult.end());
+                return leftResult;
             }
             case (-1): // Continue. No overlap.
             default:

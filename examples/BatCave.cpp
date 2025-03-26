@@ -7,11 +7,6 @@
  *
  */
 
-extern "C"
-{
-#include "utility/PPMWriter.h"
-}
-
 #include "engine/PhotonEngine.hpp"
 #include "engine/RenderSettings.hpp"
 #include "engine/Scene.hpp"
@@ -19,6 +14,7 @@ extern "C"
 #include "engine/primitives/Cube.hpp"
 #include "engine/primitives/Plane.hpp"
 #include "engine/primitives/Primitive.hpp"
+#include "utility/PPMWriter.hpp"
 
 #include "engine/materials/EmitterMaterial.hpp"
 #include "engine/materials/MatteMaterial.hpp"
@@ -28,6 +24,7 @@ extern "C"
 
 #include <cstdlib>
 #include <memory>
+#include <string>
 #include <vector>
 
 Primitive *makeDarkKnightRoom(double length, double width, double height);
@@ -59,11 +56,11 @@ int main(int argc, const char *argv[])
 
     PhotonEngine engine(RenderSettings::instance().pixelsWide, RenderSettings::instance().pixelsHigh);
 
-    PPMImage *outputImage = engine.render(scene, camera);
-
-    writeBinary16BitPPMImage(outputImage, RenderSettings::instance().outputPath);
-
-    freePPMImage(outputImage);
+    const PPMWriter *writer = engine.render(scene, camera);
+    if (writer)
+    {
+        writer->write(std::string(RenderSettings::instance().outputPath), PPMWriter::Binary16Bit);
+    }
 
     return 0;
 }

@@ -32,7 +32,7 @@ double Vector3::length() const
 }
 
 
-Vector3 Vector3::randomVector(double min = 0.0, double max = 1.0)
+Vector3 Vector3::randomVector(double min, double max)
 {
     return Vector3(randomDoubleRange(min, max), randomDoubleRange(min, max), randomDoubleRange(min, max));
 }
@@ -115,6 +115,12 @@ Vector3 Vector3::operator*(double scalar) const
 }
 
 
+Vector3 Vector3::operator*(const Vector3 &other) const
+{
+    return Vector3(x() * other.x(), y() * other.y(), z() * other.z());
+}
+
+
 Vector3 &Vector3::operator*=(double scalar)
 {
     _x *= scalar;
@@ -125,7 +131,7 @@ Vector3 &Vector3::operator*=(double scalar)
 }
 
 
-bool Vector3::isApproxZero(double tolerance = 1.0e-8) const
+bool Vector3::isApproxZero(double tolerance) const
 {
     return (std::fabs(_x) < tolerance && std::fabs(_y) < tolerance && std::fabs(_z) < tolerance);
 }

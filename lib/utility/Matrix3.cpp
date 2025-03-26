@@ -30,7 +30,7 @@ Vector3 Rotate3::rotate(const Vector3 &vector) const
 {
     if (_isZeroRotation)
     {
-        return;
+        return vector;
     }
 
     return transformVector(vector, _rotation);
@@ -41,7 +41,7 @@ Vector3 Rotate3::undoRotation(const Vector3 &vector) const
 {
     if (_isZeroRotation)
     {
-        return;
+        return vector;
     }
 
     return transformVector(vector, _inverse);

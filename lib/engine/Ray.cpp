@@ -8,14 +8,13 @@
  */
 
 #include "Ray.hpp"
+#include <utility>
 
-
-Ray::Ray(Point3 origin_, Vector3 direction_) : origin(std::move(origin_)), direction(std::move(direction_))
+Ray::Ray(Point3 origin, Vector3 direction) : _origin(std::move(origin)), _direction(std::move(direction))
 {
 }
 
-
-Point3 Ray::pointAtTime(double t)
+Point3 Ray::pointAtTime(double t) const
 {
-    return addVectors(origin, scaleVector(direction, t));
+    return (_origin + _direction * t);
 }

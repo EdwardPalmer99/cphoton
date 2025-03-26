@@ -11,12 +11,7 @@
 #include "Primitive.hpp"
 #include "engine/Hit.hpp"
 #include "engine/materials/Material.hpp"
-
-extern "C"
-{
-#include "utility/Vector3.h"
-}
-
+#include "utility/Vector3.hpp"
 
 class Triangle : public Primitive
 {

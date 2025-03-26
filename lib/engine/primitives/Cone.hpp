@@ -10,19 +10,14 @@
 #pragma once
 #include "Disc.hpp"
 #include "Primitive.hpp"
-
-extern "C"
-{
-#include "utility/Matrix3.h"
-#include "utility/Vector3.h"
-}
+#include "utility/Matrix3.hpp"
+#include "utility/Vector3.hpp"
 
 class Cone : public Primitive
 {
 public:
     Cone() = delete;
     Cone(Point3 center_, Vector3 rotAngles_, double height_, std::shared_ptr<Material> material_);
-    ~Cone() override;
 
     bool hit(Ray &ray, Time tmin, Time tmax, Hit &hit) override;
 
@@ -32,5 +27,5 @@ protected:
     Point3 center;
     double height;
     Disc base;
-    Rotate3 *rotationMatrix;
+    Rotate3 rotationMatrix;
 };

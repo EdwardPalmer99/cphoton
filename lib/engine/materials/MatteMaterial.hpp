@@ -11,7 +11,7 @@
 #include "Material.hpp"
 #include "engine/Hit.hpp"
 #include "engine/textures/Texture.hpp"
-#include "utility/Vector3.h"
+#include "utility/Vector3.hpp"
 #include <memory>
 
 /**

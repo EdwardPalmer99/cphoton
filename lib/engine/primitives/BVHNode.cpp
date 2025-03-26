@@ -13,6 +13,7 @@
 extern "C"
 {
 #include "utility/MathMacros.h"
+#include "utility/Randomizer.h"
 }
 
 int compareBoundingBoxes(AABB *boxA, AABB *boxB, int axis);
@@ -24,7 +25,7 @@ int boxComparatorZ(const void *ptr1, const void *ptr2);
 BVHNode::BVHNode(Primitive **objects, int start, int end) : Primitive(nullptr)
 {
     const int objectSpan = (end - start);
-    const int axis = randomInt(0, 2); // TODO: - split about largest axis.
+    const int axis = randomIntRange(0, 2); // TODO: - split about largest axis.
 
     enum
     {
@@ -110,18 +111,18 @@ int compareBoundingBoxes(AABB *boxA, AABB *boxB, int axis)
 
     if (axis == 0)
     {
-        minA = boxA->minPt().x;
-        minB = boxB->minPt().x;
+        minA = boxA->minPt().x();
+        minB = boxB->minPt().x();
     }
     else if (axis == 1)
     {
-        minA = boxA->minPt().y;
-        minB = boxB->minPt().y;
+        minA = boxA->minPt().y();
+        minB = boxB->minPt().y();
     }
     else
     {
-        minA = boxA->minPt().z;
-        minB = boxB->minPt().z;
+        minA = boxA->minPt().z();
+        minB = boxB->minPt().z();
     }
 
     if (minA < minB)

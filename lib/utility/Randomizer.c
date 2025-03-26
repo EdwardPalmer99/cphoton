@@ -22,3 +22,9 @@ double randomDoubleRange(double min, double max)
 {
     return min + randomDouble() * (max - min);
 }
+
+
+int randomIntRange(int min, int max)
+{
+    return (int)randomDoubleRange(min, max);
+}

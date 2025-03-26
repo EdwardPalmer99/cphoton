@@ -8,16 +8,11 @@
  */
 
 #pragma once
-#include "engine/materials/Material.hpp"
-
-extern "C"
-{
-#include "utility/Matrix3.h"
-#include "utility/Vector3.h"
-}
-
 #include "Disc.hpp"
 #include "Primitive.hpp"
+#include "engine/materials/Material.hpp"
+#include "utility/Matrix3.hpp"
+#include "utility/Vector3.hpp"
 
 
 class Cylinder : public Primitive
@@ -25,7 +20,6 @@ class Cylinder : public Primitive
 public:
     Cylinder() = delete;
     Cylinder(Point3 center_, Vector3 rotAngles_, double radius_, double height_, std::shared_ptr<Material> material_);
-    ~Cylinder() override;
 
     bool hit(Ray &ray, Time tmin, Time tmax, Hit &hit) override;
 
@@ -36,7 +30,7 @@ protected:
     Disc bottomCap;
 
     Point3 center;
-    Rotate3 *rotationMatrix;
+    Rotate3 rotationMatrix;
     double radius;
     double height;
 };

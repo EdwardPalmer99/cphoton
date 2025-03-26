@@ -8,6 +8,7 @@
  */
 
 #include "DielectricMaterial.hpp"
+#include <cmath>
 
 extern "C"
 {
@@ -22,11 +23,11 @@ DielectricMaterial::DielectricMaterial(double indexOfRefraction_) : indexOfRefra
 
 bool DielectricMaterial::scatter(Ray &incidentRay, Hit &hit, Ray &scatteredRay, Color3 &attenuation)
 {
-    Vector3 unitDirection = unitVector(incidentRay.direction);
+    Vector3 unitDirection = incidentRay.direction().normalize();
 
     // Angle theta is the angle between the normal and incident ray.
-    const double cosTheta = dot(flipVector(unitDirection), hit.normal);
-    const double sinTheta = sqrt(1.0 - cosTheta * cosTheta);
+    const double cosTheta = (-unitDirection).dot(hit.normal);
+    const double sinTheta = std::sqrt(1.0 - cosTheta * cosTheta);
 
     // If it's the front face, we're going into the object otherwise we're leaving
     // and exiting into the air.
@@ -46,7 +47,7 @@ bool DielectricMaterial::scatter(Ray &incidentRay, Hit &hit, Ray &scatteredRay, 
         direction = refract(unitDirection, hit.normal, refractionRatio);
 
     scatteredRay = Ray(hit.hitPt, direction);
-    attenuation = color3(1.0, 1.0, 1.0);
+    attenuation = Color3(1.0, 1.0, 1.0);
 
     return true;
 }

@@ -27,7 +27,7 @@ ImageTexture::ImageTexture(uint8_t *bytes_, size_t pixelsWide_, size_t pixelsHig
 
 Color3 ImageTexture::value(double u, double v, Point3 *hitPt)
 {
-    if (!bytes) return color3(1, 1, 0);
+    if (!bytes) return Color3(1, 1, 0);
 
     u = clamp(u, 0, 1);
     v = 1.0 - clamp(v, 0, 1); // Image is flipped!
@@ -42,5 +42,5 @@ Color3 ImageTexture::value(double u, double v, Point3 *hitPt)
 
     uint8_t *pixels = bytes + (j * bytesPerRow + i * bytesPerPixel);
 
-    return color3(pixels[0] * invMaxByte, pixels[1] * invMaxByte, pixels[2] * invMaxByte);
+    return Color3(pixels[0] * invMaxByte, pixels[1] * invMaxByte, pixels[2] * invMaxByte);
 }

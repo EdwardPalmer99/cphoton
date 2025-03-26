@@ -15,6 +15,7 @@
 #include "engine/primitives/Primitives.hpp"
 #include "engine/textures/Textures.hpp"
 #include <memory>
+#include <string>
 
 int main(int argc, const char *argv[])
 {
@@ -40,9 +41,11 @@ int main(int argc, const char *argv[])
 
     PhotonEngine engine(RenderSettings::instance().pixelsWide, RenderSettings::instance().pixelsHigh);
 
-    PPMImage *outputImage = engine.render(scene, camera);
-    writeBinary16BitPPMImage(outputImage, RenderSettings::instance().outputPath);
-    freePPMImage(outputImage);
+    const PPMWriter *writer = engine.render(scene, camera);
+    if (writer)
+    {
+        writer->write(std::string(RenderSettings::instance().outputPath));
+    }
 
     return 0;
 }

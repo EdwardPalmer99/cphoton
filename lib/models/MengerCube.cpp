@@ -9,6 +9,7 @@
 
 #include "models/MengerCube.hpp"
 #include "engine/primitives/Cube.hpp"
+#include <cmath>
 #include <cstdlib>
 #include <cstring>
 #include <memory>
@@ -50,22 +51,22 @@ static MengerCube makeMengerCube(short int iter, double len, double x, double y,
 
 Primitive *makeMengerSponge(int8_t n, Point3 center, double sideLength, std::shared_ptr<Material> material)
 {
-    if (n < 0 || n > 6 || sideLength <= 0.0 || !material) return NULL;
+    if (n < 0 || n > 6 || sideLength <= 0.0 || !material) return nullptr;
 
     const int numOutputCubes = pow(20, n);
 
     CubeStack *inputStack = makeCubeStack();
-    if (!inputStack) return NULL;
+    if (!inputStack) return nullptr;
 
     Primitive **objects = (Primitive **)malloc(sizeof(Primitive *) * numOutputCubes);
     if (!objects)
     {
         freeCubeStack(inputStack);
-        return NULL;
+        return nullptr;
     }
 
     int numObjectsAdded = 0;
-    Vector3 noRotation = zeroVector();
+    Vector3 noRotation;
 
     // Make initial cube for iteration 0 and add to stack:
     MengerCube initialCube = makeMengerCube(0, sideLength, 0, 0, 0);
@@ -80,7 +81,7 @@ Primitive *makeMengerSponge(int8_t n, Point3 center, double sideLength, std::sha
 
         if (poppedCube.iteration == n)
         {
-            Point3 objectCenter = addVectors(poppedCube.center, center);
+            Point3 objectCenter = poppedCube.center + center;
             objects[numObjectsAdded++] = new Cube(objectCenter, noRotation, poppedCube.sideLen, material);
             continue;
         }
@@ -109,7 +110,7 @@ Primitive *makeMengerSponge(int8_t n, Point3 center, double sideLength, std::sha
 
 static MengerCube makeMengerCube(short int iter, double len, double x, double y, double z)
 {
-    MengerCube cube = {.iteration = iter, .sideLen = len, .center = {x, y, z}};
+    MengerCube cube = {.iteration = iter, .sideLen = len, .center = Point3(x, y, z)};
 
     return cube;
 }
@@ -118,7 +119,7 @@ static MengerCube makeMengerCube(short int iter, double len, double x, double y,
 static CubeStack *makeCubeStack(void)
 {
     CubeStack *stack = (CubeStack *)malloc(sizeof(CubeStack));
-    if (!stack) return NULL;
+    if (!stack) return nullptr;
 
     stack->ncubes = 0;
     stack->capacity = kInitialCubeStackCapacity;
@@ -127,7 +128,7 @@ static CubeStack *makeCubeStack(void)
     if (!stack->cubes)
     {
         free(stack);
-        return NULL;
+        return nullptr;
     }
 
     return stack;
@@ -200,25 +201,29 @@ static bool subdivideCube(MengerCube *subCubes, MengerCube *parent)
     for (int mode = kTopCubes; mode <= kBottomCubes; mode++)
     {
         if (mode == kTopCubes)
-            cubeCenterY = center.y + sideLen;
+            cubeCenterY = center.y() + sideLen;
         else if (mode == kMiddleCubes)
-            cubeCenterY = center.y;
+            cubeCenterY = center.y();
         else
-            cubeCenterY = center.y - sideLen;
+            cubeCenterY = center.y() - sideLen;
 
         // Four corners (going clockwise):
-        subCubes[nsubCubes++] = makeMengerCube(nextIter, sideLen, center.x - sideLen, cubeCenterY, center.z + sideLen);
-        subCubes[nsubCubes++] = makeMengerCube(nextIter, sideLen, center.x - sideLen, cubeCenterY, center.z - sideLen);
-        subCubes[nsubCubes++] = makeMengerCube(nextIter, sideLen, center.x + sideLen, cubeCenterY, center.z + sideLen);
-        subCubes[nsubCubes++] = makeMengerCube(nextIter, sideLen, center.x + sideLen, cubeCenterY, center.z - sideLen);
+        subCubes[nsubCubes++] =
+            makeMengerCube(nextIter, sideLen, center.x() - sideLen, cubeCenterY, center.z() + sideLen);
+        subCubes[nsubCubes++] =
+            makeMengerCube(nextIter, sideLen, center.x() - sideLen, cubeCenterY, center.z() - sideLen);
+        subCubes[nsubCubes++] =
+            makeMengerCube(nextIter, sideLen, center.x() + sideLen, cubeCenterY, center.z() + sideLen);
+        subCubes[nsubCubes++] =
+            makeMengerCube(nextIter, sideLen, center.x() + sideLen, cubeCenterY, center.z() - sideLen);
 
         if (mode != kMiddleCubes)
         {
-            subCubes[nsubCubes++] = makeMengerCube(nextIter, sideLen, center.x - sideLen, cubeCenterY, center.z);
-            subCubes[nsubCubes++] = makeMengerCube(nextIter, sideLen, center.x + sideLen, cubeCenterY, center.z);
+            subCubes[nsubCubes++] = makeMengerCube(nextIter, sideLen, center.x() - sideLen, cubeCenterY, center.z());
+            subCubes[nsubCubes++] = makeMengerCube(nextIter, sideLen, center.x() + sideLen, cubeCenterY, center.z());
 
-            subCubes[nsubCubes++] = makeMengerCube(nextIter, sideLen, center.x, cubeCenterY, center.z - sideLen);
-            subCubes[nsubCubes++] = makeMengerCube(nextIter, sideLen, center.x, cubeCenterY, center.z + sideLen);
+            subCubes[nsubCubes++] = makeMengerCube(nextIter, sideLen, center.x(), cubeCenterY, center.z() - sideLen);
+            subCubes[nsubCubes++] = makeMengerCube(nextIter, sideLen, center.x(), cubeCenterY, center.z() + sideLen);
         }
     }
 

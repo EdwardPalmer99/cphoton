@@ -9,6 +9,7 @@
 
 #include "engine/PhotonEngineImpl.hpp"
 #include "engine/Hit.hpp"
+#include <cmath>
 
 extern "C"
 {
@@ -23,7 +24,7 @@ Color3 rayColor(Ray &ray, Primitive *objectsBVH, int depth)
 {
     Hit hit;
 
-    if (depth <= 0) return color3(0, 0, 0); // Exceeded ray bounce limit.
+    if (depth <= 0) return Color3(); // Exceeded ray bounce limit.
 
     if (objectsBVH->hit(ray, kMinHitTime, kMaxHitTime, hit))
     {
@@ -36,7 +37,7 @@ Color3 rayColor(Ray &ray, Primitive *objectsBVH, int depth)
             Color3 outputColor = rayColor(scatteredRay, objectsBVH, depth - 1);
 
             // Light source color + (ray output * attenuation)
-            return addVectors(emitted, multiplyColors(outputColor, attenuation));
+            return (emitted + outputColor * attenuation);
         }
         else
         {
@@ -47,12 +48,12 @@ Color3 rayColor(Ray &ray, Primitive *objectsBVH, int depth)
     else
     {
         // Didn't hit anything. Return the background color for the sky:
-        const double t = 0.5 * (unitVector(ray.direction).y + 1.0);
+        const double t = 0.5 * (ray.direction().normalize().y() + 1.0);
 
-        Color3 whiteComponent = scaleVector(color3(1, 1, 1), 1 - t);
-        Color3 blueComponent = scaleVector(color3(0.5, 0.7, 1.0), t);
+        Color3 whiteComponent = Color3(1, 1, 1) * (1 - t);
+        Color3 blueComponent = Color3(0.5, 0.7, 1.0) * t;
 
-        return addVectors(whiteComponent, blueComponent);
+        return (whiteComponent + blueComponent);
     }
 }
 
@@ -87,9 +88,9 @@ void renderPixel(void *args)
     static const int kMaxSample = 10000;
     static const int kSampleBatch = 10;
 
-    RenderPixelArgs *pArgs = (RenderPixelArgs *)args;
+    auto *pArgs = static_cast<RenderPixelArgs *>(args);
 
-    Color3 pixelColor = color3(0, 0, 0);
+    Color3 pixelColor;
 
     double s1 = 0.0; // Sum of values.
     double s2 = 0.0; // Sum of squares of values.
@@ -99,8 +100,8 @@ void renderPixel(void *args)
     // Sampling:
     for (; numSamples <= kMaxSample; ++numSamples)
     {
-        const double u = (pArgs->col + randomDouble()) / (double)(pArgs->image->width - 1);
-        const double v = (pArgs->row + randomDouble()) / (double)(pArgs->image->height - 1);
+        const double u = (pArgs->col + randomDouble()) / (double)(pArgs->image->pixelsWide() - 1);
+        const double v = (pArgs->row + randomDouble()) / (double)(pArgs->image->pixelsHigh() - 1);
 
         // Generate a new camera ray:
         Ray ray = pArgs->camera->fireRay(u, v);
@@ -110,13 +111,13 @@ void renderPixel(void *args)
         // Compute the luminance:
         // https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
         {
-            double luminance = 0.21 * color.r + 0.72 * color.g + 0.07 * color.b;
+            double luminance = 0.21 * color.x() + 0.72 * color.y() + 0.07 * color.z();
 
             s1 += luminance;
             s2 += (luminance * luminance);
         }
 
-        pixelColor = addVectors(pixelColor, color);
+        pixelColor += color;
 
         // Recalculate the metric periodically to see if we need additional samples.
         // NB: ensure we have sufficient samples first to have a good figure.
@@ -137,5 +138,5 @@ void renderPixel(void *args)
     }
 
     // Set the image's pixel to the average value:
-    pArgs->image->pixelValue[pArgs->row][pArgs->col] = scaleVector(pixelColor, 1.0 / (double)numSamples);
+    pArgs->image->pixel(pArgs->row, pArgs->col) = (pixelColor * (1.0 / (double)numSamples));
 }

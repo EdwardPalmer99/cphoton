@@ -9,11 +9,7 @@
 
 #pragma once
 #include "engine/Ray.hpp"
-
-extern "C"
-{
-#include "utility/Vector3.h"
-}
+#include "utility/Vector3.hpp"
 
 /**
  * Axis-aligned bounding box.

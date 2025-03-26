@@ -8,6 +8,7 @@
  */
 
 #include "Sphere.hpp"
+#include <cmath>
 
 Sphere::Sphere(Point3 center_, double radius_, std::shared_ptr<Material> material_)
     : Primitive(material_), center(center_), radius(radius_)
@@ -36,11 +37,11 @@ bool Sphere::hit(Ray &ray, Hit &hit, HitType type)
     // B = 2d.(O - C)
     // C = (O - C).(O - C) - r^2
 
-    Vector3 rayOriginMinusCenter = subtractVectors(ray.origin, center);
+    Vector3 rayOriginMinusCenter = (ray.origin() - center);
 
-    const double quadA = dot(ray.direction, ray.direction);
-    const double quadB = 2.0 * dot(ray.direction, rayOriginMinusCenter);
-    const double quadC = dot(rayOriginMinusCenter, rayOriginMinusCenter) - radius * radius;
+    const double quadA = ray.direction().dot(ray.direction());
+    const double quadB = 2.0 * (ray.direction().dot(rayOriginMinusCenter));
+    const double quadC = rayOriginMinusCenter.dot(rayOriginMinusCenter) - radius * radius;
 
     double t1, t2;
 
@@ -54,15 +55,15 @@ bool Sphere::hit(Ray &ray, Hit &hit, HitType type)
     Point3 hitPoint = ray.pointAtTime(hitTime);
 
     // Compute the normal vector:
-    Vector3 outwardNormal = scaleVector(subtractVectors(hitPoint, center), 1.0 / radius);
+    Vector3 outwardNormal = (hitPoint - center) * (1.0 / radius);
 
     // Are we hitting the outside surface or are we hitting the inside?
-    const bool frontFace = (dot(ray.direction, outwardNormal) < 0.0);
+    const bool frontFace = (ray.direction().dot(outwardNormal) < 0.0);
 
     hit.frontFace = frontFace;
     hit.t = hitTime;
     hit.hitPt = hitPoint;
-    hit.normal = frontFace ? outwardNormal : flipVector(outwardNormal);
+    hit.normal = frontFace ? outwardNormal : -outwardNormal;
     hit.material = material.get();
 
     // Calculate the U, V texture coordinates:
@@ -73,8 +74,8 @@ bool Sphere::hit(Ray &ray, Hit &hit, HitType type)
 
 bool Sphere::boundingBox(AABB *boundingBox)
 {
-    Point3 min = point3(center.x - radius, center.y - radius, center.z - radius);
-    Point3 max = point3(center.x + radius, center.y + radius, center.z + radius);
+    Point3 min(center.x() - radius, center.y() - radius, center.z() - radius);
+    Point3 max(center.x() + radius, center.y() + radius, center.z() + radius);
     *boundingBox = AABB(min, max);
     return true;
 }
@@ -86,8 +87,8 @@ bool Sphere::boundingBox(AABB *boundingBox)
 /// starting from the +x axis.
 void setSphereUV(Vector3 *outwardNormal, double *u, double *v)
 {
-    const double theta = acos(-outwardNormal->y);
-    const double phi = atan2(-outwardNormal->z, outwardNormal->x) + M_PI;
+    const double theta = acos(-outwardNormal->y());
+    const double phi = atan2(-outwardNormal->z(), outwardNormal->x()) + M_PI;
 
     *u = phi / (2.0 * M_PI);
     *v = theta / M_PI;

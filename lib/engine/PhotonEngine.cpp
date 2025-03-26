@@ -19,30 +19,27 @@ extern "C"
 #include "threadpool/ThreadUtils.h"
 }
 
-PhotonEngine::PhotonEngine(unsigned int pixelsWide_, unsigned int pixelsHigh_)
-    : pixelsWide(pixelsWide_), pixelsHigh(pixelsHigh_)
+PhotonEngine::PhotonEngine(unsigned int pixelsWide, unsigned int pixelsHigh) : _writer(pixelsWide, pixelsHigh)
 {
 }
 
-PPMImage *PhotonEngine::render(Scene &scene, Camera &camera) const
+const PPMWriter *PhotonEngine::render(Scene &scene, Camera &camera)
 {
     if (!scene.BVH())
     {
         return nullptr;
     }
 
-    PPMImage *image = makePPMImage(pixelsWide, pixelsHigh);
-    if (!image) return nullptr;
-
     ThreadPool *threadPool = allocThreadPool(computeNumWorkers());
 
-    RenderPixelArgs args = {.row = 0, .col = 0, .camera = &camera, .objects = scene.BVH(), .image = image};
+    RenderPixelArgs args = {
+        .row = 0, .col = 0, .camera = &camera, .objects = scene.BVH(), .image = const_cast<PPMWriter *>(&_writer)};
 
-    for (int iRow = 0; iRow < image->height; ++iRow)
+    for (int iRow = 0; iRow < _writer.pixelsHigh(); ++iRow)
     {
         args.row = iRow;
 
-        for (int iCol = 0; iCol < image->width; ++iCol)
+        for (int iCol = 0; iCol < _writer.pixelsWide(); ++iCol)
         {
             args.col = iCol;
             addTask(threadPool, renderPixel, &args, sizeof(RenderPixelArgs));
@@ -52,5 +49,5 @@ PPMImage *PhotonEngine::render(Scene &scene, Camera &camera) const
     executeTasks(threadPool);
 
     deallocThreadPool(threadPool);
-    return image;
+    return const_cast<PPMWriter *>(&_writer);
 }

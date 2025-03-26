@@ -8,6 +8,8 @@
  */
 
 #include "Plane.hpp"
+#include <cmath>
+
 
 Plane::Plane(Point3 p0_, Point3 normal_, std::shared_ptr<Material> material_)
     : Primitive(material_), p0(p0_), normal(normal_)
@@ -23,12 +25,12 @@ bool Plane::hit(Ray &ray, Time tmin, Time tmax, Hit &hit)
     {
         Vector3 outwardNormal = normal;
 
-        const bool frontFace = (dot(ray.direction, outwardNormal) < 0.0);
+        const bool frontFace = (ray.direction().dot(outwardNormal) < 0.0);
 
         hit.frontFace = frontFace;
         hit.t = hitTime;
         hit.hitPt = ray.pointAtTime(hitTime);
-        hit.normal = frontFace ? outwardNormal : flipVector(outwardNormal);
+        hit.normal = frontFace ? outwardNormal : -outwardNormal;
         hit.material = material.get();
 
         hit.u = 0.0;
@@ -45,25 +47,25 @@ bool Plane::boundingBox(AABB *outputBox)
 {
     const double deltaR = 0.001;
 
-    if (fabs(normal.x) == 1.0)
+    if (fabs(normal.x()) == 1.0)
     {
-        outputBox->minPt() = point3(p0.x - deltaR, -INFINITY, -INFINITY);
-        outputBox->maxPt() = point3(p0.x + deltaR, INFINITY, INFINITY);
+        outputBox->minPt() = Point3(p0.x() - deltaR, -INFINITY, -INFINITY);
+        outputBox->maxPt() = Point3(p0.x() + deltaR, INFINITY, INFINITY);
     }
-    else if (fabs(normal.y) == 1.0)
+    else if (fabs(normal.y()) == 1.0)
     {
-        outputBox->minPt() = point3(-INFINITY, p0.y - deltaR, -INFINITY);
-        outputBox->maxPt() = point3(INFINITY, p0.y + deltaR, INFINITY);
+        outputBox->minPt() = Point3(-INFINITY, p0.y() - deltaR, -INFINITY);
+        outputBox->maxPt() = Point3(INFINITY, p0.y() + deltaR, INFINITY);
     }
-    else if (fabs(normal.z) == 1.0)
+    else if (fabs(normal.z()) == 1.0)
     {
-        outputBox->minPt() = point3(-INFINITY, -INFINITY, p0.z - deltaR);
-        outputBox->maxPt() = point3(INFINITY, INFINITY, p0.z + deltaR);
+        outputBox->minPt() = Point3(-INFINITY, -INFINITY, p0.z() - deltaR);
+        outputBox->maxPt() = Point3(INFINITY, INFINITY, p0.z() + deltaR);
     }
     else
     {
-        outputBox->minPt() = point3(-INFINITY, -INFINITY, -INFINITY);
-        outputBox->maxPt() = point3(INFINITY, INFINITY, INFINITY);
+        outputBox->minPt() = Point3(-INFINITY, -INFINITY, -INFINITY);
+        outputBox->maxPt() = Point3(INFINITY, INFINITY, INFINITY);
     }
 
     return true;

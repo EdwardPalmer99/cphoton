@@ -6,6 +6,8 @@
 //
 
 #include "engine/Camera.hpp"
+#include <cmath>
+#include <utility>
 
 extern "C"
 {
@@ -13,46 +15,45 @@ extern "C"
 }
 
 
-Camera::Camera(double verticalFOV_, double aspectRatio_, double focalLength_, double aperture_, Point3 origin_,
-               Point3 target_)
-    : origin(origin_)
+Camera::Camera(double verticalFOV, double aspectRatio, double focalLength, double aperture, Point3 origin,
+               Point3 target)
+    : _origin(std::move(origin))
 {
     // The viewport coordinates are in the range:
-    const double viewportHeight = 2.0 * tand(verticalFOV_ / 2.0);
-    const double viewportWidth = aspectRatio_ * viewportHeight;
+    const double viewportHeight = 2.0 * tand(verticalFOV / 2.0);
+    const double viewportWidth = aspectRatio * viewportHeight;
 
     // w vector is in opporite direction to camera's direction!
-    Vector3 vectorUp = vector3(0, 1, 0);
+    Vector3 vectorUp(0, 1, 0);
 
-    w = unitVector(makeVectorFromPoints(origin_, target_));
-    u = unitVector(cross(vectorUp, w));
-    v = unitVector(cross(w, u)); // TODO: - don't need to normalize this one...
+    _w = (origin - target).normalize();
+    _u = vectorUp.cross(_w).normalize();
+    _v = _w.cross(_u).normalize(); // TODO: - don't need to normalize this one...
 
-    horizontal = scaleVector(u, focalLength_ * viewportWidth);
-    vertical = scaleVector(v, focalLength_ * viewportHeight);
+    _horizontal = _u * (focalLength * viewportWidth);
+    _vertical = _v * (focalLength * viewportHeight);
 
     // Lower left corner of focal plane. This is in-front of the camera (opposite
     // direction to w vector).
-    Vector3 halfHorizontal = scaleVector(horizontal, 0.5);
-    Vector3 halfVertical = scaleVector(vertical, 0.5);
-    Vector3 focalLengthMultW = scaleVector(w, focalLength_);
+    Vector3 halfHorizontal = (_horizontal * 0.5);
+    Vector3 halfVertical = (_vertical * 0.5);
+    Vector3 focalLengthMultW = (_w * focalLength);
 
-    lowerLeftCorner = subtractVectors(origin_, addVectors(addVectors(halfHorizontal, halfVertical), focalLengthMultW));
-    lensRadius = aperture_ / 2.0;
+    _lowerLeftCorner = _origin - ((halfHorizontal + halfVertical) + focalLengthMultW);
+    _lensRadius = aperture / 2.0;
 }
 
 
-Ray Camera::fireRay(double s, double t)
+Ray Camera::fireRay(double s, double t) const
 {
-    // Calculate offset due to non-zero aperature (defocus blur):
-    Vector3 randomInDisk = scaleVector(randomInUnitDisk(), lensRadius);
-    Vector3 offset = addVectors(scaleVector(u, randomInDisk.x), scaleVector(v, randomInDisk.y));
+    // Calculate offset due to non-zero aperture (defocus blur):
+    Vector3 randomInDisk = (Vector3::randomUnitDiskVector() * _lensRadius);
+    Vector3 offset = (_u * randomInDisk.x()) + (_v * randomInDisk.y());
 
-    Point3 rayStart = addVectors(origin, offset);
+    Point3 rayStart = _origin + offset;
+    Point3 rayTarget = _lowerLeftCorner + (_horizontal * s) + (_vertical * t);
 
-    Point3 rayTarget = addVectors(addVectors(lowerLeftCorner, scaleVector(horizontal, s)), scaleVector(vertical, t));
+    Vector3 direction = rayTarget - rayStart;
 
-    Vector3 direction = subtractVectors(rayTarget, rayStart);
-
-    return Ray(rayStart, direction);
+    return Ray(std::move(rayStart), std::move(direction));
 }

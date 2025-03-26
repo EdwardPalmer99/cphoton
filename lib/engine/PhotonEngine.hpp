@@ -11,24 +11,19 @@
 
 #include "engine/Camera.hpp"
 #include "engine/Scene.hpp"
-
-extern "C"
-{
-#include "utility/PPMWriter.h"
-}
+#include "utility/PPMWriter.hpp"
 
 class PhotonEngine
 {
 public:
     PhotonEngine() = delete;
-    PhotonEngine(unsigned int pixelsWide_, unsigned int pixelsHigh_);
+    PhotonEngine(unsigned int pixelsWide, unsigned int pixelsHigh);
 
     /**
      * @brief Renders a scene.
      */
-    PPMImage *render(Scene &scene, Camera &camera) const;
+    const PPMWriter *render(Scene &scene, Camera &camera);
 
 private:
-    unsigned int pixelsWide;
-    unsigned int pixelsHigh;
+    PPMWriter _writer;
 };

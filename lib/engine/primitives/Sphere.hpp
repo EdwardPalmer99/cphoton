@@ -11,12 +11,7 @@
 #pragma once
 #include "Primitive.hpp"
 #include "engine/Ray.hpp"
-
-extern "C"
-{
-#include "utility/Vector3.h"
-}
-
+#include "utility/Vector3.hpp"
 
 class Sphere : public Primitive
 {

@@ -14,3 +14,6 @@ double randomDouble(void);
 
 /// Returns a double in the range [min, max)
 double randomDoubleRange(double min, double max);
+
+/* Returns a random int in the range [min, max) */
+int randomIntRange(int min, int max);

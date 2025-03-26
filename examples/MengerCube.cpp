@@ -7,11 +7,7 @@
  *
  */
 
-extern "C"
-{
-#include "utility/PPMWriter.h"
-}
-
+#include "models/MengerCube.hpp"
 #include "engine/CLIOptions.hpp"
 #include "engine/PhotonEngine.hpp"
 #include "engine/RenderSettings.hpp"
@@ -23,7 +19,8 @@ extern "C"
 #include "engine/primitives/Plane.hpp"
 #include "engine/primitives/Primitive.hpp"
 #include "engine/textures/SolidTexture.hpp"
-#include "models/MengerCube.hpp"
+#include "utility/PPMWriter.hpp"
+#include <string>
 
 int main(int argc, const char *argv[])
 {
@@ -61,10 +58,11 @@ int main(int argc, const char *argv[])
     // Render:
     PhotonEngine engine(RenderSettings::instance().pixelsWide, RenderSettings::instance().pixelsHigh);
 
-    PPMImage *outputImage = engine.render(scene, camera);
-    writeBinary16BitPPMImage(outputImage, RenderSettings::instance().outputPath);
+    const PPMWriter *writer = engine.render(scene, camera);
+    if (writer)
+    {
+        writer->write(std::string(RenderSettings::instance().outputPath), PPMWriter::Binary16Bit);
+    }
 
-    // Cleanup:
-    freePPMImage(outputImage);
     return 0;
 }

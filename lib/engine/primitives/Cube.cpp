@@ -16,17 +16,8 @@ extern "C"
 
 
 Cube::Cube(Point3 center_, Vector3 rotAngles_, double length_, std::shared_ptr<Material> material_)
-    : Primitive(material_), center(center_), length(length_)
+    : Primitive(material_), center(center_), length(length_), rotationMatrix(rotAngles_)
 {
-    rotationMatrix = makeRotate3(rotAngles_);
-}
-
-Cube::~Cube()
-{
-    if (rotationMatrix)
-    {
-        free(rotationMatrix);
-    }
 }
 
 
@@ -34,38 +25,38 @@ bool Cube::hit(Ray &ray, Hit &hit, HitType type)
 {
     const double halfLength = 0.5 * length;
 
-    // Transform ray and shift it so that cube is at the origin and oriented
-    // along the y-axis.
-    Ray tranRay = transformRay(ray, center, rotationMatrix);
-    Point3 tOrigin = tranRay.origin;
-    Vector3 tDir = tranRay.direction;
+    // Transform ray and shift it so that cube is at the.origin() and oriented
+    // along the.y()-axis.
+    Ray tranRay = transformRay(ray, center, &rotationMatrix);
+    Point3 tOrigin = tranRay.origin();
+    Vector3 tDir = tranRay.direction();
 
     double tEnter, tExit;
-    const double divX = 1.0 / tDir.x;
+    const double divX = 1.0 / tDir.x();
 
     if (divX >= 0)
     {
-        tEnter = (-halfLength - tOrigin.x) * divX;
-        tExit = (+halfLength - tOrigin.x) * divX;
+        tEnter = (-halfLength - tOrigin.x()) * divX;
+        tExit = (+halfLength - tOrigin.x()) * divX;
     }
     else
     {
-        tExit = (-halfLength - tOrigin.x) * divX;
-        tEnter = (+halfLength - tOrigin.x) * divX;
+        tExit = (-halfLength - tOrigin.x()) * divX;
+        tEnter = (+halfLength - tOrigin.x()) * divX;
     }
 
     double tyEnter, tyExit;
-    const double divY = 1.0 / tDir.y;
+    const double divY = 1.0 / tDir.y();
 
     if (divY >= 0)
     {
-        tyEnter = (-halfLength - tOrigin.y) * divY;
-        tyExit = (+halfLength - tOrigin.y) * divY;
+        tyEnter = (-halfLength - tOrigin.y()) * divY;
+        tyExit = (+halfLength - tOrigin.y()) * divY;
     }
     else
     {
-        tyExit = (-halfLength - tOrigin.y) * divY;
-        tyEnter = (+halfLength - tOrigin.y) * divY;
+        tyExit = (-halfLength - tOrigin.y()) * divY;
+        tyEnter = (+halfLength - tOrigin.y()) * divY;
     }
 
     tEnter = max(tEnter, tyEnter);
@@ -74,17 +65,17 @@ bool Cube::hit(Ray &ray, Hit &hit, HitType type)
     if (tExit < tEnter) return false; // No intersection.
 
     double tzEnter, tzExit;
-    const double divZ = 1.0 / tDir.z;
+    const double divZ = 1.0 / tDir.z();
 
     if (divZ >= 0)
     {
-        tzEnter = (-halfLength - tOrigin.z) * divZ;
-        tzExit = (+halfLength - tOrigin.z) * divZ;
+        tzEnter = (-halfLength - tOrigin.z()) * divZ;
+        tzExit = (+halfLength - tOrigin.z()) * divZ;
     }
     else
     {
-        tzExit = (-halfLength - tOrigin.z) * divZ;
-        tzEnter = (+halfLength - tOrigin.z) * divZ;
+        tzExit = (-halfLength - tOrigin.z()) * divZ;
+        tzEnter = (+halfLength - tOrigin.z()) * divZ;
     }
 
     tEnter = max(tEnter, tzEnter);
@@ -97,23 +88,23 @@ bool Cube::hit(Ray &ray, Hit &hit, HitType type)
 
     // The hit will occur at time tmin. Now calculate which face it intersects.
     if (tyEnter == hitTime)
-        outwardNormal = vector3(0, (divY >= 0 ? -1 : 1), 0);
+        outwardNormal = Vector3(0, (divY >= 0 ? -1 : 1), 0);
     else if (tzEnter == hitTime)
-        outwardNormal = vector3(0, 0, (divZ >= 0 ? -1 : 1));
+        outwardNormal = Vector3(0, 0, (divZ >= 0 ? -1 : 1));
     else
-        outwardNormal = vector3((divX >= 0 ? -1 : 1), 0, 0);
+        outwardNormal = Vector3((divX >= 0 ? -1 : 1), 0, 0);
 
     // Calculate the hit point and outward normal in original coordinates
     // (rotate back to original). hitTime is correct in both coordinates.
     Vector3 hitPoint = ray.pointAtTime(hitTime);
-    outwardNormal = rotation(outwardNormal, rotationMatrix);
+    outwardNormal = rotationMatrix.rotate(outwardNormal);
 
-    const bool frontFace = (dot(ray.direction, outwardNormal) < 0.0);
+    const bool frontFace = (ray.direction().dot(outwardNormal) < 0.0);
 
     hit.frontFace = frontFace;
     hit.t = hitTime;
     hit.hitPt = hitPoint;
-    hit.normal = frontFace ? outwardNormal : flipVector(outwardNormal);
+    hit.normal = frontFace ? outwardNormal : -outwardNormal;
     hit.material = material.get();
 
     hit.u = 0.0;
@@ -127,10 +118,10 @@ bool Cube::boundingBox(AABB *outputBox)
 {
     const double halfL = 0.5 * length;
 
-    if (!rotationMatrix)
+    if (rotationMatrix.isZeroRotation())
     {
-        outputBox->minPt() = point3(center.x - halfL, center.y - halfL, center.z - halfL);
-        outputBox->maxPt() = point3(center.x + halfL, center.y + halfL, center.z + halfL);
+        outputBox->minPt() = Point3(center.x() - halfL, center.y() - halfL, center.z() - halfL);
+        outputBox->maxPt() = Point3(center.x() + halfL, center.y() + halfL, center.z() + halfL);
     }
     else
     {
@@ -144,12 +135,12 @@ bool Cube::boundingBox(AABB *outputBox)
                 {
                     Point3 vertex; // Vertex before rotation or translation.
 
-                    vertex.x = (i == 0) ? -halfL : halfL;
-                    vertex.y = (j == 0) ? -halfL : halfL;
-                    vertex.z = (k == 0) ? -halfL : halfL;
+                    vertex.x() = (i == 0) ? -halfL : halfL;
+                    vertex.y() = (j == 0) ? -halfL : halfL;
+                    vertex.z() = (k == 0) ? -halfL : halfL;
 
                     // Rotated and then translated vertex.
-                    Point3 vertexPrime = addVectors(rotation(vertex, rotationMatrix), center);
+                    Point3 vertexPrime = rotationMatrix.rotate(vertex) + center;
 
                     outputBox->addPoint(vertexPrime);
                 }

@@ -8,7 +8,9 @@
  */
 
 #include "Primitive.hpp"
+#include <cmath>
 #include <stdexcept>
+
 
 Primitive::Primitive(std::shared_ptr<Material> material_) : material(material_)
 {
@@ -78,8 +80,8 @@ bool intersectionWithPlane(Point3 p0, Vector3 n, Ray &ray, double *hitTime)
     //
     // --> (origin - p0).n + t*(d.n) = 0
     // --> t = (p0 - origin).n / (d.n)
-    const double directionDotN = dot(ray.direction, n);
-    const double p0MinusOriginDotN = dot(subtractVectors(p0, ray.origin), n);
+    const double directionDotN = ray.direction().dot(n);
+    const double p0MinusOriginDotN = (p0 - ray.origin()).dot(n);
 
     // Line and plane are parallel --> no intersection point:
     if (directionDotN == 0) return false;
@@ -95,8 +97,8 @@ bool intersectionWithPlane(Point3 p0, Vector3 n, Ray &ray, double *hitTime)
 
 Ray transformRay(Ray &ray, Point3 center, Rotate3 *rotation)
 {
-    Vector3 newDir = inverseRotation(ray.direction, rotation);
-    Point3 newOrigin = inverseRotation(subtractVectors(ray.origin, center), rotation);
+    Vector3 newDir = rotation->undoRotation(ray.direction());
+    Point3 newOrigin = rotation->undoRotation(ray.origin() - center);
 
     return Ray(newOrigin, newDir);
 }
@@ -108,7 +110,7 @@ bool solveQuadratic(double a, double b, double c, double *t1, double *t2)
 
     if (discriminant < 0.0) return 0; // No roots.
 
-    const double sqrtDiscriminant = sqrt(discriminant);
+    const double sqrtDiscriminant = std::sqrt(discriminant);
 
     *t1 = (-b - sqrtDiscriminant) / (2 * a);
     *t2 = (-b + sqrtDiscriminant) / (2 * a);

@@ -9,11 +9,7 @@
 
 #pragma once
 #include "Texture.hpp"
-
-extern "C"
-{
-#include "utility/Vector3.h"
-}
+#include "utility/Vector3.hpp"
 
 class SolidTexture : public Texture
 {

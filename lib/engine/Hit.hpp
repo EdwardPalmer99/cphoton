@@ -9,11 +9,7 @@
 
 #pragma once
 #include "engine/materials/Material.hpp"
-
-extern "C"
-{
-#include "utility/Vector3.h"
-}
+#include "utility/Vector3.hpp"
 
 /* Stores single-hit information */
 class Hit

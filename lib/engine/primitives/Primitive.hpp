@@ -8,18 +8,13 @@
  */
 
 #pragma once
-
-extern "C"
-{
-#include "utility/Matrix3.h"
-#include "utility/Vector3.h"
-}
-
 #include "engine/AABB.hpp"
 #include "engine/Hit.hpp"
 #include "engine/Ray.hpp"
 #include "engine/Span.hpp"
 #include "engine/materials/Material.hpp"
+#include "utility/Matrix3.hpp"
+#include "utility/Vector3.hpp"
 #include <memory>
 
 /** Base object class. */

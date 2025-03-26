@@ -11,24 +11,20 @@
 #include "engine/Camera.hpp"
 #include "engine/Ray.hpp"
 #include "engine/primitives/Primitive.hpp"
-
-extern "C"
-{
-#include "utility/PPMWriter.h"
-#include "utility/Vector3.h"
-}
+#include "utility/PPMWriter.hpp"
+#include "utility/Vector3.hpp"
 
 #include <stdint.h>
 
 /** Struct passed to renderPixel function */
-typedef struct
+struct RenderPixelArgs
 {
     uint16_t row;
     uint16_t col;
     Camera *camera;
     Primitive *objects;
-    PPMImage *image;
-} RenderPixelArgs;
+    PPMWriter *image;
+};
 
 /**
  * @brief Renders a single pixel by repeatedly firing rays for a pixel and sampling the colors. Function is called by a

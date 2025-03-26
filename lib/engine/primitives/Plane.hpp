@@ -9,6 +9,7 @@
 
 #pragma once
 #include "Primitive.hpp"
+#include "utility/Vector3.hpp"
 
 class Plane : public Primitive
 {

@@ -10,12 +10,8 @@
 #pragma once
 #include "Primitive.hpp"
 #include "engine/materials/Material.hpp"
-
-extern "C"
-{
-#include "utility/Matrix3.h"
-#include "utility/Vector3.h"
-}
+#include "utility/Matrix3.hpp"
+#include "utility/Vector3.hpp"
 
 class Cube : public Primitive
 {
@@ -30,6 +26,6 @@ public:
 
 protected:
     Point3 center;
-    Rotate3 *rotationMatrix;
+    Rotate3 rotationMatrix;
     double length;
 };

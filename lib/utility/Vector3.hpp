@@ -91,6 +91,9 @@ public:
     /* Scale operator */
     Vector3 operator*(double scalar) const;
 
+    /* Vector scale operation */
+    Vector3 operator*(const Vector3 &other) const;
+
     /* Multiplication assignment operator */
     Vector3 &operator*=(double scalar);
 

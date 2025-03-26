@@ -9,6 +9,8 @@
 
 
 #include "SolidTexture.hpp"
+#include <utility>
+
 
 SolidTexture::SolidTexture(Color3 color_) : color(std::move(color_))
 {
@@ -19,14 +21,14 @@ SolidTexture::SolidTexture(PresetColor colorType)
     switch (colorType)
     {
         case Gold:
-            color = color3(1.000, 0.766, 0.336);
+            color = Color3(1.000, 0.766, 0.336);
             break;
         case Silver:
-            color = color3(0.972, 0.960, 0.816);
+            color = Color3(0.972, 0.960, 0.816);
             break;
         case Grey:
         default:
-            color = color3(0.20, 0.26, 0.35);
+            color = Color3(0.20, 0.26, 0.35);
             break;
     }
 }
